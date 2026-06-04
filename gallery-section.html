@@ -1,0 +1,252 @@
+<!-- ═══════════════════════════════════════════
+     GALLERY SECTION — Dark Amber/Yellow Theme
+     Replace YOUR_IMAGE_URL with your image link
+     Clicking anywhere → cow-life-gallery.html
+════════════════════════════════════════════ -->
+<style>
+#gallery-section {
+  background: linear-gradient(160deg, #1a1200 0%, #2a1e00 50%, #1a1200 100%);
+  padding: 56px 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+#gallery-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(245,168,0,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.gal-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.gal-head {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.gal-tag {
+  display: inline-block;
+  background: rgba(245,168,0,.15);
+  color: #F5A800;
+  border: 1px solid rgba(245,168,0,.35);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+.gal-title {
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.15;
+}
+.gal-title span {
+  color: #F5A800;
+  font-style: italic;
+}
+.gal-desc {
+  color: rgba(255,255,255,.55);
+  font-size: .92rem;
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── IMAGE CONTAINER ── */
+.gal-img-container {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid rgba(245,168,0,.3);
+  box-shadow: 0 12px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(245,168,0,.08);
+  transition: transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+  aspect-ratio: 16/7;
+  background: #2a1e00;
+}
+#gallery-section:hover .gal-img-container {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 24px 64px rgba(0,0,0,.7), 0 0 0 2px rgba(245,168,0,.35);
+  border-color: rgba(245,168,0,.6);
+}
+.gal-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s ease;
+}
+#gallery-section:hover .gal-img-container img {
+  transform: scale(1.04);
+}
+/* Overlay gradient on image */
+.gal-img-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(20,14,0,.65) 100%
+  );
+  pointer-events: none;
+}
+/* Overlay text on image */
+.gal-img-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 32px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.gal-overlay-title {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Playfair Display', Georgia, serif;
+  margin-bottom: 4px;
+}
+.gal-overlay-sub {
+  font-size: .8rem;
+  color: rgba(255,255,255,.65);
+}
+.gal-cta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F5A800;
+  color: #1a1200;
+  font-size: .82rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 99px;
+  white-space: nowrap;
+  transition: background .2s, transform .2s;
+  flex-shrink: 0;
+}
+#gallery-section:hover .gal-cta-pill {
+  background: #ffc62b;
+  transform: translateX(4px);
+}
+.gal-cta-pill svg {
+  transition: transform .2s;
+}
+#gallery-section:hover .gal-cta-pill svg {
+  transform: translateX(3px);
+}
+
+/* ── BOTTOM STATS ── */
+.gal-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 20px;
+  border: 1px solid rgba(245,168,0,.2);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.gal-stat {
+  flex: 1;
+  text-align: center;
+  padding: 16px 12px;
+  background: rgba(245,168,0,.06);
+  border-right: 1px solid rgba(245,168,0,.15);
+  transition: background .25s;
+}
+.gal-stat:last-child { border-right: none; }
+#gallery-section:hover .gal-stat { background: rgba(245,168,0,.1); }
+.gal-stat-num {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #F5A800;
+  line-height: 1;
+  margin-bottom: 3px;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.gal-stat-label {
+  font-size: .68rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 600;
+}
+
+/* ── MOBILE ── */
+@media(max-width: 600px) {
+  #gallery-section { padding: 44px 0; }
+  .gal-img-container { aspect-ratio: 4/3; }
+  .gal-img-overlay { padding: 16px 18px; }
+  .gal-stats { flex-wrap: wrap; }
+  .gal-stat { flex: 0 0 50%; border-bottom: 1px solid rgba(245,168,0,.15); }
+  .gal-stat:nth-child(2) { border-right: none; }
+  .gal-stat:nth-child(3) { border-bottom: none; }
+  .gal-stat:nth-child(4) { border-bottom: none; border-right: none; }
+}
+</style>
+
+<section id="gallery-section" onclick="window.location.href='cow-life-gallery.html'">
+  <div class="gal-wrap">
+
+    <!-- HEAD TEXT -->
+    <div class="gal-head">
+      <div class="gal-tag">Sri Ranga Gaushala</div>
+      <h2 class="gal-title">Our Cows Live <span>Happily &amp; Freely</span></h2>
+      <p class="gal-desc">No injections. No stress. Just open fields, natural feeding, and a life full of care — every single day.</p>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         IMAGE CONTAINER
+         👉 Replace YOUR_IMAGE_URL below with
+            your actual image link
+    ════════════════════════════════════════ -->
+    <div class="gal-img-container">
+      <img src="YOUR_IMAGE_URL" alt="Sri Ranga Gaushala — Our Cows"/>
+
+      <!-- Text + button overlaid on image -->
+      <div class="gal-img-overlay">
+        <div class="gal-overlay-text">
+          <div class="gal-overlay-title">A Life of Care, Freedom &amp; Respect</div>
+          <div class="gal-overlay-sub">Click to explore our full gallery →</div>
+        </div>
+        <div class="gal-cta-pill">
+          View Gallery
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="gal-stats">
+      <div class="gal-stat">
+        <div class="gal-stat-num">15+</div>
+        <div class="gal-stat-label">Years of Care</div>
+      </div>
+      <div class="gal-stat">
+        <div class="gal-stat-num">100%</div>
+        <div class="gal-stat-label">Natural Feeding</div>
+      </div>
+      <div class="gal-stat">
+        <div class="gal-stat-num">0</div>
+        <div class="gal-stat-label">Injections Ever</div>
+      </div>
+      <div class="gal-stat">
+        <div class="gal-stat-num">&#x221E;</div>
+        <div class="gal-stat-label">Love &amp; Freedom</div>
+      </div>
+    </div>
+
+  </div>
+</section>
