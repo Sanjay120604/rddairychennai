@@ -16,6 +16,25 @@ var SALT = "RD_dairy_x7Qm29vLpK4tZbN8wR3jH6sF1aYcE5gD0uViO_2026";
 /* CONFIG: admin password to view admin & stats pages. Change this. */
 var ADMIN_KEY = "rdadmin2026";
 
+/* ============================================================
+   FREE NOTIFICATIONS (no paid provider needed)
+============================================================ */
+
+// --- EMAIL alerts (free, via Gmail/Apps Script) ---
+// Where YOU want to receive new-order emails. Leave "" to disable.
+var ADMIN_EMAIL = "";   // <-- put your email here, e.g. "rddairy@gmail.com"
+var SEND_CUSTOMER_EMAIL = true;   // email the customer their confirmation (if they gave an email)
+
+// --- TELEGRAM instant alert (free) ---
+// To enable:
+//   1. In Telegram, message @BotFather -> /newbot -> follow steps -> copy the BOT TOKEN.
+//   2. Message your new bot once (say "hi"), then open in a browser:
+//      https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
+//      Find "chat":{"id":NUMBER} -> that NUMBER is your CHAT ID.
+//   3. Paste both below. Leave TELEGRAM_BOT_TOKEN "" to disable.
+var TELEGRAM_BOT_TOKEN = "";   // <-- paste bot token
+var TELEGRAM_CHAT_ID   = "";   // <-- paste your chat id
+
 var USERS_SHEET = "Users";
 var ORDERS_SHEET = "Orders";
 var SUBS_SHEET = "Subscriptions";
@@ -31,6 +50,7 @@ function doPost(e) {
     if (action === "updateStatus")      return json(updateStatus(body));
     if (action === "getAdminData")      return json(getAdminData(body));
     if (action === "getStats")          return json(getStats(body));
+    if (action === "getMyOrders")       return json(getMyOrders(body));
     if (action === "saveProfile")       return json(saveProfile(body));
     if (action === "getProfile")        return json(getProfile(body));
     return json({ success: false, message: "Unknown action." });
@@ -62,8 +82,8 @@ function login(b) {
   var row = findRowByMobile(getUsersSheet(), mobile);
   if (!row) return { success: false, message: "No account found for this number. Please register." };
   if (hashPassword(password) !== row.data[2]) return { success: false, message: "Incorrect password." };
-  var email = row.data[4] || "", address = row.data[5] || "";
-  return { success: true, name: row.data[1], email: email, address: address,
+  var email = row.data[4] || "", address = row.data[5] || "", mapLink = row.data[6] || "";
+  return { success: true, name: row.data[1], email: email, address: address, mapLink: mapLink,
            profileComplete: !!(address && address.toString().trim()), message: "Login successful." };
 }
 
@@ -73,6 +93,7 @@ function saveProfile(b) {
   var name = (b.name || "").toString().trim();
   var email = (b.email || "").toString().trim();
   var address = (b.address || "").toString().trim();
+  var mapLink = (b.mapLink || "").toString().trim();
   if (!/^\d{10}$/.test(mobile)) return { success: false, message: "Invalid mobile." };
   if (!name)    return { success: false, message: "Name is required." };
   if (!address) return { success: false, message: "Address is required." };
@@ -84,7 +105,8 @@ function saveProfile(b) {
   sheet.getRange(row.rowNumber, 2).setValue(name);    // Name (col B)
   sheet.getRange(row.rowNumber, 5).setValue(email);   // Email (col E)
   sheet.getRange(row.rowNumber, 6).setValue(address); // Address (col F)
-  return { success: true, message: "Profile saved.", name: name, email: email, address: address };
+  if (mapLink) sheet.getRange(row.rowNumber, 7).setValue(mapLink); // MapLink (col G)
+  return { success: true, message: "Profile saved.", name: name, email: email, address: address, mapLink: mapLink };
 }
 
 function getProfile(b) {
@@ -93,7 +115,7 @@ function getProfile(b) {
   if (!row) return { success: false, message: "Account not found." };
   var address = row.data[5] || "";
   return { success: true, name: row.data[1] || "", email: row.data[4] || "",
-           address: address, profileComplete: !!(address && address.toString().trim()) };
+           address: address, mapLink: row.data[6] || "", profileComplete: !!(address && address.toString().trim()) };
 }
 
 /* ---------------- ORDERS ---------------- */
@@ -105,6 +127,7 @@ function placeOrder(b) {
   var total = Number(b.total) || 0;
   var payMethod = (b.payMethod || "UPI / QR").toString();
   var paymentRef = (b.paymentRef || "").toString().trim();
+  var mapLink = (b.mapLink || "").toString().trim();
   if (!name || !mobile) return { success: false, message: "Please login before ordering." };
   if (!address)         return { success: false, message: "Delivery address is required." };
   if (!items.length)    return { success: false, message: "Your cart is empty." };
@@ -118,8 +141,12 @@ function placeOrder(b) {
   if (/cod/i.test(payMethod)) status = "COD - Pending Delivery";
   else status = paymentRef ? "Payment Submitted" : "Pending Payment";
 
-  getOrdersSheet().appendRow([orderId, new Date(), name, mobile, address,
+  getOrdersSheet().appendRow([orderId, new Date(), name, mobile, address, mapLink,
     itemsText, totalQty, total, payMethod, paymentRef, status]);
+
+  // FREE notifications: Telegram + email to admin, email to customer
+  notifyNewOrder("Order", orderId, name, mobile, address, itemsText, total, payMethod, emailForMobile(mobile));
+
   return { success: true, orderId: orderId, message: "Order placed." };
 }
 
@@ -133,14 +160,20 @@ function placeSubscription(b) {
   var plan = (b.plan || "Daily Delivery").toString();
   var total = Number(b.total) || 0;
   var paymentRef = (b.paymentRef || "").toString().trim();
+  var mapLink = (b.mapLink || "").toString().trim();
   if (!name || !mobile) return { success: false, message: "Please login before subscribing." };
   if (!address)         return { success: false, message: "Delivery address is required." };
   if (!product)         return { success: false, message: "Please choose a product." };
 
   var subId = "SUB" + (new Date().getTime().toString().slice(-8));
   var status = paymentRef ? "Payment Submitted" : "Pending Confirmation";
-  getSubsSheet().appendRow([subId, new Date(), name, mobile, address,
+  getSubsSheet().appendRow([subId, new Date(), name, mobile, address, mapLink,
     product, qty, plan, total, paymentRef, status]);
+
+  // FREE notifications
+  notifyNewOrder("Subscription", subId, name, mobile, address,
+    product + " x" + qty + " (" + plan + ")", total, "Subscription", emailForMobile(mobile));
+
   return { success: true, subId: subId, message: "Subscription requested." };
 }
 
@@ -153,6 +186,18 @@ function updateStatus(b) {
   for (var i = 1; i < values.length; i++) {
     if (values[i][0].toString() === b.id) {
       sheet.getRange(i + 1, statusCol).setValue(b.status);
+      // Notify the customer of the status change by email (col index: Name=2, Mobile=3)
+      var custName = values[i][2], custMobile = values[i][3];
+      if (custMobile) {
+        var custEmail = emailForMobile(custMobile.toString());
+        if (custEmail) {
+          sendEmail(custEmail, "RD Dairy — Order " + b.id + " update",
+            "<p>Hi " + custName + ",</p><p>Your RD Dairy order <b>" + b.id +
+            "</b> status is now: <b>" + b.status + "</b>.</p>" +
+            "<p>Track it anytime under <b>My Orders</b> on our website.</p>" +
+            "<p style='color:#C47E00;font-weight:bold'>RD Dairy — Pure A2 Milk</p>");
+        }
+      }
       return { success: true, message: "Status updated." };
     }
   }
@@ -162,6 +207,21 @@ function updateStatus(b) {
 function getAdminData(b) {
   if (b.adminKey !== ADMIN_KEY) return { success: false, message: "Unauthorized." };
   return { success: true, orders: sheetToObjects(getOrdersSheet()), subscriptions: sheetToObjects(getSubsSheet()) };
+}
+
+/* ---------------- MY ORDERS (customer tracking) ----------------
+   body: { mobile }  -> returns that customer's orders + subscriptions */
+function getMyOrders(b) {
+  var mobile = (b.mobile || "").toString().trim();
+  if (!/^\d{10}$/.test(mobile)) return { success: false, message: "Please login." };
+  function mine(rows) {
+    return rows.filter(function (r) { return (r.Mobile || "").toString().trim() === mobile; });
+  }
+  return {
+    success: true,
+    orders: mine(sheetToObjects(getOrdersSheet())),
+    subscriptions: mine(sheetToObjects(getSubsSheet()))
+  };
 }
 
 function getStats(b) {
@@ -204,9 +264,9 @@ function getStats(b) {
 }
 
 /* ---------------- HELPERS ---------------- */
-function getUsersSheet() { return getOrMake(USERS_SHEET, ["Mobile", "Name", "PasswordHash", "RegisteredOn", "Email", "Address"]); }
-function getOrdersSheet() { return getOrMake(ORDERS_SHEET, ["OrderId","Date","Name","Mobile","Address","Items","TotalQty","Amount","PayMethod","PaymentRef","Status"]); }
-function getSubsSheet() { return getOrMake(SUBS_SHEET, ["SubId","Date","Name","Mobile","Address","Product","Qty","Plan","Amount","PaymentRef","Status"]); }
+function getUsersSheet() { return getOrMake(USERS_SHEET, ["Mobile", "Name", "PasswordHash", "RegisteredOn", "Email", "Address", "MapLink"]); }
+function getOrdersSheet() { return getOrMake(ORDERS_SHEET, ["OrderId","Date","Name","Mobile","Address","MapLink","Items","TotalQty","Amount","PayMethod","PaymentRef","Status"]); }
+function getSubsSheet() { return getOrMake(SUBS_SHEET, ["SubId","Date","Name","Mobile","Address","MapLink","Product","Qty","Plan","Amount","PaymentRef","Status"]); }
 function getOrMake(name, header) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(name);
@@ -240,3 +300,75 @@ function hashPassword(password) {
   return raw.map(function (x) { return ((x & 0xff) + 0x100).toString(16).slice(1); }).join("");
 }
 function json(obj) { return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }
+
+/* ---- TELEGRAM instant alert (free) ---- */
+function sendTelegram(text) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  try {
+    var url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage";
+    UrlFetchApp.fetch(url, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: "HTML" }),
+      muteHttpExceptions: true
+    });
+  } catch (e) {}
+}
+
+/* ---- EMAIL (free, via Apps Script) ---- */
+function sendEmail(to, subject, body) {
+  if (!to) return;
+  try {
+    MailApp.sendEmail({ to: to, subject: subject, htmlBody: body });
+  } catch (e) {}
+}
+
+/* Build a readable email/telegram body for an order or subscription */
+function notifyNewOrder(kind, id, name, mobile, address, detail, amount, payMethod, customerEmail) {
+  // --- Admin: Telegram ---
+  var tg = "🔔 <b>New RD Dairy " + kind + "</b>\n" +
+    "ID: " + id + "\n" +
+    "Name: " + name + "\n" +
+    "Mobile: " + mobile + "\n" +
+    "Amount: Rs." + amount + "\n" +
+    (payMethod ? ("Payment: " + payMethod + "\n") : "") +
+    "Address: " + address + "\n" +
+    "Items: " + detail;
+  sendTelegram(tg);
+
+  // --- Admin: Email ---
+  var adminHtml =
+    "<h2 style='color:#1B2A5A'>New " + kind + " received</h2>" +
+    "<p><b>ID:</b> " + id + "<br>" +
+    "<b>Name:</b> " + name + "<br>" +
+    "<b>Mobile:</b> " + mobile + "<br>" +
+    "<b>Amount:</b> Rs." + amount + "<br>" +
+    (payMethod ? ("<b>Payment:</b> " + payMethod + "<br>") : "") +
+    "<b>Address:</b> " + address + "<br>" +
+    "<b>Items:</b> " + detail + "</p>";
+  sendEmail(ADMIN_EMAIL, "New RD Dairy " + kind + " — " + id, adminHtml);
+
+  // --- Customer: Email confirmation ---
+  if (SEND_CUSTOMER_EMAIL && customerEmail) {
+    var custHtml =
+      "<div style='font-family:Arial,sans-serif;max-width:520px'>" +
+      "<h2 style='color:#1B2A5A'>Thank you for your " + kind + ", " + name + "! 🥛</h2>" +
+      "<p>We've received your " + kind + " and will keep you updated.</p>" +
+      "<table style='border-collapse:collapse;width:100%'>" +
+      "<tr><td style='padding:6px 0'><b>Order ID</b></td><td>" + id + "</td></tr>" +
+      "<tr><td style='padding:6px 0'><b>Items</b></td><td>" + detail + "</td></tr>" +
+      "<tr><td style='padding:6px 0'><b>Amount</b></td><td>Rs." + amount + "</td></tr>" +
+      (payMethod ? ("<tr><td style='padding:6px 0'><b>Payment</b></td><td>" + payMethod + "</td></tr>") : "") +
+      "<tr><td style='padding:6px 0'><b>Delivery to</b></td><td>" + address + "</td></tr>" +
+      "</table>" +
+      "<p style='margin-top:16px'>Track your order anytime on our website under <b>My Orders</b>.</p>" +
+      "<p style='color:#C47E00;font-weight:bold'>RD Dairy — Pure A2 Milk, Chennai</p></div>";
+    sendEmail(customerEmail, "RD Dairy — Order Confirmation (" + id + ")", custHtml);
+  }
+}
+
+/* Look up a customer's email from the Users sheet by mobile */
+function emailForMobile(mobile) {
+  var row = findRowByMobile(getUsersSheet(), mobile);
+  return row ? (row.data[4] || "") : "";
+}

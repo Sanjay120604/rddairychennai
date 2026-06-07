@@ -27,6 +27,11 @@
   .field input:focus,.field textarea:focus{border-color:var(--amber);background:#fff;box-shadow:0 0 0 4px rgba(245,168,0,.15)}
   .field input:disabled{background:#f0ece0;color:var(--navy-light);cursor:not-allowed}
   .field .hint{font-size:.72rem;color:var(--navy-light);margin-top:4px;font-weight:600}
+  .loc-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border:1.5px dashed var(--amber);background:var(--amber-bg);color:var(--navy);border-radius:11px;font-family:inherit;font-weight:800;font-size:.88rem;cursor:pointer}
+  .loc-btn:active{background:var(--amber-light)}
+  .loc-btn.done{border-style:solid;background:#e8f5e9;border-color:var(--ok);color:var(--ok)}
+  .loc-status{font-size:.76rem;font-weight:700;color:var(--navy-light);margin-top:6px;line-height:1.4}
+  .loc-status a{color:var(--amber-dark)}
   .btn{width:100%;padding:14px;background:var(--amber);color:var(--navy);border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 8px 22px rgba(245,168,0,.4);transition:transform .15s,background .2s;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:6px}
   .btn:hover{background:#ffc62b;transform:translateY(-2px)}
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
@@ -70,6 +75,14 @@
         <label>Delivery Address</label>
         <textarea id="pAddress" rows="3" placeholder="Flat / house no, street, area, Chennai, pincode"></textarea>
       </div>
+      <div class="field">
+        <label>Map Location <span class="opt" style="font-weight:600;color:var(--amber-dark);font-size:.74rem;">(helps us find you faster)</span></label>
+        <button type="button" class="loc-btn" id="profLocBtn" onclick="captureLocation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="profLocLabel">Pin my location on map</span>
+        </button>
+        <div class="loc-status" id="profLocStatus"></div>
+      </div>
 
       <button class="btn" id="saveBtn" onclick="save()">
         <span class="lbl">Save &amp; Continue</span>
@@ -79,6 +92,7 @@
 
       <div class="links">
         <a href="index.html">← Back to store</a>
+        <a href="my-orders.html">My Orders</a>
         <a href="#" onclick="logout();return false;">Log out</a>
       </div>
     </div>
@@ -102,6 +116,23 @@ async function api(p){
 
 function showMsg(t,type){ var m=$("msg"); m.textContent=t; m.className="msg show "+type; }
 
+var _profMapLink = "";
+function captureLocation(){
+  var btn=$("profLocBtn"), status=$("profLocStatus"), label=$("profLocLabel");
+  if(!navigator.geolocation){ status.innerHTML="Location not supported. You can paste a Google Maps link in the address box."; return; }
+  label.textContent="Getting location…"; status.innerHTML="";
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude.toFixed(6), lng=pos.coords.longitude.toFixed(6);
+    _profMapLink="https://www.google.com/maps?q="+lat+","+lng;
+    btn.classList.add("done"); label.textContent="Location pinned ✓";
+    status.innerHTML='Saved: <a href="'+_profMapLink+'" target="_blank">view on map</a>';
+  }, function(err){
+    label.textContent="Pin my location on map";
+    if(err.code===1) status.innerHTML="Permission denied. Please allow location access in your browser settings, or paste a Google Maps link in the address box.";
+    else status.innerHTML="Could not get location. Please try again.";
+  }, {enableHighAccuracy:true,timeout:10000,maximumAge:0});
+}
+
 async function save(){
   var name=$("pName").value.trim();
   var email=$("pEmail").value.trim();
@@ -114,9 +145,9 @@ async function save(){
 
   var btn=$("saveBtn"); btn.classList.add("loading"); btn.disabled=true;
   try{
-    var r=await api({action:"saveProfile",mobile:u.mobile,name:name,email:email,address:address});
+    var r=await api({action:"saveProfile",mobile:u.mobile,name:name,email:email,address:address,mapLink:_profMapLink});
     if(r.success){
-      setUser({name:name,mobile:u.mobile,email:email,address:address,profileComplete:true});
+      setUser({name:name,mobile:u.mobile,email:email,address:address,mapLink:_profMapLink,profileComplete:true});
       showMsg("Profile saved! Redirecting to store...","ok");
       setTimeout(function(){ window.location.href="index.html"; },800);
     }else showMsg(r.message||"Could not save.","err");
@@ -132,6 +163,7 @@ async function save(){
   $("pName").value=u.name||"";
   $("pEmail").value=u.email||"";
   $("pAddress").value=u.address||"";
+  if(u.mapLink){ _profMapLink=u.mapLink; $("profLocBtn").classList.add("done"); $("profLocLabel").textContent="Location pinned ✓"; $("profLocStatus").innerHTML='Saved: <a href="'+u.mapLink+'" target="_blank">view on map</a>'; }
   if(u.profileComplete){ $("intro").textContent="Update your profile details below. Your saved address is used automatically at checkout."; }
   try{
     var r=await api({action:"getProfile",mobile:u.mobile});
@@ -139,6 +171,7 @@ async function save(){
       $("pName").value=r.name||$("pName").value;
       $("pEmail").value=r.email||"";
       $("pAddress").value=r.address||"";
+      if(r.mapLink){ _profMapLink=r.mapLink; $("profLocBtn").classList.add("done"); $("profLocLabel").textContent="Location pinned ✓"; $("profLocStatus").innerHTML='Saved: <a href="'+r.mapLink+'" target="_blank">view on map</a>'; }
     }
   }catch(e){}
 })();

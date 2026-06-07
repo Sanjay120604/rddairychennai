@@ -449,7 +449,28 @@
       .hamburger {
         display: flex
       }
+
+      .mob-profile-btn {
+        display: inline-flex !important;
+      }
     }
+
+    .mob-profile-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--amber-pale, #FFF8DC);
+      color: var(--navy, #1B2A5A);
+      border: 1.5px solid var(--amber, #F5A800);
+      margin-left: 4px;
+      margin-right: 4px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .mob-profile-btn:active { background: var(--amber-light, #FFEAA0); }
 
     /* ACTION MODAL */
     .modal-ov {
@@ -2937,7 +2958,7 @@
     }
 
     /* ===== RD CHECKOUT MODALS (method + address) ===== */
-    .rd-modal-ov{position:fixed;inset:0;background:rgba(27,42,90,.55);backdrop-filter:blur(3px);z-index:3000;display:none;align-items:center;justify-content:center;padding:18px}
+    .rd-modal-ov{position:fixed;inset:0;background:rgba(27,42,90,.55);backdrop-filter:blur(3px);z-index:4000;display:none;align-items:center;justify-content:center;padding:18px}
     .rd-modal-ov.open{display:flex}
     .rd-modal{background:#fff;border-radius:22px;width:100%;max-width:420px;padding:26px 24px;position:relative;box-shadow:0 24px 70px rgba(0,0,0,.3);animation:rdpop .3s ease both}
     @keyframes rdpop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
@@ -2955,6 +2976,11 @@
     .rd-addr-text{color:#7a6f57;font-size:.82rem;font-weight:600}
     .rd-addr-input{width:100%;padding:12px;border:1.5px solid var(--amber-light);border-radius:12px;font-family:inherit;font-size:.92rem;font-weight:600;background:var(--amber-bg);color:var(--navy);resize:vertical;margin-bottom:12px;outline:none}
     .rd-addr-input:focus{border-color:var(--amber);background:#fff}
+    .rd-loc-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border:1.5px dashed var(--amber);background:var(--amber-bg);color:var(--navy);border-radius:11px;font-family:inherit;font-weight:800;font-size:.88rem;cursor:pointer;margin-bottom:8px}
+    .rd-loc-btn:active{background:var(--amber-light)}
+    .rd-loc-btn.done{border-style:solid;background:#e8f5e9;border-color:#2e7d32;color:#2e7d32}
+    .rd-loc-status{font-size:.78rem;font-weight:700;color:#7a6f57;margin-bottom:12px;line-height:1.4}
+    .rd-loc-status a{color:var(--amber-dark)}
     .rd-modal-btn{width:100%;padding:14px;background:var(--amber);color:var(--navy);border:none;border-radius:12px;font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer;margin-top:6px;transition:background .2s,transform .15s}
     .rd-modal-btn:hover{background:#ffc62b;transform:translateY(-2px)}
     @media(max-width:420px){
@@ -3044,6 +3070,13 @@
         </label>
       </div>
       <textarea id="addrOther" class="rd-addr-input" rows="3" placeholder="Flat / house no, street, area, Chennai, pincode" style="display:none;"></textarea>
+      <div id="addrOtherLoc" style="display:none;">
+        <button type="button" class="rd-loc-btn" id="addrLocBtn" onclick="captureLocation('addr')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="addrLocLabel">Pin my location on map</span>
+        </button>
+        <div class="rd-loc-status" id="addrLocStatus"></div>
+      </div>
       <button class="rd-modal-btn" onclick="addrConfirm()">Continue</button>
     </div>
   </div>
@@ -3128,15 +3161,21 @@
             <circle cx="9" cy="21" r="1" />
             <circle cx="20" cy="21" r="1" />
             <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
-          </svg>Cart <span class="cart-count hidden" id="cartCount">0</span></button><a href="profile.html"
+          </svg>Cart <span class="cart-count hidden" id="cartCount">0</span></button><a href="my-orders.html"
+          class="btn btn-outline nav-sub-btn" style="margin-right:6px;">My Orders</a><a href="profile.html"
           class="btn btn-outline nav-sub-btn" style="margin-right:6px;">My Account</a><a href="#subscription"
           class="btn btn-primary nav-sub-btn">Subscribe</a></div>
+      <a href="profile.html" class="mob-profile-btn" id="mobProfileBtn" aria-label="My Account" title="My Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+        </svg>
+      </a>
       <div class="hamburger" id="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></div>
     </div>
   </nav>
   <div class="mob-menu" id="mobileMenu"><a href="#home" onclick="closeMobile()">Home</a><a href="#products"
       onclick="closeMobile()">Products</a><a href="#subscription" onclick="closeMobile()">Subscribe</a><a href="#about"
-      onclick="closeMobile()">About Us</a><a href="profile.html" onclick="closeMobile()">My Account</a><a href="#faq" onclick="closeMobile()">FAQ</a><a href="#contact"
+      onclick="closeMobile()">About Us</a><a href="profile.html" onclick="closeMobile()">My Account</a><a href="my-orders.html" onclick="closeMobile()">My Orders</a><a href="#faq" onclick="closeMobile()">FAQ</a><a href="#contact"
       onclick="closeMobile()">Contact</a>
     <div class="mob-btns"><button class="btn btn-outline btn-sm" onclick="openCart();closeMobile();"
         style="font-size:.8rem;">&#x1F6D2; Cart (<span id="mobileCartCount">0</span>)</button><a href="#subscription"
@@ -4444,39 +4483,52 @@
       });
     }
     var _addrResolve = null;
+    var _capturedLoc = '';   // google maps link for the "other" address
     function openAddrModal(profileAddr, resolve) {
       _addrResolve = resolve;
+      _capturedLoc = '';
       var block = document.getElementById('addrProfileBlock');
       var other = document.getElementById('addrOther');
+      var otherLoc = document.getElementById('addrOtherLoc');
+      // reset location button
+      var btn = document.getElementById('addrLocBtn');
+      btn.classList.remove('done');
+      document.getElementById('addrLocLabel').textContent = 'Pin my location on map';
+      document.getElementById('addrLocStatus').innerHTML = '';
       if (profileAddr) {
         document.getElementById('addrProfileText').textContent = profileAddr;
         block.style.display = 'block';
         document.querySelector('input[name="addrChoice"][value="profile"]').checked = true;
         other.style.display = 'none';
+        otherLoc.style.display = 'none';
         other.value = '';
       } else {
         // no saved address: force "other"
         block.style.display = 'none';
         other.style.display = 'block';
+        otherLoc.style.display = 'block';
       }
       document.getElementById('addrModal').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
     function addrToggle() {
       var val = document.querySelector('input[name="addrChoice"]:checked').value;
-      document.getElementById('addrOther').style.display = (val === 'other') ? 'block' : 'none';
+      var isOther = (val === 'other');
+      document.getElementById('addrOther').style.display = isOther ? 'block' : 'none';
+      document.getElementById('addrOtherLoc').style.display = isOther ? 'block' : 'none';
     }
     function addrConfirm() {
       var u = rdGetUser();
       var profileAddr = (u && u.address) ? u.address : '';
+      var profileLoc = (u && u.mapLink) ? u.mapLink : '';
       var choice = document.querySelector('input[name="addrChoice"]:checked');
       var val = (choice ? choice.value : 'other');
-      var addr;
-      if (val === 'profile' && profileAddr) addr = profileAddr;
-      else addr = document.getElementById('addrOther').value.trim();
+      var addr, mapLink;
+      if (val === 'profile' && profileAddr) { addr = profileAddr; mapLink = profileLoc; }
+      else { addr = document.getElementById('addrOther').value.trim(); mapLink = _capturedLoc; }
       if (!addr) { showToast('Please enter a delivery address'); return; }
       closeAddrModal();
-      if (_addrResolve) { _addrResolve(addr); _addrResolve = null; }
+      if (_addrResolve) { _addrResolve({ address: addr, mapLink: mapLink }); _addrResolve = null; }
     }
     function addrCancel() {
       closeAddrModal();
@@ -4485,6 +4537,35 @@
     function closeAddrModal() {
       document.getElementById('addrModal').classList.remove('open');
       document.body.style.overflow = '';
+    }
+    /* Capture GPS location via the browser and build a Google Maps link.
+       context = 'addr' (checkout modal) or 'profile' (profile page).      */
+    function captureLocation(context) {
+      var btnId = context === 'profile' ? 'profLocBtn' : 'addrLocBtn';
+      var labelId = context === 'profile' ? 'profLocLabel' : 'addrLocLabel';
+      var statusId = context === 'profile' ? 'profLocStatus' : 'addrLocStatus';
+      var btn = document.getElementById(btnId);
+      var status = document.getElementById(statusId);
+      if (!navigator.geolocation) {
+        status.innerHTML = 'Location not supported on this device. You can paste a Google Maps link in the address box.';
+        return;
+      }
+      document.getElementById(labelId).textContent = 'Getting location…';
+      status.innerHTML = '';
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var lat = pos.coords.latitude.toFixed(6);
+        var lng = pos.coords.longitude.toFixed(6);
+        var link = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+        if (context === 'profile') { window._profLoc = link; }
+        else { _capturedLoc = link; }
+        btn.classList.add('done');
+        document.getElementById(labelId).textContent = 'Location pinned ✓';
+        status.innerHTML = 'Saved: <a href="' + link + '" target="_blank">view on map</a>';
+      }, function (err) {
+        document.getElementById(labelId).textContent = 'Pin my location on map';
+        if (err.code === 1) status.innerHTML = 'Permission denied. Please allow location access, or paste a Google Maps link in the address box.';
+        else status.innerHTML = 'Could not get location. Please try again or paste a maps link.';
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     }
     function rdGetPaymentRef() {
       var ref = prompt('Enter your UPI reference / transaction ID after paying (or type SKIP to confirm payment later):', '');
@@ -4601,6 +4682,7 @@
 
     // STEP 1: choose COD or Pay Online
     function openMethodModal() {
+      try { closeCart(); } catch (e) {}
       var items = currentCheckoutItems();
       var total = itemsTotal(items);
       document.getElementById('methodTotal').textContent = 'Rs.' + total;
@@ -4616,16 +4698,17 @@
     // STEP 2 (COD): resolve address, then place order
     async function chooseCOD() {
       closeMethodModal();
-      var address = await rdResolveAddress();
-      if (!address) return;
-      await processOrder('COD', address, '');
+      var res = await rdResolveAddress();
+      if (!res) return;
+      await processOrder('COD', res.address, '', res.mapLink || '');
     }
     // STEP 2 (online): resolve address, then show QR pay modal
     async function choosePayOnline() {
       closeMethodModal();
-      var address = await rdResolveAddress();
-      if (!address) return;
-      window._pendingAddress = address;
+      var res = await rdResolveAddress();
+      if (!res) return;
+      window._pendingAddress = res.address;
+      window._pendingMapLink = res.mapLink || '';
       var items = currentCheckoutItems();
       document.getElementById('qrOrderTotal').textContent = 'Rs.' + itemsTotal(items);
       document.getElementById('qrOrderItems').textContent = items.reduce(function(s,it){return s+it.qty;},0) + ' item(s)';
@@ -4642,14 +4725,15 @@
       if (paymentRef === null) return;
       if (/^skip$/i.test(paymentRef)) paymentRef = '';
       closePayModal();
-      await processOrder('UPI / QR', window._pendingAddress || '', paymentRef);
+      await processOrder('UPI / QR', window._pendingAddress || '', paymentRef, window._pendingMapLink || '');
     }
 
     // CORE: write order(s) + subscription(s) to Google Sheets
-    async function processOrder(payMethod, address, paymentRef) {
+    async function processOrder(payMethod, address, paymentRef, mapLink) {
       var u = rdGetUser();
       if (!u) { window.location.href = 'auth.html'; return; }
       if (!address) { showToast('Address is required'); return; }
+      mapLink = mapLink || (u.mapLink || '');
 
       var items = currentCheckoutItems();
       var parts = splitItems(items);
@@ -4660,7 +4744,7 @@
         if (parts.once.length) {
           var r = await rdSubmit({
             action: 'placeOrder',
-            name: u.name, mobile: u.mobile, address: address,
+            name: u.name, mobile: u.mobile, address: address, mapLink: mapLink,
             items: parts.once, total: itemsTotal(parts.once),
             payMethod: payMethod, paymentRef: paymentRef
           });
@@ -4671,7 +4755,7 @@
           var s = parts.subs[i];
           var sr = await rdSubmit({
             action: 'placeSubscription',
-            name: u.name, mobile: u.mobile, address: address,
+            name: u.name, mobile: u.mobile, address: address, mapLink: mapLink,
             product: s.name + ' (' + s.variant + ')', qty: s.qty,
             plan: 'Daily Delivery', total: s.price * s.qty, paymentRef: paymentRef
           });
@@ -4710,7 +4794,7 @@
       try {
         var r = await rdSubmit({
           action: 'placeSubscription',
-          name: user.name, mobile: user.mobile, address: address,
+          name: user.name, mobile: user.mobile, address: address, mapLink: (user.mapLink || ''),
           product: product, qty: qty, plan: plan, total: 0, paymentRef: ''
         });
         if (r.success) {

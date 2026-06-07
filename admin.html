@@ -52,6 +52,8 @@
   .pill.paid{background:#e8f5e9;color:var(--ok)}
   .pill.cancel{background:#fdecea;color:var(--err)}
   .status-sel{padding:6px 8px;border-radius:8px;border:1.5px solid var(--amber-light);font-family:inherit;font-weight:700;font-size:.78rem;background:#fff;cursor:pointer}
+  .wa-btn{display:inline-block;background:#25D366;color:#fff;padding:6px 12px;border-radius:8px;font-weight:800;font-size:.78rem;text-decoration:none;white-space:nowrap}
+  .wa-btn:hover{background:#1da851}
   .muted{color:var(--navy-light);font-size:.8rem}
   .empty{padding:40px;text-align:center;color:var(--navy-light);font-weight:700}
   .err-msg{color:var(--err);font-weight:700;margin-top:10px;font-size:.85rem}
@@ -158,6 +160,16 @@ function statusPill(s){
   return '<span class="pill '+cls+'">'+(s||"—")+'</span>';
 }
 function fmtDate(d){ if(!d) return "—"; var dt=new Date(d); return isNaN(dt)?d:dt.toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function mapCell(link){ if(!link) return '<span class="muted">—</span>'; return '<a href="'+link+'" target="_blank" style="color:var(--amber-dark);font-weight:800;white-space:nowrap;">📍 Map</a>'; }
+function waButton(mobile, name, id, status){
+  if(!mobile) return '<span class="muted">—</span>';
+  var m = mobile.toString().replace(/\D/g,'');
+  if(m.length===10) m = '91'+m;  // add India country code if 10-digit
+  var msg = 'Hi '+(name||'')+', regarding your RD Dairy order '+(id||'')+
+            (status? ' (status: '+status+')':'')+' — ';
+  var url = 'https://wa.me/'+m+'?text='+encodeURIComponent(msg);
+  return '<a href="'+url+'" target="_blank" class="wa-btn">💬 WhatsApp</a>';
+}
 
 function renderCards(){
   var o=data.orders, s=data.subscriptions;
@@ -188,7 +200,7 @@ function render(){
 
   var html, opts=(view==="orders"?STATUS_OPTS.orders:STATUS_OPTS.subs);
   if(view==="orders"){
-    html='<table><thead><tr><th>Order ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Address</th><th>Items</th><th>Amount</th><th>Pay Ref</th><th>Status</th></tr></thead><tbody>';
+    html='<table><thead><tr><th>Order ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Address</th><th>Map</th><th>Items</th><th>Amount</th><th>Pay Ref</th><th>Status</th><th>Contact</th></tr></thead><tbody>';
     rows.forEach(r=>{
       html+='<tr>'+
         '<td><b>'+(r.OrderId||"")+'</b></td>'+
@@ -196,14 +208,16 @@ function render(){
         '<td>'+(r.Name||"")+'</td>'+
         '<td>'+(r.Mobile||"")+'</td>'+
         '<td class="muted">'+(r.Address||"")+'</td>'+
+        '<td>'+mapCell(r.MapLink)+'</td>'+
         '<td class="muted">'+(r.Items||"")+'</td>'+
         '<td><b>Rs.'+(r.Amount||0)+'</b></td>'+
         '<td class="muted">'+(r.PaymentRef||"—")+'</td>'+
         '<td>'+statusPill(r.Status)+'<br>'+statusSelect("order",r.OrderId,r.Status,opts)+'</td>'+
+        '<td>'+waButton(r.Mobile,r.Name,r.OrderId,r.Status)+'</td>'+
       '</tr>';
     });
   }else{
-    html='<table><thead><tr><th>Sub ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Address</th><th>Product</th><th>Qty</th><th>Plan</th><th>Status</th></tr></thead><tbody>';
+    html='<table><thead><tr><th>Sub ID</th><th>Date</th><th>Name</th><th>Mobile</th><th>Address</th><th>Map</th><th>Product</th><th>Qty</th><th>Plan</th><th>Status</th><th>Contact</th></tr></thead><tbody>';
     rows.forEach(r=>{
       html+='<tr>'+
         '<td><b>'+(r.SubId||"")+'</b></td>'+
@@ -211,10 +225,12 @@ function render(){
         '<td>'+(r.Name||"")+'</td>'+
         '<td>'+(r.Mobile||"")+'</td>'+
         '<td class="muted">'+(r.Address||"")+'</td>'+
+        '<td>'+mapCell(r.MapLink)+'</td>'+
         '<td>'+(r.Product||"")+'</td>'+
         '<td>'+(r.Qty||"")+'</td>'+
         '<td class="muted">'+(r.Plan||"")+'</td>'+
         '<td>'+statusPill(r.Status)+'<br>'+statusSelect("sub",r.SubId,r.Status,opts)+'</td>'+
+        '<td>'+waButton(r.Mobile,r.Name,r.SubId,r.Status)+'</td>'+
       '</tr>';
     });
   }

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Orders — RD Dairy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--amber:#F5A800;--amber-dark:#C47E00;--amber-light:#FFEAA0;--amber-pale:#FFF8DC;--amber-bg:#FFFBF0;--navy:#1B2A5A;--navy-light:#2D3F7A;--ok:#2e7d32;--warn:#C47E00;--err:#c0392b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Nunito',sans-serif;color:var(--navy);background:var(--amber-bg);min-height:100vh}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 0 var(--amber);position:sticky;top:0;z-index:10}
+  header h1{font-family:'Playfair Display',serif;font-size:1.25rem;display:flex;align-items:center;gap:9px}
+  header .badge{width:32px;height:32px;border-radius:8px;background:var(--amber);color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+  header a{color:var(--amber-light);text-decoration:none;font-weight:700;font-size:.84rem}
+  header a:hover{color:#fff}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px}
+
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{flex:1;background:#fff;border:1.5px solid var(--amber-light);color:var(--navy);padding:10px;border-radius:99px;font-weight:800;cursor:pointer;font-size:.9rem}
+  .tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+  .order-card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(27,42,90,.07);border:1px solid var(--amber-pale)}
+  .order-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+  .order-id{font-weight:800;font-size:.95rem;color:var(--navy)}
+  .order-date{font-size:.76rem;color:var(--navy-light);font-weight:600}
+  .order-amt{font-weight:800;color:var(--amber-dark);font-size:1.05rem;font-family:'Playfair Display',serif}
+  .order-items{font-size:.84rem;color:var(--navy-light);font-weight:600;margin:8px 0 14px;line-height:1.5}
+  .pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:.72rem;font-weight:800}
+  .pill.pending{background:#fff3e0;color:var(--warn)}
+  .pill.submitted{background:#e3f2fd;color:#1565c0}
+  .pill.paid{background:#e8f5e9;color:var(--ok)}
+  .pill.cancel{background:#fdecea;color:var(--err)}
+
+  /* progress tracker */
+  .track{display:flex;align-items:flex-start;margin-top:6px}
+  .track-step{flex:1;text-align:center;position:relative}
+  .track-step:not(:last-child)::after{content:'';position:absolute;top:11px;left:50%;width:100%;height:3px;background:var(--amber-light);z-index:0}
+  .track-step.done:not(:last-child)::after{background:var(--ok)}
+  .track-dot{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--amber-light);margin:0 auto 6px;position:relative;z-index:1;display:grid;place-items:center;font-size:.7rem;color:transparent}
+  .track-step.done .track-dot{background:var(--ok);border-color:var(--ok);color:#fff}
+  .track-step.current .track-dot{border-color:var(--amber);box-shadow:0 0 0 4px rgba(245,168,0,.2)}
+  .track-label{font-size:.68rem;font-weight:700;color:var(--navy-light);line-height:1.2}
+  .track-step.done .track-label,.track-step.current .track-label{color:var(--navy)}
+  .cancel-note{background:#fdecea;color:var(--err);padding:10px 14px;border-radius:10px;font-weight:700;font-size:.84rem;margin-top:6px}
+
+  .empty{text-align:center;padding:50px 20px;color:var(--navy-light)}
+  .empty-ic{font-size:3rem;margin-bottom:10px}
+  .empty a{color:var(--amber-dark);font-weight:800;text-decoration:none}
+  .loading{text-align:center;padding:40px;color:var(--navy-light);font-weight:700}
+  .refresh-row{display:flex;justify-content:flex-end;margin-bottom:10px}
+  .refresh-btn{background:var(--amber);border:none;color:var(--navy);padding:8px 16px;border-radius:99px;font-family:inherit;font-weight:800;cursor:pointer;font-size:.82rem}
+  @media(max-width:480px){ .track-label{font-size:.6rem} }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="badge">RD</span> My Orders</h1>
+  <div><a href="index.html">← Store</a></div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" id="tabOrders" onclick="switchTab('orders')">Orders</button>
+    <button class="tab" id="tabSubs" onclick="switchTab('subs')">Subscriptions</button>
+  </div>
+  <div class="refresh-row"><button class="refresh-btn" onclick="load()">↻ Refresh</button></div>
+  <div id="content"><div class="loading">Loading your orders…</div></div>
+</div>
+
+<script>
+/* Same Apps Script Web App URL as the other pages */
+var API_URL = "https://script.google.com/macros/s/AKfycbyB-pCn5FPFzHyHQWjziQ_QvsFFSlkpzdaRCeVGGVOWbYAXdMoTADMwAW6humC0-Eok/exec";
+var SESSION_KEY = "rd_dairy_user";
+var data = {orders:[], subscriptions:[]};
+var tab = "orders";
+function $(id){return document.getElementById(id);}
+function getUser(){ try{return JSON.parse(localStorage.getItem(SESSION_KEY));}catch(e){return null;} }
+
+async function api(p){
+  if(API_URL.indexOf("PASTE_YOUR")!==-1) throw new Error("Add your Apps Script URL (API_URL) in my-orders.html.");
+  var res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)});
+  return res.json();
+}
+
+function switchTab(t){
+  tab=t;
+  $("tabOrders").classList.toggle("active", t==="orders");
+  $("tabSubs").classList.toggle("active", t==="subs");
+  render();
+}
+
+function fmtDate(d){ if(!d) return ""; var dt=new Date(d); return isNaN(dt)?d:dt.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+
+// Map any status text to a step index in the tracker
+var ORDER_STEPS = ["Placed","Payment","Preparing","Out for Delivery","Delivered"];
+function orderStepIndex(status){
+  status=(status||"").toLowerCase();
+  if(/cancel/.test(status)) return -1;
+  if(/deliver(ed)?$/.test(status) || status==="delivered") return 4;
+  if(/out for delivery|dispatch|shipped/.test(status)) return 3;
+  if(/prepar|packed|processing/.test(status)) return 2;
+  if(/paid|received|confirmed|payment submitted|cod/.test(status)) return 1;
+  return 0; // placed / pending
+}
+
+function statusPill(s){
+  s=(s||"").toString(); var cls="pending";
+  if(/paid|received|confirmed|deliver/i.test(s)) cls="paid";
+  else if(/submitted|out for|dispatch/i.test(s)) cls="submitted";
+  else if(/cancel/i.test(s)) cls="cancel";
+  return '<span class="pill '+cls+'">'+(s||"—")+'</span>';
+}
+
+function tracker(status){
+  var idx=orderStepIndex(status);
+  if(idx===-1) return '<div class="cancel-note">This order was cancelled.</div>';
+  var html='<div class="track">';
+  for(var i=0;i<ORDER_STEPS.length;i++){
+    var cls = i<idx ? 'done' : (i===idx ? 'current done' : '');
+    html+='<div class="track-step '+cls+'"><div class="track-dot">✓</div><div class="track-label">'+ORDER_STEPS[i]+'</div></div>';
+  }
+  return html+'</div>';
+}
+
+function render(){
+  var rows = tab==="orders" ? data.orders : data.subscriptions;
+  if(!rows || !rows.length){
+    $("content").innerHTML='<div class="empty"><div class="empty-ic">📦</div><p>No '+(tab==="orders"?"orders":"subscriptions")+' yet.</p><p style="margin-top:8px;"><a href="index.html">Start shopping →</a></p></div>';
+    return;
+  }
+  var html="";
+  rows.forEach(function(r){
+    var id = tab==="orders" ? r.OrderId : r.SubId;
+    var itemsLine = tab==="orders" ? (r.Items||"") : ((r.Product||"")+" × "+(r.Qty||"")+" • "+(r.Plan||""));
+    html+='<div class="order-card">'+
+      '<div class="order-top">'+
+        '<div><div class="order-id">'+(id||"")+'</div><div class="order-date">'+fmtDate(r.Date)+'</div></div>'+
+        '<div style="text-align:right"><div class="order-amt">Rs.'+(r.Amount||0)+'</div>'+statusPill(r.Status)+'</div>'+
+      '</div>'+
+      '<div class="order-items">'+itemsLine+'</div>'+
+      tracker(r.Status)+
+    '</div>';
+  });
+  $("content").innerHTML=html;
+}
+
+async function load(){
+  var u=getUser();
+  if(!u||!u.mobile){ window.location.href="auth.html"; return; }
+  $("content").innerHTML='<div class="loading">Loading your orders…</div>';
+  try{
+    var r=await api({action:"getMyOrders", mobile:u.mobile});
+    if(r.success){ data={orders:r.orders||[], subscriptions:r.subscriptions||[]}; render(); }
+    else $("content").innerHTML='<div class="empty"><p>'+(r.message||"Could not load orders.")+'</p></div>';
+  }catch(e){ $("content").innerHTML='<div class="empty"><p>'+e.message+'</p></div>'; }
+}
+
+load();
+</script>
+</body>
+</html>
