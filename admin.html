@@ -247,10 +247,13 @@ async function changeStatus(type,id,status){
   try{
     var r=await api({action:"updateStatus",adminKey:adminKey,type:type,id:id,status:status});
     if(r.success){
+      // update locally for instant feedback
       var arr = type==="sub"?data.subscriptions:data.orders;
       var idKey = type==="sub"?"SubId":"OrderId";
       arr.forEach(function(x){ if(x[idKey]===id) x.Status=status; });
       renderCards(); render();
+      // then re-sync from the sheet so it matches exactly on refresh
+      loadData();
     }else alert(r.message||"Update failed");
   }catch(e){ alert(e.message); }
 }

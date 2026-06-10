@@ -14,7 +14,7 @@
 var SALT = "RD_dairy_x7Qm29vLpK4tZbN8wR3jH6sF1aYcE5gD0uViO_2026";
 
 /* CONFIG: admin password to view admin & stats pages. Change this. */
-var ADMIN_KEY = "rdadmin2026";
+var ADMIN_KEY = "1402";
 
 /* ============================================================
    FREE NOTIFICATIONS (no paid provider needed)
@@ -22,7 +22,7 @@ var ADMIN_KEY = "rdadmin2026";
 
 // --- EMAIL alerts (free, via Gmail/Apps Script) ---
 // Where YOU want to receive new-order emails. Leave "" to disable.
-var ADMIN_EMAIL = "";   // <-- put your email here, e.g. "rddairy@gmail.com"
+var ADMIN_EMAIL = "rddairy14@gmail.com";   // <-- put your email here, e.g. "rddairy@gmail.com"
 var SEND_CUSTOMER_EMAIL = true;   // email the customer their confirmation (if they gave an email)
 
 // --- TELEGRAM instant alert (free) ---
@@ -32,8 +32,8 @@ var SEND_CUSTOMER_EMAIL = true;   // email the customer their confirmation (if t
 //      https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
 //      Find "chat":{"id":NUMBER} -> that NUMBER is your CHAT ID.
 //   3. Paste both below. Leave TELEGRAM_BOT_TOKEN "" to disable.
-var TELEGRAM_BOT_TOKEN = "";   // <-- paste bot token
-var TELEGRAM_CHAT_ID   = "";   // <-- paste your chat id
+var TELEGRAM_BOT_TOKEN = "8907582797:AAHJ-Y1nlSrLRdKTUURUtBvoL_o7pW71hCo";
+var TELEGRAM_CHAT_ID   = "1572115462";
 
 var USERS_SHEET = "Users";
 var ORDERS_SHEET = "Orders";
@@ -71,7 +71,7 @@ function register(b) {
   if (password.length < 6)      return { success: false, message: "Password must be at least 6 characters." };
   var sheet = getUsersSheet();
   if (findRowByMobile(sheet, mobile)) return { success: false, message: "User already exists. Please login instead." };
-  sheet.appendRow([mobile, name, hashPassword(password), new Date()]);
+  appendObj(sheet, { Mobile: mobile, Name: name, PasswordHash: hashPassword(password), RegisteredOn: new Date() });
   return { success: true, message: "Account created." };
 }
 
@@ -81,9 +81,9 @@ function login(b) {
   if (!/^\d{10}$/.test(mobile)) return { success: false, message: "Enter a valid 10-digit mobile number." };
   var row = findRowByMobile(getUsersSheet(), mobile);
   if (!row) return { success: false, message: "No account found for this number. Please register." };
-  if (hashPassword(password) !== row.data[2]) return { success: false, message: "Incorrect password." };
-  var email = row.data[4] || "", address = row.data[5] || "", mapLink = row.data[6] || "";
-  return { success: true, name: row.data[1], email: email, address: address, mapLink: mapLink,
+  if (hashPassword(password) !== row.get("PasswordHash")) return { success: false, message: "Incorrect password." };
+  var email = row.get("Email") || "", address = row.get("Address") || "", mapLink = row.get("MapLink") || "";
+  return { success: true, name: row.get("Name"), email: email, address: address, mapLink: mapLink,
            profileComplete: !!(address && address.toString().trim()), message: "Login successful." };
 }
 
@@ -102,10 +102,10 @@ function saveProfile(b) {
   var row = findRowByMobile(sheet, mobile);
   if (!row) return { success: false, message: "Account not found. Please register again." };
 
-  sheet.getRange(row.rowNumber, 2).setValue(name);    // Name (col B)
-  sheet.getRange(row.rowNumber, 5).setValue(email);   // Email (col E)
-  sheet.getRange(row.rowNumber, 6).setValue(address); // Address (col F)
-  if (mapLink) sheet.getRange(row.rowNumber, 7).setValue(mapLink); // MapLink (col G)
+  if (colOf(sheet, "Name"))    sheet.getRange(row.rowNumber, colOf(sheet, "Name")).setValue(name);
+  if (colOf(sheet, "Email"))   sheet.getRange(row.rowNumber, colOf(sheet, "Email")).setValue(email);
+  if (colOf(sheet, "Address")) sheet.getRange(row.rowNumber, colOf(sheet, "Address")).setValue(address);
+  if (mapLink && colOf(sheet, "MapLink")) sheet.getRange(row.rowNumber, colOf(sheet, "MapLink")).setValue(mapLink);
   return { success: true, message: "Profile saved.", name: name, email: email, address: address, mapLink: mapLink };
 }
 
@@ -113,9 +113,9 @@ function getProfile(b) {
   var mobile = (b.mobile || "").toString().trim();
   var row = findRowByMobile(getUsersSheet(), mobile);
   if (!row) return { success: false, message: "Account not found." };
-  var address = row.data[5] || "";
-  return { success: true, name: row.data[1] || "", email: row.data[4] || "",
-           address: address, mapLink: row.data[6] || "", profileComplete: !!(address && address.toString().trim()) };
+  var address = row.get("Address") || "";
+  return { success: true, name: row.get("Name") || "", email: row.get("Email") || "",
+           address: address, mapLink: row.get("MapLink") || "", profileComplete: !!(address && address.toString().trim()) };
 }
 
 /* ---------------- ORDERS ---------------- */
@@ -141,8 +141,10 @@ function placeOrder(b) {
   if (/cod/i.test(payMethod)) status = "COD - Pending Delivery";
   else status = paymentRef ? "Payment Submitted" : "Pending Payment";
 
-  getOrdersSheet().appendRow([orderId, new Date(), name, mobile, address, mapLink,
-    itemsText, totalQty, total, payMethod, paymentRef, status]);
+  appendObj(getOrdersSheet(), {
+    OrderId: orderId, Date: new Date(), Name: name, Mobile: mobile, Address: address, MapLink: mapLink,
+    Items: itemsText, TotalQty: totalQty, Amount: total, PayMethod: payMethod, PaymentRef: paymentRef, Status: status
+  });
 
   // FREE notifications: Telegram + email to admin, email to customer
   notifyNewOrder("Order", orderId, name, mobile, address, itemsText, total, payMethod, emailForMobile(mobile));
@@ -167,8 +169,10 @@ function placeSubscription(b) {
 
   var subId = "SUB" + (new Date().getTime().toString().slice(-8));
   var status = paymentRef ? "Payment Submitted" : "Pending Confirmation";
-  getSubsSheet().appendRow([subId, new Date(), name, mobile, address, mapLink,
-    product, qty, plan, total, paymentRef, status]);
+  appendObj(getSubsSheet(), {
+    SubId: subId, Date: new Date(), Name: name, Mobile: mobile, Address: address, MapLink: mapLink,
+    Product: product, Qty: qty, Plan: plan, Amount: total, PaymentRef: paymentRef, Status: status
+  });
 
   // FREE notifications
   notifyNewOrder("Subscription", subId, name, mobile, address,
@@ -182,12 +186,16 @@ function updateStatus(b) {
   if (b.adminKey !== ADMIN_KEY) return { success: false, message: "Unauthorized." };
   var sheet = b.type === "sub" ? getSubsSheet() : getOrdersSheet();
   var values = sheet.getDataRange().getValues();
-  var statusCol = sheet.getLastColumn();
+  var header = values[0].map(function (x) { return x.toString().trim(); });
+  var statusCol = header.indexOf("Status") + 1;
+  var nameCol = header.indexOf("Name");
+  var mobileCol = header.indexOf("Mobile");
+  if (statusCol === 0) return { success: false, message: "Status column not found." };
   for (var i = 1; i < values.length; i++) {
     if (values[i][0].toString() === b.id) {
       sheet.getRange(i + 1, statusCol).setValue(b.status);
-      // Notify the customer of the status change by email (col index: Name=2, Mobile=3)
-      var custName = values[i][2], custMobile = values[i][3];
+      var custName = nameCol >= 0 ? values[i][nameCol] : "";
+      var custMobile = mobileCol >= 0 ? values[i][mobileCol] : "";
       if (custMobile) {
         var custEmail = emailForMobile(custMobile.toString());
         if (custEmail) {
@@ -264,19 +272,67 @@ function getStats(b) {
 }
 
 /* ---------------- HELPERS ---------------- */
-function getUsersSheet() { return getOrMake(USERS_SHEET, ["Mobile", "Name", "PasswordHash", "RegisteredOn", "Email", "Address", "MapLink"]); }
-function getOrdersSheet() { return getOrMake(ORDERS_SHEET, ["OrderId","Date","Name","Mobile","Address","MapLink","Items","TotalQty","Amount","PayMethod","PaymentRef","Status"]); }
-function getSubsSheet() { return getOrMake(SUBS_SHEET, ["SubId","Date","Name","Mobile","Address","MapLink","Product","Qty","Plan","Amount","PaymentRef","Status"]); }
+/* RUN ONCE (optional): from the Apps Script editor, select fixSheets and click Run.
+   It ensures all expected columns exist on every sheet. New orders are written
+   by column name, so they'll always land correctly after this. */
+function fixSheets() {
+  getUsersSheet(); getOrdersSheet(); getSubsSheet();
+  return "Sheets checked & missing columns added.";
+}
+
+var USERS_HEADER  = ["Mobile", "Name", "PasswordHash", "RegisteredOn", "Email", "Address", "MapLink"];
+var ORDERS_HEADER = ["OrderId","Date","Name","Mobile","Address","MapLink","Items","TotalQty","Amount","PayMethod","PaymentRef","Status"];
+var SUBS_HEADER   = ["SubId","Date","Name","Mobile","Address","MapLink","Product","Qty","Plan","Amount","PaymentRef","Status"];
+
+function getUsersSheet() { return getOrMake(USERS_SHEET, USERS_HEADER); }
+function getOrdersSheet() { return getOrMake(ORDERS_SHEET, ORDERS_HEADER); }
+function getSubsSheet() { return getOrMake(SUBS_SHEET, SUBS_HEADER); }
+
 function getOrMake(name, header) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(name);
-  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(header); sh.setFrozenRows(1); }
+  if (!sh) { sh = ss.insertSheet(name); sh.appendRow(header); sh.setFrozenRows(1); return sh; }
+  // Ensure every expected column exists in the header (append any missing ones at the end).
+  var lastCol = sh.getLastColumn();
+  var existing = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(function (x) { return x.toString().trim(); });
+  var toAdd = [];
+  header.forEach(function (h) { if (existing.indexOf(h) === -1) toAdd.push(h); });
+  if (toAdd.length) {
+    sh.getRange(1, lastCol + 1, 1, toAdd.length).setValues([toAdd]);
+  }
   return sh;
 }
+
+/* Append a row by matching the sheet's actual header names (order-independent). */
+function appendObj(sheet, obj) {
+  var lastCol = sheet.getLastColumn();
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function (x) { return x.toString().trim(); });
+  var row = header.map(function (h) { return (h in obj) ? obj[h] : ""; });
+  sheet.appendRow(row);
+}
+
+/* Find the 1-based column number of a header name (0 if not found). */
+function colOf(sheet, headerName) {
+  var lastCol = sheet.getLastColumn();
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  for (var c = 0; c < header.length; c++) {
+    if (header[c].toString().trim() === headerName) return c + 1;
+  }
+  return 0;
+}
+
 function findRowByMobile(sheet, mobile) {
   var values = sheet.getDataRange().getValues();
+  var header = values[0].map(function (x) { return x.toString().trim(); });
   for (var i = 1; i < values.length; i++) {
-    if (values[i][0].toString().trim() === mobile) return { rowNumber: i + 1, data: values[i] };
+    if (values[i][0].toString().trim() === mobile) {
+      var rowArr = values[i];
+      return {
+        rowNumber: i + 1,
+        data: rowArr,
+        get: function (name) { var c = header.indexOf(name); return c >= 0 ? rowArr[c] : ""; }
+      };
+    }
   }
   return null;
 }
@@ -370,5 +426,5 @@ function notifyNewOrder(kind, id, name, mobile, address, detail, amount, payMeth
 /* Look up a customer's email from the Users sheet by mobile */
 function emailForMobile(mobile) {
   var row = findRowByMobile(getUsersSheet(), mobile);
-  return row ? (row.data[4] || "") : "";
+  return row ? (row.get("Email") || "") : "";
 }
