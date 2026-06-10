@@ -25,8 +25,19 @@
   .order-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;flex-wrap:wrap}
   .order-id{font-weight:800;font-size:.95rem;color:var(--navy)}
   .order-date{font-size:.76rem;color:var(--navy-light);font-weight:600}
-  .order-amt{font-weight:800;color:var(--amber-dark);font-size:1.05rem;font-family:'Playfair Display',serif}
+  .order-amt{font-weight:800;font-size:1.4rem;font-family:'Nunito',sans-serif;letter-spacing:.5px;
+    background:linear-gradient(135deg,#1B2A5A,#2D3F7A);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:#1B2A5A;margin-bottom:5px}
   .order-items{font-size:.84rem;color:var(--navy-light);font-weight:600;margin:8px 0 14px;line-height:1.5}
+  .item-cards{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+  .item-card{display:flex;align-items:center;gap:10px;background:var(--amber-bg);border:1px solid var(--amber-light);
+    border-radius:12px;padding:8px 12px 8px 8px;min-width:0}
+  .item-ic{width:44px;height:44px;border-radius:9px;background:#fff;border:1px solid var(--amber-light);
+    object-fit:cover;flex-shrink:0;display:block}
+  .item-ic-fallback{display:grid;place-items:center;font-size:1.3rem}
+  .item-meta{min-width:0}
+  .item-name{font-weight:800;font-size:.82rem;color:var(--navy);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+  .item-qty{font-size:.72rem;font-weight:700;color:var(--amber-dark)}
   .pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:.72rem;font-weight:800}
   .pill.pending{background:#fff3e0;color:var(--warn)}
   .pill.submitted{background:#e3f2fd;color:#1565c0}
@@ -72,6 +83,8 @@
 <script>
 /* Same Apps Script Web App URL as the other pages */
 var API_URL = "https://script.google.com/macros/s/AKfycbyB-pCn5FPFzHyHQWjziQ_QvsFFSlkpzdaRCeVGGVOWbYAXdMoTADMwAW6humC0-Eok/exec";
+var PRODUCT_THUMBS = {"A2 Cow Milk": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAcFBQYFBAcGBgYIBwcICxILCwoKCxYPEA0SGhYbGhkWGRgcICgiHB4mHhgZIzAkJiorLS4tGyIyNTEsNSgsLSz/2wBDAQcICAsJCxULCxUsHRkdLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCz/wAARCABgAEADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD6QooooAKKK8Sv/DHxNvdV1q2h8Y3Vuhu/NguFBAjiy2I1UMB3HP8As+9JuwHtuaK8T0bw78S7PXdCguvFt3cQrd+bczOMiaIEExldxA4Bwf8Aar2yhO4BRRRTAKKKKACqSDc859Wq4zbVJ9KqxqRET6ms5lRIMbbq1PTBIrSrPnHyo39xqvq25Qw70QCQtFFFaEhRRRQBXu5Nvlrn7xpxZVQDPPWoL/8A1kH1NcBrWqX178Ql0a01FYVkhKyfZH+dSuSvmbhjA3ZIU5rGT10NIRueguyski5GducUmnTebC4zna2P0rzbSNS1Cw+Iw0e71FZ1W32Kbx8O5YAt5W0YwSuQG5wK9E0j7tx/10/pRB66jnGxo0UUVsZBRRRQBSv/APW2/wBT/KvIPEujxWHjeS70nW7UXv2ob7WSYwyB5CG8sORty3OASM5Hpz69qJCvAxOACxJ/CvK9Y0r7f4k1DVbbU9PvLeW8ttQGnvcFEuYoo/m3nHyspXcuTjjmpjCM5Pm6GiqSgrR6mL4a0aPXPHq6je69Z+f9p81bZbkyzMYz9zOAMrgAgE4wfWva9J6XP/XT+gryDTtFuIv7NsNS1DSrO3sdXl1oyi5LzsCzMEC7cL33HJ6cV69o5DJOwOQzgg/gKJU4wneL3CVSU4pS6GlRRRVGYUUUUAY+vX9vYm18+WNC7MEV2C7yBnHNZVx4n8NQJuupbeFx18yNe/HUZH61sa3aWt6LeO5ginQMTtdQ2Dj9Kwr3wD4VvPLeXSYiyZIKyOuM9ehrnnzc2jFLnt7ljD1b4j+D7SMRw32mylexTft+iqD/AErofh/4o0/xTp17cafJ5kcFwIWYIVG7Yp4B5xzVFfAHhWBfl0mM7Rxvldv5tW94WsbLTrO4hsbWG1hMu7ZEgUE4GTx1PvRBPmvcmKqXvNo3aKKK6CwooooAz9S0i31KIJL5i4OQ0chQg/UVn/8ACMSDiPWNRQehkVv5iugoqXFPcdzm5PCbS8S6xqLr6CRVz+QrW0zTINNtRDCHwDnLuWJ9yTV6imopbBcKKKKYj//Z", "Milk Pouch (GoA2 & RD Dairy)": "data:image/jpeg;base64,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", "A2 Bilona Cow Ghee": "data:image/jpeg;base64,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", "RD Dairy Paneer": "data:image/jpeg;base64,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", "RD Dairy Curd": "data:image/jpeg;base64,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", "RD Dairy Butter": "data:image/jpeg;base64,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"};
+
 var SESSION_KEY = "rd_dairy_user";
 var data = {orders:[], subscriptions:[]};
 var tab = "orders";
@@ -124,6 +137,49 @@ function tracker(status){
   return html+'</div>';
 }
 
+// Find the product thumbnail by matching the order's item name to a known product
+function productImg(name){
+  if(!name) return "";
+  var n = name.toLowerCase().trim();
+  for(var key in PRODUCT_THUMBS){ if(key.toLowerCase().trim() === n) return PRODUCT_THUMBS[key]; }
+  for(var key2 in PRODUCT_THUMBS){
+    var k=key2.toLowerCase();
+    if(n.indexOf(k)!==-1 || k.indexOf(n)!==-1) return PRODUCT_THUMBS[key2];
+  }
+  var words=["ghee","butter","paneer","curd","milk","pouch"];
+  for(var w=0; w<words.length; w++){
+    if(n.indexOf(words[w])!==-1){
+      for(var key3 in PRODUCT_THUMBS){ if(key3.toLowerCase().indexOf(words[w])!==-1) return PRODUCT_THUMBS[key3]; }
+    }
+  }
+  return "";
+}
+
+// Parse an order Items string like "A2 Ghee (250g) x2 = Rs.700; Paneer (500g) x1 = Rs.400"
+// into [{name, qty, line}]
+function parseItems(itemsStr){
+  if(!itemsStr) return [];
+  return itemsStr.split(";").map(function(part){
+    part=part.trim(); if(!part) return null;
+    var name = part.split("(")[0].trim() || part;
+    var qm = part.match(/x\s*(\d+)/i);
+    var qty = qm ? qm[1] : "1";
+    return { name:name, qty:qty, line:part };
+  }).filter(Boolean);
+}
+
+function itemCardsHtml(rows){
+  return '<div class="item-cards">'+rows.map(function(it){
+    var img=productImg(it.name);
+    var thumb = img
+      ? '<img class="item-ic" src="'+img+'" alt="'+it.name+'"/>'
+      : '<div class="item-ic item-ic-fallback">🐄</div>';
+    return '<div class="item-card">'+ thumb +
+      '<div class="item-meta"><div class="item-name">'+it.name+'</div>'+
+      '<div class="item-qty">Qty: '+it.qty+'</div></div></div>';
+  }).join("")+'</div>';
+}
+
 function render(){
   var rows = tab==="orders" ? data.orders : data.subscriptions;
   if(!rows || !rows.length){
@@ -133,13 +189,15 @@ function render(){
   var html="";
   rows.forEach(function(r){
     var id = tab==="orders" ? r.OrderId : r.SubId;
-    var itemsLine = tab==="orders" ? (r.Items||"") : ((r.Product||"")+" × "+(r.Qty||"")+" • "+(r.Plan||""));
+    var items = tab==="orders"
+      ? parseItems(r.Items||"")
+      : [{ name:(r.Product||""), qty:(r.Qty||"1"), line:(r.Product||"") }];
     html+='<div class="order-card">'+
       '<div class="order-top">'+
         '<div><div class="order-id">'+(id||"")+'</div><div class="order-date">'+fmtDate(r.Date)+'</div></div>'+
-        '<div style="text-align:right"><div class="order-amt">Rs.'+(r.Amount||0)+'</div>'+statusPill(r.Status)+'</div>'+
+        '<div style="text-align:right"><div class="order-amt">₹'+(r.Amount||0)+'</div>'+statusPill(r.Status)+'</div>'+
       '</div>'+
-      '<div class="order-items">'+itemsLine+'</div>'+
+      itemCardsHtml(items)+
       tracker(r.Status)+
     '</div>';
   });

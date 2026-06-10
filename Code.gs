@@ -99,6 +99,8 @@ function saveProfile(b) {
   if (!address) return { success: false, message: "Address is required." };
 
   var sheet = getUsersSheet();
+  // Remove any duplicate rows for this mobile, keeping only the first.
+  dedupeUserRows(sheet, mobile);
   var row = findRowByMobile(sheet, mobile);
   if (!row) return { success: false, message: "Account not found. Please register again." };
 
@@ -107,6 +109,21 @@ function saveProfile(b) {
   if (colOf(sheet, "Address")) sheet.getRange(row.rowNumber, colOf(sheet, "Address")).setValue(address);
   if (mapLink && colOf(sheet, "MapLink")) sheet.getRange(row.rowNumber, colOf(sheet, "MapLink")).setValue(mapLink);
   return { success: true, message: "Profile saved.", name: name, email: email, address: address, mapLink: mapLink };
+}
+
+/* Delete duplicate Users rows with the same mobile, keeping the FIRST (topmost). */
+function dedupeUserRows(sheet, mobile) {
+  var values = sheet.getDataRange().getValues();
+  var firstSeenRow = -1;
+  // find the first occurrence (top-down)
+  for (var i = 1; i < values.length; i++) {
+    if (values[i][0].toString().trim() === mobile) { firstSeenRow = i; break; }
+  }
+  if (firstSeenRow === -1) return;
+  // delete any later duplicates, bottom-up so indices stay valid
+  for (var j = values.length - 1; j > firstSeenRow; j--) {
+    if (values[j][0].toString().trim() === mobile) { sheet.deleteRow(j + 1); }
+  }
 }
 
 function getProfile(b) {
@@ -278,6 +295,30 @@ function getStats(b) {
 function fixSheets() {
   getUsersSheet(); getOrdersSheet(); getSubsSheet();
   return "Sheets checked & missing columns added.";
+}
+
+/* RUN ONCE (optional): removes duplicate Users rows (same mobile), keeping the first. */
+function cleanAllDuplicates() {
+  var sheet = getUsersSheet();
+  var values = sheet.getDataRange().getValues();
+  var seen = {};
+  var removed = 0;
+  for (var i = values.length - 1; i >= 1; i--) {
+    var m = values[i][0].toString().trim();
+    if (!m) continue;
+    // count occurrences from the top to know if this is a later duplicate
+  }
+  // simplest correct pass: collect first-seen rows top-down, delete the rest bottom-up
+  var firstRowFor = {};
+  for (var t = 1; t < values.length; t++) {
+    var mob = values[t][0].toString().trim();
+    if (mob && !(mob in firstRowFor)) firstRowFor[mob] = t;
+  }
+  for (var b = values.length - 1; b >= 1; b--) {
+    var mb = values[b][0].toString().trim();
+    if (mb && firstRowFor[mb] !== b) { sheet.deleteRow(b + 1); removed++; }
+  }
+  return "Removed " + removed + " duplicate user row(s).";
 }
 
 var USERS_HEADER  = ["Mobile", "Name", "PasswordHash", "RegisteredOn", "Email", "Address", "MapLink"];
