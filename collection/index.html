@@ -178,6 +178,7 @@
         <legend>Add a supplier</legend>
         <div class="sup-add">
           <div><label>Supplier name</label><input id="supEn" placeholder="e.g. Ramesh"></div>
+          <div><label>Milk type</label><select id="supType"><option value="Cow">Cow</option><option value="Buffalo">Buffalo</option></select></div>
           <div><label>Rate ₹ / litre</label><input id="supRate" type="number" min="0" step="0.5" placeholder="e.g. 55"></div>
           <button class="btn" onclick="addSupplier()">+ Add</button>
         </div>
@@ -290,7 +291,7 @@
 /* ============================================================
    GOOGLE SHEETS CONNECTION
    Paste your Apps Script Web App URL (ending in /exec) below.
-   Example: const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbzeiGsRojaZxNskUTPvM6IaLUmqRt5sA-aFM28n0HJpPnHIKbSg/exec";
+   Example: const SHEETS_URL = "https://script.google.com/macros/s/AKfy..../exec";
    Leave it as "" to keep entries on this device only.
    ============================================================ */
 const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbzeiGsRojaZxNskUTPvM6IaLUmqRt5sA-aFM28n0HJpPnHIKbSg/exec";
@@ -340,21 +341,27 @@ function setStatus(txt,ok){const s=document.getElementById('status');s.innerHTML
 function renderSuppliers(){
   const sel=document.getElementById('mSup');const keep=sel.value;
   sel.innerHTML='<option value="">— select —</option>';
-  mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+'</option>';});
+  mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+' ('+(s.type||'Cow')+')</option>';});
   sel.value=keep;
   document.getElementById('supList').innerHTML = mem.suppliers.length
-    ? mem.suppliers.map(s=>'<span class="pill">'+s.en+' · ₹'+s.rate+'/L</span>').join('')
+    ? mem.suppliers.map(s=>'<span class="pill">'+s.en+' · '+(s.type||'Cow')+' · ₹'+s.rate+'/L</span>').join('')
     : 'No suppliers yet.';
 }
 function addSupplier(){
   const en=document.getElementById('supEn').value.trim();
+  const type=document.getElementById('supType').value;
   const rate=parseFloat(document.getElementById('supRate').value);
   if(!en){toast('Enter the supplier name','err');return;}
   if(isNaN(rate)||rate<0){toast('Enter a valid rate','err');return;}
-  mem.suppliers.push({en,rate});saveLocal();renderSuppliers();
+  // prevent exact duplicate of same name + same type
+  if(mem.suppliers.some(s=>s.en===en && (s.type||'Cow')===type)){
+    toast(en+' ('+type+') already added','err');return;
+  }
+  mem.suppliers.push({en,type,rate});saveLocal();renderSuppliers();
   document.getElementById('supEn').value='';document.getElementById('supRate').value='';
+  document.getElementById('supType').value='Cow';
   toast('Supplier added','ok');
-  post({action:'addSupplier',en,rate});
+  post({action:'addSupplier',en,type,rate});
 }
 
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
@@ -396,7 +403,7 @@ async function saveMilk(){
   const s=mem.suppliers[si];const date=document.getElementById('mDate').value;
   const m=num('mMorning'),n=num('mNight');
   if(m===0&&n===0){toast('Enter morning or night litres','err');return;}
-  const r=await post({action:'milk',supEn:s.en,date,morning:m,night:n,rate:s.rate});
+  const r=await post({action:'milk',supEn:s.en,type:s.type||'Cow',date,morning:m,night:n,rate:s.rate});
   if(r.ok){toast('Milk entry saved','ok');document.getElementById('mMorning').value='';document.getElementById('mNight').value='';calcMilk();}
   else if(r.local){toast('Saved locally — add your Sheets URL to sync','err');}
   else toast('Save failed','err');
