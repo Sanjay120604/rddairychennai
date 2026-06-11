@@ -104,6 +104,19 @@
   .pill{display:inline-block;font-size:.72rem;padding:4px 11px;border-radius:99px;
     background:var(--amber-pale);border:1px solid var(--amber-light);color:var(--amber-dark);
     margin:3px 3px 0 0;font-weight:700}
+  .sup-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    background:var(--cream);border:1.5px solid var(--line);border-radius:var(--rsm);
+    padding:8px 12px;margin-top:8px}
+  .sup-row .sup-name{font-weight:800;color:var(--navy)}
+  .sup-row .sup-tag{font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:99px;
+    background:var(--amber-pale);border:1px solid var(--amber-light);color:var(--amber-dark)}
+  .sup-row .sup-rate{font-weight:700;color:var(--text-muted);font-size:.85rem}
+  .sup-row .sup-btn{margin-left:auto;border:none;cursor:pointer;font-weight:800;font-size:.76rem;
+    padding:6px 12px;border-radius:8px;font-family:inherit}
+  .sup-row .sup-btn.edit{background:var(--amber);color:var(--navy)}
+  .sup-row .sup-btn.edit:hover{background:#ffc62b}
+  .sup-row .sup-btn.del{background:#fff;border:1.5px solid #e3b9b3;color:var(--danger);margin-left:0}
+  .sup-row .sup-btn.del:hover{background:#fdecea}
   .mini{font-size:.76rem;color:var(--text-muted);margin-top:6px}
   .divider{height:1px;background:var(--line);margin:18px 0}
   .savebar{margin-top:16px;text-align:right}
@@ -182,7 +195,7 @@
           <div><label>Rate ₹ / litre</label><input id="supRate" type="number" min="0" step="0.5" placeholder="e.g. 55"></div>
           <button class="btn" onclick="addSupplier()">+ Add</button>
         </div>
-        <div class="mini" id="supList">No suppliers yet.</div>
+        <div id="supList" style="margin-top:4px"><div class="mini">No suppliers yet.</div></div>
       </fieldset>
 
       <div class="divider"></div>
@@ -304,7 +317,7 @@ const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbz
    Note: a front-end password keeps casual visitors out, but is
    not strong security — anyone technical could read it in the code.
    ============================================================ */
-const PAGE_PASSWORD = "1234";
+const PAGE_PASSWORD = "1402";
 /* ============================================================ */
 
 let unlocked = false;
@@ -343,9 +356,17 @@ function renderSuppliers(){
   sel.innerHTML='<option value="">— select —</option>';
   mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+' ('+(s.type||'Cow')+')</option>';});
   sel.value=keep;
-  document.getElementById('supList').innerHTML = mem.suppliers.length
-    ? mem.suppliers.map(s=>'<span class="pill">'+s.en+' · '+(s.type||'Cow')+' · ₹'+s.rate+'/L</span>').join('')
-    : 'No suppliers yet.';
+  const box=document.getElementById('supList');
+  if(!mem.suppliers.length){ box.innerHTML='<div class="mini">No suppliers yet.</div>'; return; }
+  box.innerHTML = mem.suppliers.map((s,i)=>
+    '<div class="sup-row">'
+    +'<span class="sup-name">'+s.en+'</span>'
+    +'<span class="sup-tag">'+(s.type||'Cow')+'</span>'
+    +'<span class="sup-rate">₹'+s.rate+'/L</span>'
+    +'<button class="sup-btn edit" onclick="editSupplier('+i+')">Edit</button>'
+    +'<button class="sup-btn del" onclick="deleteSupplier('+i+')">Delete</button>'
+    +'</div>'
+  ).join('');
 }
 function addSupplier(){
   const en=document.getElementById('supEn').value.trim();
@@ -362,6 +383,48 @@ function addSupplier(){
   document.getElementById('supType').value='Cow';
   toast('Supplier added','ok');
   post({action:'addSupplier',en,type,rate});
+}
+
+function editSupplier(i){
+  const s=mem.suppliers[i]; const type=s.type||'Cow';
+  // 1) Edit name
+  const newName=prompt('Edit supplier name:', s.en);
+  if(newName===null) return;               // cancelled
+  const en=newName.trim(); if(!en){toast('Name cannot be empty','err');return;}
+  // 2) Edit rate
+  const rateStr=prompt('Edit rate ₹ / litre for '+en+' ('+type+'):', s.rate);
+  if(rateStr===null) return;               // cancelled
+  const rate=parseFloat(rateStr);
+  if(isNaN(rate)||rate<0){toast('Enter a valid rate','err');return;}
+  // duplicate guard (same name+type as another supplier)
+  if(mem.suppliers.some((o,j)=>j!==i && o.en===en && (o.type||'Cow')===type)){
+    toast(en+' ('+type+') already exists','err');return;
+  }
+  const nameChanged = en!==s.en;
+  const rateChanged = rate!==s.rate;
+  if(!nameChanged && !rateChanged){toast('No changes','err');return;}
+
+  let applyPast=false;
+  if(rateChanged){
+    applyPast = confirm(
+      'Rate changed from ₹'+s.rate+' to ₹'+rate+'.\n\n'+
+      'OK = Recalculate ALL past entries at the new rate.\n'+
+      'Cancel = Apply new rate only to future entries.'
+    );
+  }
+  const oldName=s.en;
+  mem.suppliers[i]={en,type,rate};
+  saveLocal(); renderSuppliers();
+  toast('Supplier updated','ok');
+  post({action:'editSupplier',oldName:oldName,oldType:type,newName:en,newType:type,
+        oldRate:s.rate,newRate:rate,nameChanged:nameChanged,rateChanged:rateChanged,applyPast:applyPast});
+}
+
+function deleteSupplier(i){
+  const s=mem.suppliers[i];
+  if(!confirm('Remove '+s.en+' ('+(s.type||'Cow')+') from this device?\n\nThis does NOT delete their Google Sheet history.')) return;
+  mem.suppliers.splice(i,1); saveLocal(); renderSuppliers();
+  toast('Supplier removed from list','ok');
 }
 
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
