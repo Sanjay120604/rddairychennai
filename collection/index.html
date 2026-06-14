@@ -419,9 +419,10 @@ function renderSuppliers(){
   mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+' ('+(s.type||'Cow')+') — ₹'+s.rate+'/L</option>';});
   sel.value=keep;
   const box=document.getElementById('supList');
+  const refresh = SHEETS_URL ? ' <a href="#" onclick="fetchSuppliers(true);return false;" style="color:var(--amber-dark);font-weight:800;text-decoration:none">↻ Refresh from sheet</a>' : '';
   box.innerHTML = mem.suppliers.length
-    ? '<div class="mini">'+mem.suppliers.length+' supplier'+(mem.suppliers.length>1?'s':'')+' saved. Select one below to edit, delete, or enter milk.</div>'
-    : '<div class="mini">No suppliers yet. Add one above.</div>';
+    ? '<div class="mini">'+mem.suppliers.length+' supplier'+(mem.suppliers.length>1?'s':'')+' saved. Select one below to edit, delete, or enter milk.'+refresh+'</div>'
+    : '<div class="mini">No suppliers yet. Add one above.'+refresh+'</div>';
   onPickSupplier(); // refresh edit/delete button state
 }
 function onPickSupplier(){
@@ -512,11 +513,12 @@ function confirmEdit(){
 
 function deleteSupplier(i){
   const s=mem.suppliers[i];
-  if(!confirm('Remove '+s.en+' ('+(s.type||'Cow')+') from this device?\n\nThis does NOT delete their Google Sheet history.')) return;
+  if(!confirm('Remove '+s.en+' ('+(s.type||'Cow')+')?\n\nThis removes them from the supplier list (here and in the sheet).\nTheir saved milk history sheet is kept.')) return;
   mem.suppliers.splice(i,1); saveLocal();
   document.getElementById('mSup').value=''; // clear selection (indexes shifted)
   renderSuppliers();
-  toast('Supplier removed from list','ok');
+  toast('Supplier removed','ok');
+  post({action:'deleteSupplier',en:s.en,type:s.type||'Cow'});
 }
 
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
@@ -591,9 +593,34 @@ async function savePaneer(){
   else toast('Save failed','err');
 }
 
+async function fetchSuppliers(showToast){
+  if(!SHEETS_URL){ renderSuppliers(); return; }
+  try{
+    setStatus('Loading suppliers…');
+    const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'getSuppliers'})});
+    const data=await res.json();
+    if(data.ok && Array.isArray(data.suppliers)){
+      mem.suppliers = data.suppliers;     // sheet is the source of truth
+      saveLocal();                        // cache for offline view
+      document.getElementById('mSup').value=''; // selection may be stale
+      renderSuppliers();
+      setStatus('Connected ✓',true);
+      if(showToast) toast('Supplier list refreshed','ok');
+    }else{
+      setStatus('Connected',true);
+      if(showToast) toast('Could not read suppliers','err');
+    }
+  }catch(e){
+    setStatus('Offline — showing saved list',false);
+    renderSuppliers();
+    if(showToast) toast('Offline — using saved list','err');
+  }
+}
+
 function startApp(){
   loadLocal();initDates();renderSuppliers();calcPk();calcGh();calcPn();
-  if(SHEETS_URL)setStatus('Connected',true); else setStatus('Local only',false);
+  if(SHEETS_URL){ setStatus('Connected',true); fetchSuppliers(false); }
+  else setStatus('Local only',false);
 }
 
 /* show lock screen on load, focus the password box */
