@@ -119,6 +119,15 @@
   .sup-row .sup-btn.edit:hover{background:#ffc62b}
   .sup-row .sup-btn.del{background:#fff;border:1.5px solid #e3b9b3;color:var(--danger);margin-left:0}
   .sup-row .sup-btn.del:hover{background:#fdecea}
+  .sup-pick{display:flex;gap:8px;align-items:stretch}
+  .sup-pick select{flex:1}
+  .sup-pick .sup-btn{margin-left:0;border:none;cursor:pointer;font-weight:800;font-size:.78rem;
+    padding:0 14px;border-radius:8px;font-family:inherit;white-space:nowrap}
+  .sup-pick .sup-btn.edit{background:var(--amber);color:var(--navy)}
+  .sup-pick .sup-btn.edit:hover{background:#ffc62b}
+  .sup-pick .sup-btn.del{background:#fff;border:1.5px solid #e3b9b3;color:var(--danger)}
+  .sup-pick .sup-btn.del:hover{background:#fdecea}
+  .sup-pick .sup-btn:disabled{opacity:.4;cursor:not-allowed}
   .mini{font-size:.76rem;color:var(--text-muted);margin-top:6px}
   .divider{height:1px;background:var(--line);margin:18px 0}
   .savebar{margin-top:16px;text-align:right}
@@ -224,7 +233,14 @@
       <div class="divider"></div>
 
       <div class="grid g2">
-        <div><label>Supplier</label><select id="mSup" onchange="calcMilk()"><option value="">— select —</option></select></div>
+        <div>
+          <label>Supplier</label>
+          <div class="sup-pick">
+            <select id="mSup" onchange="onPickSupplier()"><option value="">— select —</option></select>
+            <button class="sup-btn edit" id="mEditBtn" onclick="editSelected()" disabled>Edit</button>
+            <button class="sup-btn del" id="mDelBtn" onclick="deleteSelected()" disabled>Delete</button>
+          </div>
+        </div>
         <div><label>Date</label><input type="date" id="mDate"></div>
       </div>
       <div class="grid g2" style="margin-top:14px">
@@ -400,19 +416,29 @@ function setStatus(txt,ok){const s=document.getElementById('status');s.innerHTML
 function renderSuppliers(){
   const sel=document.getElementById('mSup');const keep=sel.value;
   sel.innerHTML='<option value="">— select —</option>';
-  mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+' ('+(s.type||'Cow')+')</option>';});
+  mem.suppliers.forEach((s,i)=>{sel.innerHTML+='<option value="'+i+'">'+s.en+' ('+(s.type||'Cow')+') — ₹'+s.rate+'/L</option>';});
   sel.value=keep;
   const box=document.getElementById('supList');
-  if(!mem.suppliers.length){ box.innerHTML='<div class="mini">No suppliers yet.</div>'; return; }
-  box.innerHTML = mem.suppliers.map((s,i)=>
-    '<div class="sup-row">'
-    +'<span class="sup-name">'+s.en+'</span>'
-    +'<span class="sup-tag">'+(s.type||'Cow')+'</span>'
-    +'<span class="sup-rate">₹'+s.rate+'/L</span>'
-    +'<button class="sup-btn edit" onclick="editSupplier('+i+')">Edit</button>'
-    +'<button class="sup-btn del" onclick="deleteSupplier('+i+')">Delete</button>'
-    +'</div>'
-  ).join('');
+  box.innerHTML = mem.suppliers.length
+    ? '<div class="mini">'+mem.suppliers.length+' supplier'+(mem.suppliers.length>1?'s':'')+' saved. Select one below to edit, delete, or enter milk.</div>'
+    : '<div class="mini">No suppliers yet. Add one above.</div>';
+  onPickSupplier(); // refresh edit/delete button state
+}
+function onPickSupplier(){
+  const has = document.getElementById('mSup').value!=='';
+  document.getElementById('mEditBtn').disabled = !has;
+  document.getElementById('mDelBtn').disabled = !has;
+  calcMilk();
+}
+function editSelected(){
+  const i=document.getElementById('mSup').value;
+  if(i==='') {toast('Select a supplier first','err');return;}
+  editSupplier(parseInt(i,10));
+}
+function deleteSelected(){
+  const i=document.getElementById('mSup').value;
+  if(i==='') {toast('Select a supplier first','err');return;}
+  deleteSupplier(parseInt(i,10));
 }
 function addSupplier(){
   const en=document.getElementById('supEn').value.trim();
@@ -487,7 +513,9 @@ function confirmEdit(){
 function deleteSupplier(i){
   const s=mem.suppliers[i];
   if(!confirm('Remove '+s.en+' ('+(s.type||'Cow')+') from this device?\n\nThis does NOT delete their Google Sheet history.')) return;
-  mem.suppliers.splice(i,1); saveLocal(); renderSuppliers();
+  mem.suppliers.splice(i,1); saveLocal();
+  document.getElementById('mSup').value=''; // clear selection (indexes shifted)
+  renderSuppliers();
   toast('Supplier removed from list','ok');
 }
 
