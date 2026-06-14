@@ -90,7 +90,8 @@
     border:1.5px solid var(--amber-light);border-radius:var(--rsm);
     padding:16px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px}
   .calc .lbl{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-  .calc .big{font-size:1.5rem;font-weight:800;color:var(--amber-dark);font-family:'Playfair Display',serif}
+  .calc .big{font-size:1.6rem;font-weight:800;color:var(--amber-dark);
+    font-family:'Nunito',sans-serif;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.5px}
 
   /* stock flow strip */
   .flow{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
@@ -98,7 +99,8 @@
     border-radius:var(--rsm);padding:12px 14px}
   .flow .box.hi{background:linear-gradient(135deg,var(--amber-pale),var(--cream));border-color:var(--amber-light)}
   .flow .box .lbl{font-size:.72rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-  .flow .box .v{font-size:1.35rem;font-weight:800;color:var(--navy);font-family:'Playfair Display',serif;margin-top:2px}
+  .flow .box .v{font-size:1.45rem;font-weight:800;color:var(--navy);
+    font-family:'Nunito',sans-serif;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.5px;margin-top:2px}
   .flow .box.hi .v{color:var(--amber-dark)}
 
   .pill{display:inline-block;font-size:.72rem;padding:4px 11px;border-radius:99px;
@@ -120,6 +122,27 @@
   .mini{font-size:.76rem;color:var(--text-muted);margin-top:6px}
   .divider{height:1px;background:var(--line);margin:18px 0}
   .savebar{margin-top:16px;text-align:right}
+
+  .btn.sec{background:#fff;border:1.5px solid var(--line);color:var(--navy);box-shadow:none}
+  .btn.sec:hover{border-color:var(--amber);filter:none}
+
+  /* in-page edit modal */
+  .modal-overlay{position:fixed;inset:0;z-index:9998;background:rgba(27,42,90,.45);
+    display:none;align-items:center;justify-content:center;padding:18px}
+  .modal-overlay.show{display:flex;animation:fade .2s ease}
+  .modal-card{background:#fff;border-radius:var(--r);box-shadow:var(--sh-lg);
+    width:100%;max-width:420px;padding:24px}
+  .modal-card h3{font-size:1.3rem;color:var(--navy);font-family:'Playfair Display',serif}
+  .modal-sub{font-size:.82rem;color:var(--text-muted);margin:2px 0 16px}
+  .modal-card label{font-size:.8rem;color:var(--navy);font-weight:700;margin-bottom:6px;display:block}
+  .recalc-box{display:none;margin-top:16px;background:var(--amber-pale);
+    border:1.5px solid var(--amber-light);border-radius:var(--rsm);padding:12px 14px}
+  .recalc-box.show{display:block}
+  .recalc-q{font-size:.84rem;font-weight:800;color:var(--amber-dark);margin-bottom:8px}
+  .recalc-box .radio{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;
+    color:var(--text);font-weight:600;margin-top:6px;cursor:pointer}
+  .recalc-box .radio input{width:auto;margin-top:3px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);
     background:var(--navy);color:#fff;padding:13px 24px;border-radius:99px;font-size:.9rem;
@@ -298,6 +321,29 @@
 
 </div>
 </div>
+<!-- ===== Edit supplier modal ===== -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-card">
+    <h3>Edit supplier</h3>
+    <div class="modal-sub" id="editSubtitle">—</div>
+    <label>Supplier name</label>
+    <input id="editName" placeholder="Name">
+    <label style="margin-top:12px">Rate ₹ / litre</label>
+    <input id="editRate" type="number" min="0" step="0.5" placeholder="Rate" oninput="onEditRateInput()">
+    <div class="recalc-box" id="recalcBox">
+      <div class="recalc-q">You changed the rate. Apply to past entries?</div>
+      <label class="radio"><input type="radio" name="recalc" value="future" checked>
+        <span>Only new entries from now on (past stays the same)</span></label>
+      <label class="radio"><input type="radio" name="recalc" value="all">
+        <span>Recalculate ALL past entries at the new rate</span></label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn sec" onclick="closeEdit()">Cancel</button>
+      <button class="btn" onclick="confirmEdit()">Save changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -385,36 +431,54 @@ function addSupplier(){
   post({action:'addSupplier',en,type,rate});
 }
 
+let editingIndex = -1;
 function editSupplier(i){
+  editingIndex = i;
   const s=mem.suppliers[i]; const type=s.type||'Cow';
-  // 1) Edit name
-  const newName=prompt('Edit supplier name:', s.en);
-  if(newName===null) return;               // cancelled
-  const en=newName.trim(); if(!en){toast('Name cannot be empty','err');return;}
-  // 2) Edit rate
-  const rateStr=prompt('Edit rate ₹ / litre for '+en+' ('+type+'):', s.rate);
-  if(rateStr===null) return;               // cancelled
-  const rate=parseFloat(rateStr);
+  document.getElementById('editSubtitle').textContent = s.en+' · '+type+' · currently ₹'+s.rate+'/L';
+  document.getElementById('editName').value = s.en;
+  document.getElementById('editRate').value = s.rate;
+  // reset recalc choice
+  document.getElementById('recalcBox').classList.remove('show');
+  var fut=document.querySelector('input[name="recalc"][value="future"]'); if(fut) fut.checked=true;
+  document.getElementById('editModal').classList.add('show');
+  setTimeout(function(){ document.getElementById('editName').focus(); },50);
+}
+function closeEdit(){
+  document.getElementById('editModal').classList.remove('show');
+  editingIndex = -1;
+}
+function onEditRateInput(){
+  if(editingIndex<0) return;
+  const orig=mem.suppliers[editingIndex].rate;
+  const now=parseFloat(document.getElementById('editRate').value);
+  const changed = !isNaN(now) && now!==orig;
+  document.getElementById('recalcBox').classList.toggle('show', changed);
+}
+function confirmEdit(){
+  if(editingIndex<0) return;
+  const i=editingIndex;
+  const s=mem.suppliers[i]; const type=s.type||'Cow';
+  const en=document.getElementById('editName').value.trim();
+  const rate=parseFloat(document.getElementById('editRate').value);
+  if(!en){toast('Name cannot be empty','err');return;}
   if(isNaN(rate)||rate<0){toast('Enter a valid rate','err');return;}
-  // duplicate guard (same name+type as another supplier)
   if(mem.suppliers.some((o,j)=>j!==i && o.en===en && (o.type||'Cow')===type)){
     toast(en+' ('+type+') already exists','err');return;
   }
   const nameChanged = en!==s.en;
   const rateChanged = rate!==s.rate;
-  if(!nameChanged && !rateChanged){toast('No changes','err');return;}
+  if(!nameChanged && !rateChanged){ closeEdit(); toast('No changes','err'); return; }
 
   let applyPast=false;
   if(rateChanged){
-    applyPast = confirm(
-      'Rate changed from ₹'+s.rate+' to ₹'+rate+'.\n\n'+
-      'OK = Recalculate ALL past entries at the new rate.\n'+
-      'Cancel = Apply new rate only to future entries.'
-    );
+    const sel=document.querySelector('input[name="recalc"]:checked');
+    applyPast = sel && sel.value==='all';
   }
   const oldName=s.en;
   mem.suppliers[i]={en,type,rate};
   saveLocal(); renderSuppliers();
+  closeEdit();
   toast('Supplier updated','ok');
   post({action:'editSupplier',oldName:oldName,oldType:type,newName:en,newType:type,
         oldRate:s.rate,newRate:rate,nameChanged:nameChanged,rateChanged:rateChanged,applyPast:applyPast});
