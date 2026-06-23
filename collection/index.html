@@ -271,9 +271,27 @@
         <div><label>Packets sent today</label><input id="pkSent" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
         <div></div>
       </div>
+      <fieldset style="margin-top:16px">
+        <legend>½ L bottles</legend>
+        <div class="grid g2">
+          <div><label>½ L bottles packed today</label><input id="pkHalfPacked" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
+          <div><label>½ L bottles sent today</label><input id="pkHalfSent" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
+        </div>
+      </fieldset>
+      <fieldset style="margin-top:16px">
+        <legend>1 L bottles</legend>
+        <div class="grid g2">
+          <div><label>1 L bottles packed today</label><input id="pkLitrePacked" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
+          <div><label>1 L bottles sent today</label><input id="pkLitreSent" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
+        </div>
+      </fieldset>
       <div class="flow">
         <div class="box"><div class="lbl">Total stock (available + packed)</div><div class="v" id="pkTotal">0</div></div>
         <div class="box hi"><div class="lbl">Stock available (after sent)</div><div class="v" id="pkRemain">0</div></div>
+      </div>
+      <div class="flow">
+        <div class="box"><div class="lbl">½ L remaining (packed − sent)</div><div class="v" id="pkHalfRemain">0</div></div>
+        <div class="box hi"><div class="lbl">1 L remaining (packed − sent)</div><div class="v" id="pkLitreRemain">0</div></div>
       </div>
       <div class="savebar"><button class="btn navy" onclick="savePackets()">💾 Save</button></div>
     </div>
@@ -369,7 +387,7 @@
    Example: const SHEETS_URL = "https://script.google.com/macros/s/AKfy..../exec";
    Leave it as "" to keep entries on this device only.
    ============================================================ */
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbzeiGsRojaZxNskUTPvM6IaLUmqRt5sA-aFM28n0HJpPnHIKbSg/exec";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbypp5Hab7Ska0-AUS0Q5-JxtuCoJHsq47-b2oQqw4qWDyyemhfmzhhDFbAhMxqKkElQ/exec";
 /* ============================================================ */
 
 /* ============================================================
@@ -529,7 +547,9 @@ function calcMilk(){const L=num('mMorning')+num('mNight');
 
 function calcPk(){const total=num('pkAvail')+num('pkPacked');
   document.getElementById('pkTotal').textContent=total;
-  document.getElementById('pkRemain').textContent=total-num('pkSent');}
+  document.getElementById('pkRemain').textContent=total-num('pkSent');
+  document.getElementById('pkHalfRemain').textContent=num('pkHalfPacked')-num('pkHalfSent');
+  document.getElementById('pkLitreRemain').textContent=num('pkLitrePacked')-num('pkLitreSent');}
 
 function ghSentL(){return num('gh250')*0.25+num('gh500')*0.5+num('gh1000')*1;}
 function calcGh(){const total=num('ghAvail')+num('ghAdd');const sent=ghSentL();
@@ -569,7 +589,10 @@ async function savePackets(){
   const date=document.getElementById('pkDate').value;
   const avail=num('pkAvail'),packed=num('pkPacked'),sent=num('pkSent');
   const total=avail+packed, remain=total-sent;
-  const r=await post({action:'packets',date,available:avail,packed,sent,total,remaining:remain});
+  const halfPacked=num('pkHalfPacked'),halfSent=num('pkHalfSent'),halfRemain=halfPacked-halfSent;
+  const litrePacked=num('pkLitrePacked'),litreSent=num('pkLitreSent'),litreRemain=litrePacked-litreSent;
+  const r=await post({action:'packets',date,available:avail,packed,sent,total,remaining:remain,
+    halfPacked,halfSent,halfRemain,litrePacked,litreSent,litreRemain});
   if(r.ok){toast('Packets saved','ok');}
   else if(r.local){toast('Saved locally','err');}
   else toast('Save failed','err');
