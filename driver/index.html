@@ -126,6 +126,24 @@
   .lock-card input{text-align:center;font-size:1.05rem;margin-bottom:6px}
   .lock-card .btn{width:100%;margin-top:12px;justify-content:center;display:flex}
   .lock-err{color:var(--danger);font-size:.82rem;font-weight:700;min-height:18px}
+
+  /* status segmented control */
+  .statusrow{display:flex;gap:8px;margin-top:6px}
+  .statusrow .opt{flex:1}
+  .statusrow input{display:none}
+  .statusrow label{display:flex;align-items:center;justify-content:center;cursor:pointer;
+    padding:11px 8px;border-radius:var(--rsm);border:1.5px solid var(--line);background:var(--cream);
+    font-weight:800;font-size:.85rem;color:var(--text-muted);margin:0;transition:.12s;text-align:center}
+  .statusrow input:checked + label{border-color:var(--amber);background:var(--amber-pale);color:var(--amber-dark);
+    box-shadow:0 0 0 3px rgba(245,168,0,.18)}
+  .statusrow .pres input:checked + label{border-color:#2c7a4e;background:#e7f5ec;color:#1f5d3a;box-shadow:0 0 0 3px rgba(44,122,78,.15)}
+  .statusrow .late input:checked + label{border-color:#C47E00;background:#FFF1CC;color:#8a5a00;box-shadow:0 0 0 3px rgba(196,126,0,.15)}
+  .statusrow .abs  input:checked + label{border-color:#c0392b;background:#fdecea;color:#922b21;box-shadow:0 0 0 3px rgba(192,57,43,.15)}
+  .pickrow{display:flex;gap:8px;align-items:flex-end}
+  .pickrow .grow{flex:1}
+  .linkbtn{background:none;border:none;color:var(--amber-dark);font-weight:800;font-size:.8rem;
+    cursor:pointer;padding:6px 2px;font-family:inherit;text-decoration:underline}
+
 </style>
 </head>
 <body>
@@ -168,14 +186,47 @@
     </div>
     <div class="pbody">
 
-      <div class="grid g2">
-        <div>
-          <label>Delivery person name</label>
-          <input id="dvName" placeholder="e.g. Ramesh" autocomplete="off">
+      <!-- Delivery person: pick existing OR add new -->
+      <div id="pickWrap">
+        <label>Delivery person</label>
+        <div class="pickrow">
+          <div class="grow">
+            <select id="dvSelect" onchange="onSelectDriver()">
+              <option value="">— Select delivery person —</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label>Area name</label>
-          <input id="dvArea" placeholder="e.g. Anna Nagar" autocomplete="off">
+        <button class="linkbtn" type="button" onclick="showAddNew()">+ Add new delivery person</button>
+      </div>
+
+      <!-- New person entry (hidden until "Add new" or when no drivers yet) -->
+      <div id="newWrap" style="display:none">
+        <div class="grid g2">
+          <div>
+            <label>New delivery person name</label>
+            <input id="dvName" placeholder="e.g. Ramesh" autocomplete="off">
+          </div>
+          <div>
+            <label>Area name</label>
+            <input id="dvArea" placeholder="e.g. Anna Nagar" autocomplete="off">
+          </div>
+        </div>
+        <button class="linkbtn" type="button" id="backToList" onclick="showList()" style="display:none">← Choose from saved list</button>
+      </div>
+
+      <!-- Area for an existing selected person (editable, prefilled) -->
+      <div id="areaWrap" style="display:none;margin-top:14px">
+        <label>Area name</label>
+        <input id="dvAreaExisting" placeholder="e.g. Anna Nagar" autocomplete="off">
+      </div>
+
+      <!-- Status -->
+      <div style="margin-top:16px">
+        <label>Status</label>
+        <div class="statusrow">
+          <span class="opt pres"><input type="radio" name="dvStatus" id="stPresent" value="Present" checked><label for="stPresent">Present</label></span>
+          <span class="opt late"><input type="radio" name="dvStatus" id="stLate" value="Late"><label for="stLate">Late</label></span>
+          <span class="opt abs"><input type="radio" name="dvStatus" id="stAbsent" value="Absent"><label for="stAbsent">Absent</label></span>
         </div>
       </div>
 
@@ -187,9 +238,16 @@
             <input id="dvPackets" type="number" min="0" placeholder="0" oninput="calc()">
           </div>
           <div>
-            <label>Number of bottles</label>
-            <input id="dvBottles" type="number" min="0" placeholder="0" oninput="calc()">
+            <label>Half-litre bottles</label>
+            <input id="dvHalf" type="number" min="0" placeholder="0" oninput="calc()">
           </div>
+        </div>
+        <div class="grid g2" style="margin-top:14px">
+          <div>
+            <label>One-litre bottles</label>
+            <input id="dvOne" type="number" min="0" placeholder="0" oninput="calc()">
+          </div>
+          <div></div>
         </div>
       </fieldset>
 
@@ -200,27 +258,15 @@
 
       <div class="flow">
         <div class="box"><div class="lbl">Packets</div><div class="v" id="vPackets">0</div></div>
-        <div class="box"><div class="lbl">Bottles</div><div class="v" id="vBottles">0</div></div>
-        <div class="box hi"><div class="lbl">Total items</div><div class="v" id="vTotal">0</div></div>
+        <div class="box"><div class="lbl">½ L bottles</div><div class="v" id="vHalf">0</div></div>
+        <div class="box"><div class="lbl">1 L bottles</div><div class="v" id="vOne">0</div></div>
+        <div class="box hi"><div class="lbl">Total bottles</div><div class="v" id="vTotal">0</div></div>
       </div>
 
       <div class="savebar">
         <button class="btn navy" id="saveBtn" onclick="saveDriver()">💾 Save dispatch</button>
       </div>
-      <div class="mini">Saved entries are added to that day's row in the Google Sheet (organised 1st → 31st).</div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="phead">
-      <div class="pic">📋</div>
-      <div>
-        <h2>Today's dispatches</h2>
-        <p id="logSub">Loading…</p>
-      </div>
-    </div>
-    <div class="pbody">
-      <div id="logList"><div class="mini">No dispatches recorded yet today.</div></div>
+      <div class="mini">Each save is written to that delivery person's own sheet and to the overall day sheet.</div>
     </div>
   </section>
 
@@ -228,12 +274,13 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
 /* ============================================================
-   GOOGLE SHEETS WEB APP URL  (same Apps Script as the other pages)
+   GOOGLE SHEETS WEB APP URL
+   Points to the SHARED collection backend so driver data
+   lands in the same Google Sheet as everything else.
    ============================================================ */
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbzeiGsRojaZxNskUTPvM6IaLUmqRt5sA-aFM28n0HJpPnHIKbSg/exec";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbypp5Hab7Ska0-AUS0Q5-JxtuCoJHsq47-b2oQqw4qWDyyemhfmzhhDFbAhMxqKkElQ/exec";
 
 /* ============================================================
    PAGE PASSWORD  (same as the collection page)
@@ -241,6 +288,9 @@ const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbz
 const PAGE_PASSWORD = "1402";
 
 let unlocked = false;
+let DRIVERS = [];          // [{name, area}]
+let mode = 'list';         // 'list' = pick existing, 'new' = add new
+
 function tryUnlock(){
   const v = document.getElementById('lockPw').value;
   if(v === PAGE_PASSWORD){
@@ -259,10 +309,11 @@ function initDate(){const t=todayStr();const el=document.getElementById('dvDate'
 
 function num(id){return parseFloat(document.getElementById(id).value)||0;}
 function calc(){
-  const p=num('dvPackets'), b=num('dvBottles');
+  const p=num('dvPackets'), h=num('dvHalf'), o=num('dvOne');
   document.getElementById('vPackets').textContent=p;
-  document.getElementById('vBottles').textContent=b;
-  document.getElementById('vTotal').textContent=p+b;
+  document.getElementById('vHalf').textContent=h;
+  document.getElementById('vOne').textContent=o;
+  document.getElementById('vTotal').textContent=h+o;
 }
 
 function toast(msg,kind){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(kind?' '+kind:'');setTimeout(()=>t.className='toast',2600);}
@@ -279,34 +330,124 @@ async function post(payload){
   }catch(e){setStatus('Offline — not synced',false);return {ok:false,error:String(e)};}
 }
 
+/* ---------- delivery person picker ---------- */
+
+function showList(){
+  mode='list';
+  document.getElementById('pickWrap').style.display='block';
+  document.getElementById('newWrap').style.display='none';
+  document.getElementById('areaWrap').style.display =
+    document.getElementById('dvSelect').value ? 'block' : 'none';
+}
+
+function showAddNew(){
+  mode='new';
+  document.getElementById('pickWrap').style.display='none';
+  document.getElementById('areaWrap').style.display='none';
+  document.getElementById('newWrap').style.display='block';
+  // show "back to list" link only if there are saved drivers
+  document.getElementById('backToList').style.display = DRIVERS.length ? 'inline' : 'none';
+  document.getElementById('dvName').value='';
+  document.getElementById('dvArea').value='';
+  document.getElementById('dvName').focus();
+}
+
+function onSelectDriver(){
+  const sel = document.getElementById('dvSelect');
+  const val = sel.value;
+  const aw = document.getElementById('areaWrap');
+  if(val){
+    const d = DRIVERS.find(x=>x.name===val);
+    document.getElementById('dvAreaExisting').value = d ? (d.area||'') : '';
+    aw.style.display='block';
+  }else{
+    aw.style.display='none';
+  }
+}
+
+function fillDriverDropdown(){
+  const sel = document.getElementById('dvSelect');
+  sel.innerHTML = '<option value="">— Select delivery person —</option>';
+  DRIVERS.forEach(d=>{
+    const o=document.createElement('option');
+    o.value=d.name; o.textContent=d.name;
+    sel.appendChild(o);
+  });
+}
+
+async function loadDrivers(){
+  if(!SHEETS_URL){ DRIVERS=[]; return; }
+  try{
+    const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'getDrivers'})});
+    const data=await res.json();
+    if(data.ok && Array.isArray(data.drivers)) DRIVERS=data.drivers; else DRIVERS=[];
+  }catch(e){ DRIVERS=[]; }
+  fillDriverDropdown();
+  // If no saved drivers yet, start in "add new" mode automatically.
+  if(DRIVERS.length===0) showAddNew(); else showList();
+}
+
+/* ---------- current selection helpers ---------- */
+
+function currentName(){
+  return mode==='new'
+    ? document.getElementById('dvName').value.trim()
+    : document.getElementById('dvSelect').value.trim();
+}
+function currentArea(){
+  return mode==='new'
+    ? document.getElementById('dvArea').value.trim()
+    : document.getElementById('dvAreaExisting').value.trim();
+}
+function currentStatus(){
+  const r=document.querySelector('input[name="dvStatus"]:checked');
+  return r ? r.value : 'Present';
+}
+
+/* ---------- save ---------- */
+
 async function saveDriver(){
-  const name=document.getElementById('dvName').value.trim();
-  const area=document.getElementById('dvArea').value.trim();
+  const name=currentName();
+  const area=currentArea();
   const date=document.getElementById('dvDate').value;
-  const packets=num('dvPackets'), bottles=num('dvBottles');
-  if(!name){toast('Enter the delivery person name','err');return;}
+  const status=currentStatus();
+  const packets=num('dvPackets'), halfL=num('dvHalf'), oneL=num('dvOne');
+
+  if(!name){toast('Choose or enter the delivery person','err');return;}
   if(!area){toast('Enter the area name','err');return;}
   if(!date){toast('Pick a date','err');return;}
-  if(packets===0 && bottles===0){toast('Enter packets or bottles','err');return;}
+  // For Present/Late we expect some stock; Absent can be all zeros.
+  if(status!=='Absent' && packets===0 && halfL===0 && oneL===0){
+    toast('Enter packets or bottles','err');return;
+  }
 
   const btn=document.getElementById('saveBtn');
-  if(btn.disabled) return;                 // guard against double-tap
+  if(btn.disabled) return;
   const original=btn.innerHTML;
   btn.disabled=true;
   btn.classList.add('saving');
   btn.innerHTML='<span class="spin"></span>Saving…';
 
-  const r=await post({action:'driver',date,name,area,packets,bottles,total:packets+bottles});
+  const r=await post({action:'driver',date,name,area,status,packets,halfL,oneL});
 
   if(r.ok){
     btn.classList.remove('saving');
     btn.classList.add('saved');
     btn.innerHTML='✓ Saved';
     toast('Dispatch saved','ok');
+    // clear stock fields for the next entry
     document.getElementById('dvPackets').value='';
-    document.getElementById('dvBottles').value='';
+    document.getElementById('dvHalf').value='';
+    document.getElementById('dvOne').value='';
     calc();
-    fetchToday(false);
+    // refresh the saved-driver list (so a new name appears in the dropdown)
+    await loadDrivers();
+    // if we just added a new person, jump to the list and preselect them
+    if(mode==='new' || document.getElementById('dvSelect')){
+      const sel=document.getElementById('dvSelect');
+      if(sel){ sel.value=name; onSelectDriver(); showList(); }
+    }
     setTimeout(()=>{
       btn.classList.remove('saved');
       btn.disabled=false;
@@ -317,51 +458,15 @@ async function saveDriver(){
     btn.disabled=false;
     btn.innerHTML=original;
     if(r.local){toast('Saved locally — add your Sheets URL to sync','err');}
-    else toast('Save failed','err');
+    else toast('Save failed: '+(r.error||'unknown'),'err');
   }
-}
-
-async function fetchToday(showToast){
-  const list=document.getElementById('logList');
-  const sub=document.getElementById('logSub');
-  if(!SHEETS_URL){ sub.textContent='Local only'; return; }
-  try{
-    sub.textContent='Loading…';
-    const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({action:'getDriverDay',date:document.getElementById('dvDate').value})});
-    const data=await res.json();
-    if(data.ok && Array.isArray(data.entries)){
-      renderToday(data.entries);
-      sub.textContent=data.entries.length+' entr'+(data.entries.length===1?'y':'ies')+' for '+document.getElementById('dvDate').value;
-      if(showToast) toast('Refreshed','ok');
-    }else{
-      sub.textContent='Could not read';
-    }
-  }catch(e){
-    sub.textContent='Offline';
-  }
-}
-
-function renderToday(entries){
-  const list=document.getElementById('logList');
-  if(!entries.length){list.innerHTML='<div class="mini">No dispatches recorded yet for this date.</div>';return;}
-  list.innerHTML='';
-  entries.forEach(e=>{
-    const row=document.createElement('div');
-    row.className='log-row';
-    row.innerHTML='<span class="nm">'+ (e.name||'—') +'</span>'+
-      '<span class="ar">'+ (e.area||'—') +'</span>'+
-      '<span class="qt">'+ (e.packets||0) +' pkt · '+ (e.bottles||0) +' btl</span>';
-    list.appendChild(row);
-  });
 }
 
 function startApp(){
   initDate();
   calc();
-  document.getElementById('dvDate').addEventListener('change',()=>fetchToday(false));
-  if(SHEETS_URL){ setStatus('Connected',true); fetchToday(false); }
-  else setStatus('Local only',false);
+  if(SHEETS_URL){ setStatus('Connected',true); loadDrivers(); }
+  else { setStatus('Local only',false); showAddNew(); }
 }
 
 window.addEventListener('DOMContentLoaded',function(){
