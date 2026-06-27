@@ -79,6 +79,18 @@
     transition:.15s;box-shadow:var(--sh-sm);white-space:nowrap}
   .btn:hover{filter:brightness(1.05);box-shadow:var(--sh-md)}
   .btn:active{transform:translateY(1px)}
+  .btn:disabled,.btn.loading{opacity:.7;cursor:not-allowed;filter:none}
+  .btn .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);
+    border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:-2px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .overlay{position:fixed;inset:0;background:rgba(27,42,90,.45);backdrop-filter:blur(2px);
+    display:none;align-items:center;justify-content:center;z-index:9999}
+  .overlay.show{display:flex}
+  .overlay-box{background:#fff;padding:26px 30px;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.25);
+    display:flex;flex-direction:column;align-items:center;gap:14px;min-width:150px}
+  .big-spin{width:42px;height:42px;border:4px solid var(--amber-light,#ffe2a8);
+    border-top-color:var(--gold,#F5A800);border-radius:50%;animation:spin .7s linear infinite}
+  .overlay-txt{font-weight:800;color:var(--navy,#1B2A5A);font-size:.95rem}
   .btn.navy{background:linear-gradient(135deg,var(--navy-light),var(--navy))}
 
   fieldset{border:1.5px solid var(--line);border-radius:var(--rsm);padding:16px;background:var(--cream)}
@@ -250,7 +262,7 @@
       <div class="calc">
         <div><div class="lbl">Total litres</div><div class="big" id="mTotL">0 L</div></div>
         <div><div class="lbl">Day amount</div><div class="big" id="mTotAmt">₹0</div></div>
-        <button class="btn navy" onclick="saveMilk()">💾 Save entry</button>
+        <button class="btn navy" onclick="withBusy(this,'Saving…',saveMilk)()">💾 Save entry</button>
       </div>
     </div>
   </section>
@@ -293,7 +305,7 @@
         <div class="box"><div class="lbl">½ L remaining (packed − sent)</div><div class="v" id="pkHalfRemain">0</div></div>
         <div class="box hi"><div class="lbl">1 L remaining (packed − sent)</div><div class="v" id="pkLitreRemain">0</div></div>
       </div>
-      <div class="savebar"><button class="btn navy" onclick="savePackets()">💾 Save</button></div>
+      <div class="savebar"><button class="btn navy" onclick="withBusy(this,'Saving…',savePackets)()">💾 Save</button></div>
     </div>
   </section>
 
@@ -321,7 +333,7 @@
         <div class="box"><div class="lbl">Sent today</div><div class="v" id="ghSent">0 L</div></div>
         <div class="box hi"><div class="lbl">Stock available (after sent)</div><div class="v" id="ghRemain">0 L</div></div>
       </div>
-      <div class="savebar"><button class="btn navy" onclick="saveGhee()">💾 Save</button></div>
+      <div class="savebar"><button class="btn navy" onclick="withBusy(this,'Saving…',saveGhee)()">💾 Save</button></div>
     </div>
   </section>
 
@@ -349,7 +361,7 @@
         <div class="box"><div class="lbl">Sent today</div><div class="v" id="pnSentV">0 kg</div></div>
         <div class="box hi"><div class="lbl">Stock available (after sent)</div><div class="v" id="pnRemain">0 kg</div></div>
       </div>
-      <div class="savebar"><button class="btn navy" onclick="savePaneer()">💾 Save</button></div>
+      <div class="savebar"><button class="btn navy" onclick="withBusy(this,'Saving…',savePaneer)()">💾 Save</button></div>
     </div>
   </section>
 
@@ -379,6 +391,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="overlay" id="overlay"><div class="overlay-box"><span class="big-spin"></span><div class="overlay-txt" id="overlayTxt">Saving…</div></div></div>
 
 <script>
 /* ============================================================
@@ -388,7 +401,7 @@
    Leave it as "" to keep entries on this device only.
    ============================================================ */
 const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwqwR_WdtFPzu0FePMbzeiGsRojaZxNskUTPvM6IaLUmqRt5sA-aFM28n0HJpPnHIKbSg/exec";
-  
+
 /* ============================================================ */
 
 /* ============================================================
@@ -431,6 +444,18 @@ document.querySelectorAll('.tab').forEach(tab=>{tab.onclick=()=>{
 
 function toast(msg,kind){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(kind?' '+kind:'');setTimeout(()=>t.className='toast',2600);}
 function setStatus(txt,ok){const s=document.getElementById('status');s.innerHTML=txt;s.className='status'+(ok===false?' err':'');}
+
+/* Full-screen spinner; shown while a save is in flight (driven by post()) */
+function showOverlay(label){const o=document.getElementById('overlay');document.getElementById('overlayTxt').textContent=label||'Saving…';o.classList.add('show');}
+function hideOverlay(){document.getElementById('overlay').classList.remove('show');}
+function withBusy(btn,label,fn){
+  return async function(){
+    if(btn&&btn.disabled){ return; }
+    if(btn) btn.disabled=true;
+    try{ return await fn.apply(this,arguments); }
+    finally{ if(btn) btn.disabled=false; }
+  };
+}
 
 function renderSuppliers(){
   const sel=document.getElementById('mSup');const keep=sel.value;
@@ -566,6 +591,7 @@ function calcPn(){const total=num('pnAvail')+num('pnAdd');const sent=pnSentKg();
 
 async function post(payload){
   if(!SHEETS_URL){return {ok:false,local:true};}
+  showOverlay('Saving…');
   try{setStatus('Saving…');
     const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
     const data=await res.json();
@@ -573,6 +599,7 @@ async function post(payload){
     else setStatus('Sync error',false);
     return data;
   }catch(e){setStatus('Offline — not synced',false);return {ok:false,error:String(e)};}
+  finally{hideOverlay();}
 }
 
 async function saveMilk(){
@@ -621,6 +648,7 @@ async function fetchSuppliers(showToast){
   if(!SHEETS_URL){ renderSuppliers(); return; }
   try{
     setStatus('Loading suppliers…');
+    if(showToast) showOverlay('Loading suppliers…');
     const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'getSuppliers'})});
     const data=await res.json();
     if(data.ok && Array.isArray(data.suppliers)){
@@ -639,6 +667,7 @@ async function fetchSuppliers(showToast){
     renderSuppliers();
     if(showToast) toast('Offline — using saved list','err');
   }
+  finally{ hideOverlay(); }
 }
 
 function startApp(){
