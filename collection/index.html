@@ -338,7 +338,7 @@
       </div>
       <div class="grid g2" style="margin-top:14px">
         <div><label>Packets sent today</label><input id="pkSent" type="number" min="0" placeholder="0" oninput="calcPk()"></div>
-        <div></div>
+        <div><label>Empty bottles returned today</label><input id="pkEmptyBottles" type="number" min="0" placeholder="0"></div>
       </div>
       <fieldset style="margin-top:16px">
         <legend>½ L bottles</legend>
@@ -852,29 +852,30 @@ async function savePackets(){
   const total=avail+packed, remain=total-sent;
   const halfPacked=num('pkHalfPacked'),halfSent=num('pkHalfSent'),halfRemain=halfPacked-halfSent;
   const litrePacked=num('pkLitrePacked'),litreSent=num('pkLitreSent'),litreRemain=litrePacked-litreSent;
-  const r=await post({action:'packets',date,available:avail,packed,sent,total,remaining:remain,
-    halfPacked,halfSent,halfRemain,litrePacked,litreSent,litreRemain});
+  const emptyBottlesReturned=num('pkEmptyBottles');
+  const r=await post({action:'savePackets',date,available:avail,packed,sent,total,remaining:remain,
+    halfPacked,halfSent,halfRemain,litrePacked,litreSent,litreRemain,emptyBottlesReturned});
   if(r.ok){toast('Packets saved','ok');}
   else if(r.local){toast('Saved locally','err');}
-  else toast('Save failed','err');
+  else toast(r.error||'Save failed','err');
 }
 async function saveGhee(){
   const date=document.getElementById('ghDate').value;
   const avail=num('ghAvail'),add=num('ghAdd'),sent=ghSentL();
   const total=avail+add, remain=total-sent;
-  const r=await post({action:'ghee',date,available:avail,added:add,b250:num('gh250'),b500:num('gh500'),b1000:num('gh1000'),sentL:sent,total,remaining:remain});
+  const r=await post({action:'saveGhee',date,available:avail,added:add,b250:num('gh250'),b500:num('gh500'),b1000:num('gh1000'),sentL:sent,total,remaining:remain});
   if(r.ok){toast('Ghee saved','ok');}
   else if(r.local){toast('Saved locally','err');}
-  else toast('Save failed','err');
+  else toast(r.error||'Save failed','err');
 }
 async function savePaneer(){
   const date=document.getElementById('pnDate').value;
   const avail=num('pnAvail'),add=num('pnAdd'),sent=pnSentKg();
   const total=avail+add, remain=total-sent;
-  const r=await post({action:'paneer',date,available:avail,added:add,p250:num('pn250'),p500:num('pn500'),p1000:num('pn1000'),sentKg:sent,total,remaining:remain});
+  const r=await post({action:'savePaneer',date,available:avail,added:add,p250:num('pn250'),p500:num('pn500'),p1000:num('pn1000'),sentKg:sent,total,remaining:remain});
   if(r.ok){toast('Paneer saved','ok');}
   else if(r.local){toast('Saved locally','err');}
-  else toast('Save failed','err');
+  else toast(r.error||'Save failed','err');
 }
 
 async function fetchSuppliers(showToast){

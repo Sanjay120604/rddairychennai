@@ -111,6 +111,7 @@
       <button class="tab" data-view="subs" onclick="switchView('subs')">Subscriptions</button>
       <button class="tab" data-view="delivery" onclick="switchView('delivery')">🚚 Delivery</button>
       <button class="tab" data-view="ledger" onclick="switchView('ledger')">🥛 Collection Ledger</button>
+      <button class="tab" data-view="stock" onclick="switchView('stock')">📦 Stock Ledger</button>
     </div>
 
     <div id="ordersView">
@@ -215,6 +216,42 @@
         </div>
       </div>
     </div>
+
+    <!-- ============ STOCK LEDGER VIEW (Packets / Ghee / Paneer) ============ -->
+    <div id="stockView" class="hidden">
+      <div class="dcard">
+        <h3>Packets / Ghee / Paneer</h3>
+        <div class="dform" style="grid-template-columns:1fr 1fr auto">
+          <div>
+            <label>Stock type</label>
+            <select id="stockType">
+              <option value="packets">📦 Packets</option>
+              <option value="ghee">🧈 Ghee</option>
+              <option value="paneer">🧀 Paneer</option>
+            </select>
+          </div>
+          <div>
+            <label>Month</label>
+            <input id="stockMonth" type="month" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn" onclick="loadStock()">Load</button>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="stockErr"></div>
+      </div>
+
+      <div id="stockResult" class="hidden">
+        <div class="toolbar">
+          <div class="muted" id="stockSummary" style="flex:1"></div>
+          <button class="btn ghost sm" onclick="exportStockExcel()">⬇ Excel</button>
+          <button class="btn ghost sm" onclick="exportStockPDF()">⬇ PDF</button>
+        </div>
+        <div class="table-wrap">
+          <div id="stockTableArea"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -314,14 +351,18 @@ function switchView(v){
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.view===v));
   var isDelivery = (v==="delivery");
   var isLedger = (v==="ledger");
-  var isOrders = !isDelivery && !isLedger;
+  var isStock = (v==="stock");
+  var isOrders = !isDelivery && !isLedger && !isStock;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
+  $("stockView").classList.toggle("hidden", !isStock);
   if(isDelivery){
     if(!driversLoaded){ loadDrivers(); driversLoaded=true; }
   }else if(isLedger){
     if(!ledgerSuppliersLoaded){ loadLedgerSuppliers(); ledgerSuppliersLoaded=true; }
+  }else if(isStock){
+    if(!$("stockMonth").value){ $("stockMonth").value = new Date().toISOString().slice(0,7); }
   }else{
     render();
   }
@@ -539,6 +580,123 @@ function exportLedgerPDF(){
     styles:{fontSize:9}
   });
   doc.save(ledgerSupplierName()+"_"+ledgerMonthLabel()+".pdf");
+}
+
+/* ============================================================
+   STOCK LEDGER (Supabase) — packets/ghee/paneer, month-wise
+   ============================================================ */
+var stockRows = [];
+var stockTypeCur = 'packets';
+
+function stockColumns(type){
+  if(type==='packets') return [
+    {k:'stock_date', label:'Date'},
+    {k:'available', label:'Available'},
+    {k:'packed', label:'Packed'},
+    {k:'sent', label:'Sent'},
+    {k:'total', label:'Total'},
+    {k:'remaining', label:'Remaining'},
+    {k:'empty_bottles_returned', label:'Empty Bottles Returned'},
+    {k:'half_packed', label:'½L Packed'},
+    {k:'half_sent', label:'½L Sent'},
+    {k:'half_remaining', label:'½L Remaining'},
+    {k:'litre_packed', label:'1L Packed'},
+    {k:'litre_sent', label:'1L Sent'},
+    {k:'litre_remaining', label:'1L Remaining'}
+  ];
+  if(type==='ghee') return [
+    {k:'stock_date', label:'Date'},
+    {k:'available', label:'Available (L)'},
+    {k:'added', label:'Added (L)'},
+    {k:'b250', label:'250ml qty'},
+    {k:'b500', label:'500ml qty'},
+    {k:'b1000', label:'1L qty'},
+    {k:'sent_l', label:'Sent (L)'},
+    {k:'total', label:'Total (L)'},
+    {k:'remaining', label:'Remaining (L)'}
+  ];
+  return [
+    {k:'stock_date', label:'Date'},
+    {k:'available', label:'Available (kg)'},
+    {k:'added', label:'Added (kg)'},
+    {k:'p250', label:'250g qty'},
+    {k:'p500', label:'500g qty'},
+    {k:'p1000', label:'1kg qty'},
+    {k:'sent_kg', label:'Sent (kg)'},
+    {k:'total', label:'Total (kg)'},
+    {k:'remaining', label:'Remaining (kg)'}
+  ];
+}
+
+function stockShowErr(msg){ var e=$("stockErr"); e.textContent=msg; e.classList.remove("hidden"); }
+
+async function loadStock(){
+  var type = $("stockType").value;
+  var month = $("stockMonth").value;
+  $("stockErr").classList.add("hidden");
+  if(!month){ stockShowErr("Select a month"); return; }
+  $("stockTableArea").innerHTML = '<div class="empty">Loading…</div>';
+  $("stockResult").classList.remove("hidden");
+  try{
+    var r = await cApi({action:'getStockMonth', stockType:type, month:month});
+    if(r.ok){
+      stockRows = r.rows||[];
+      stockTypeCur = type;
+      renderStockTable();
+    }else{
+      stockShowErr(r.error||"Could not load stock data");
+      $("stockResult").classList.add("hidden");
+    }
+  }catch(e){
+    stockShowErr(e.message);
+    $("stockResult").classList.add("hidden");
+  }
+}
+
+function renderStockTable(){
+  var cols = stockColumns(stockTypeCur);
+  var typeLabel = stockTypeCur==='packets'?'Packets':stockTypeCur==='ghee'?'Ghee':'Paneer';
+  $("stockSummary").innerHTML = '<b>'+typeLabel+'</b> · '+$("stockMonth").value+' · '+stockRows.length+' entries';
+  if(!stockRows.length){
+    $("stockTableArea").innerHTML = '<div class="empty">No entries for this month.</div>';
+    return;
+  }
+  var html = '<table><thead><tr>'+cols.map(function(c){return '<th>'+c.label+'</th>';}).join('')+'</tr></thead><tbody>';
+  stockRows.forEach(function(r){
+    html += '<tr>'+cols.map(function(c){
+      var v = r[c.k];
+      return '<td>'+(c.k==='stock_date'?esc(v):(v!=null?v:0))+'</td>';
+    }).join('')+'</tr>';
+  });
+  html += '</tbody></table>';
+  $("stockTableArea").innerHTML = html;
+}
+
+function exportStockExcel(){
+  if(!stockRows.length){ alert("Load a month first."); return; }
+  var cols = stockColumns(stockTypeCur);
+  var rows = stockRows.map(function(r){
+    var o = {};
+    cols.forEach(function(c){ o[c.label] = r[c.k]; });
+    return o;
+  });
+  var ws = XLSX.utils.json_to_sheet(rows);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Stock");
+  XLSX.writeFile(wb, stockTypeCur+"_"+$("stockMonth").value+".xlsx");
+}
+
+function exportStockPDF(){
+  if(!stockRows.length){ alert("Load a month first."); return; }
+  var cols = stockColumns(stockTypeCur);
+  var doc = new jspdf.jsPDF();
+  doc.setFontSize(14);
+  doc.text((stockTypeCur.charAt(0).toUpperCase()+stockTypeCur.slice(1))+" Stock — "+$("stockMonth").value, 14, 15);
+  var body = stockRows.map(function(r){
+    return cols.map(function(c){ var v=r[c.k]; return v!=null?v:0; });
+  });
+  doc.autoTable({ startY:22, head:[cols.map(function(c){return c.label;})], body: body });
+  doc.save(stockTypeCur+"_"+$("stockMonth").value+".pdf");
 }
 
 function generateBillPDF(){
