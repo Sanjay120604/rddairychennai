@@ -447,6 +447,19 @@
   </div>
 </div>
 
+<!-- ===== Delete supplier confirm modal ===== -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-card">
+    <h3>Remove supplier?</h3>
+    <div class="modal-sub" id="deleteSubtitle">—</div>
+    <div class="mini" style="margin:0 0 4px">This removes them from the supplier list (here and in the database).<br>Their saved milk history is kept.</div>
+    <div class="modal-actions">
+      <button class="btn sec" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn" style="background:linear-gradient(135deg,#e35d5b,#b33)" onclick="confirmDeleteSupplier()">Remove</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="overlay" id="overlay"><div class="overlay-box"><span class="big-spin"></span><div class="overlay-txt" id="overlayTxt">Saving…</div></div></div>
 
@@ -621,9 +634,21 @@ async function confirmEdit(){
   }
 }
 
-async function deleteSupplier(i){
+let deletingIndex = -1;
+function deleteSupplier(i){
+  deletingIndex = i;
   const s=mem.suppliers[i];
-  if(!confirm('Remove '+s.name+' ('+(s.milk_type||'Cow')+')?\n\nThis removes them from the supplier list (here and in the database).\nTheir saved milk history is kept.')) return;
+  document.getElementById('deleteSubtitle').textContent = s.name+' ('+(s.milk_type||'Cow')+')';
+  document.getElementById('deleteModal').classList.add('show');
+}
+function closeDeleteModal(){
+  document.getElementById('deleteModal').classList.remove('show');
+  deletingIndex = -1;
+}
+async function confirmDeleteSupplier(){
+  if(deletingIndex<0) return;
+  const s=mem.suppliers[deletingIndex];
+  closeDeleteModal();
   const r=await post({action:'deleteSupplier',id:s.id});
   if(r.ok){
     document.getElementById('mSup').value=''; // clear selection (indexes shifted)
@@ -679,9 +704,15 @@ async function saveMilk(){
   const si=document.getElementById('mSup').value;
   if(si===''){toast('Select a supplier','err');return;}
   const s=mem.suppliers[si];const date=document.getElementById('mDate').value;
+  // Track whether each field was actually typed into this time. If the
+  // person only enters the night litres, the morning box is empty (not 0
+  // that they entered) — so we must tell the backend not to touch morning_l,
+  // otherwise it gets overwritten with 0.
+  const morningTouched = document.getElementById('mMorning').value.trim()!=='';
+  const nightTouched = document.getElementById('mNight').value.trim()!=='';
   const m=num('mMorning'),n=num('mNight');
-  if(m===0&&n===0){toast('Enter morning or night litres','err');return;}
-  const r=await post({action:'saveMilk',supplierId:s.id,date,morningL:m,nightL:n});
+  if(!morningTouched && !nightTouched){toast('Enter morning or night litres','err');return;}
+  const r=await post({action:'saveMilk',supplierId:s.id,date,morningL:m,nightL:n,morningTouched,nightTouched});
   if(r.ok){toast('Milk entry saved','ok');document.getElementById('mMorning').value='';document.getElementById('mNight').value='';calcMilk();}
   else if(r.local){toast('Saved locally — add your Sheets URL to sync','err');}
   else toast('Save failed','err');

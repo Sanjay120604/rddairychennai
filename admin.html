@@ -96,7 +96,6 @@
     <div class="top-links">
       <a href="https://sanjay120604.github.io/rddairychennai/collection/" target="_blank">📋 Collection</a>
       <a href="https://sanjay120604.github.io/rddairychennai/delivery/" target="_blank">🚚 Delivery</a>
-      <a href="https://docs.google.com/spreadsheets/d/1RNLoPlvzINfkYA15bvNT2fR1xt7Py8esaVnuLdASM_4/edit?gid=0#gid=0" target="_blank">📊 Collection Sheet</a>
       <a href="stats.html">📊 Analytics</a>
       <a href="index.html">🏠 Store</a>
       <a href="#" onclick="logout();return false;">Logout</a>
@@ -187,20 +186,41 @@
     <!-- ============ COLLECTION LEDGER VIEW ============ -->
     <div id="ledgerView" class="hidden">
       <div class="dcard">
-        <h3>Supplier Data</h3>
-        <div class="dform" style="grid-template-columns:1.4fr 1fr auto">
-          <div>
-            <label>Supplier</label>
-            <select id="ledgerSupplier"><option value="">— select —</option></select>
-          </div>
-          <div>
-            <label>Month</label>
-            <input id="ledgerMonth" type="month" />
-          </div>
-          <div class="dform-actions">
-            <button class="btn" onclick="loadLedger()">Load</button>
+        <div class="dform" style="grid-template-columns:auto auto;gap:20px;margin-bottom:14px">
+          <label style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--navy);cursor:pointer"><input type="radio" name="ledgerMode" value="supplier" checked onchange="switchLedgerMode()"> By supplier</label>
+          <label style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--navy);cursor:pointer"><input type="radio" name="ledgerMode" value="daily" onchange="switchLedgerMode()"> All suppliers (day-wise)</label>
+        </div>
+
+        <div id="ledgerBySupplierForm">
+          <h3>Supplier Data</h3>
+          <div class="dform" style="grid-template-columns:1.4fr 1fr auto">
+            <div>
+              <label>Supplier</label>
+              <select id="ledgerSupplier"><option value="">— select —</option></select>
+            </div>
+            <div>
+              <label>Month</label>
+              <input id="ledgerMonth" type="month" />
+            </div>
+            <div class="dform-actions">
+              <button class="btn" onclick="loadLedger()">Load</button>
+            </div>
           </div>
         </div>
+
+        <div id="ledgerDailyForm" class="hidden">
+          <h3>All Suppliers — Day-wise Totals</h3>
+          <div class="dform" style="grid-template-columns:1fr auto">
+            <div>
+              <label>Month</label>
+              <input id="dailyLedgerMonth" type="month" />
+            </div>
+            <div class="dform-actions">
+              <button class="btn" onclick="loadDailyLedger()">Load</button>
+            </div>
+          </div>
+        </div>
+
         <div class="err-msg hidden" id="ledgerErr"></div>
       </div>
 
@@ -213,6 +233,17 @@
         </div>
         <div class="table-wrap">
           <div id="ledgerTableArea"></div>
+        </div>
+      </div>
+
+      <div id="dailyLedgerResult" class="hidden">
+        <div class="toolbar">
+          <div class="muted" id="dailyLedgerSummary" style="flex:1"></div>
+          <button class="btn ghost sm" onclick="exportDailyLedgerExcel()">⬇ Excel</button>
+          <button class="btn ghost sm" onclick="exportDailyLedgerPDF()">⬇ PDF</button>
+        </div>
+        <div class="table-wrap">
+          <div id="dailyLedgerTableArea"></div>
         </div>
       </div>
     </div>
@@ -580,6 +611,97 @@ function exportLedgerPDF(){
     styles:{fontSize:9}
   });
   doc.save(ledgerSupplierName()+"_"+ledgerMonthLabel()+".pdf");
+}
+
+/* ============================================================
+   ALL SUPPLIERS — DAY-WISE LEDGER (Supabase)
+   ============================================================ */
+var dailyLedgerDays = [];
+var dailyLedgerMonthTotalL = 0;
+var dailyLedgerMonthTotalAmt = 0;
+
+function switchLedgerMode(){
+  var mode = document.querySelector('input[name="ledgerMode"]:checked').value;
+  var bySupplier = mode==='supplier';
+  $("ledgerBySupplierForm").classList.toggle("hidden", !bySupplier);
+  $("ledgerDailyForm").classList.toggle("hidden", bySupplier);
+  $("ledgerErr").classList.add("hidden");
+  $("ledgerResult").classList.add("hidden");
+  $("dailyLedgerResult").classList.add("hidden");
+  if(!bySupplier && !$("dailyLedgerMonth").value){
+    $("dailyLedgerMonth").value = new Date().toISOString().slice(0,7);
+  }
+}
+
+async function loadDailyLedger(){
+  var month = $("dailyLedgerMonth").value;
+  $("ledgerErr").classList.add("hidden");
+  if(!month){ ledgerShowErr("Select a month"); return; }
+  $("dailyLedgerTableArea").innerHTML = '<div class="empty">Loading…</div>';
+  $("dailyLedgerResult").classList.remove("hidden");
+  try{
+    var r = await cApi({action:"getDailyLedger", month:month});
+    if(r.ok){
+      dailyLedgerDays = r.days||[];
+      dailyLedgerMonthTotalL = r.monthTotalL||0;
+      dailyLedgerMonthTotalAmt = r.monthTotalAmt||0;
+      renderDailyLedgerTable();
+    }else{
+      ledgerShowErr(r.error||"Could not load daily totals");
+      $("dailyLedgerResult").classList.add("hidden");
+    }
+  }catch(e){
+    ledgerShowErr(e.message);
+    $("dailyLedgerResult").classList.add("hidden");
+  }
+}
+
+function renderDailyLedgerTable(){
+  $("dailyLedgerSummary").innerHTML = '<b>All suppliers</b> · '+$("dailyLedgerMonth").value+' · Total: <b>'+dailyLedgerMonthTotalL.toFixed(1)+' L · ₹'+dailyLedgerMonthTotalAmt.toFixed(2)+'</b>';
+  if(!dailyLedgerDays.length){
+    $("dailyLedgerTableArea").innerHTML = '<div class="empty">No entries for this month.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>#</th><th>Date</th><th>Total Litres</th><th>Amount ₹</th></tr></thead><tbody>';
+  dailyLedgerDays.forEach(function(d,i){
+    html += '<tr><td>'+(i+1)+'</td><td class="muted">'+esc(d.date)+'</td><td>'+d.totalL+'</td><td>₹'+Number(d.amount).toFixed(2)+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="text-align:right;font-weight:800;color:var(--navy);padding:10px 4px">Month Total: '+dailyLedgerMonthTotalL.toFixed(1)+' L · ₹'+dailyLedgerMonthTotalAmt.toFixed(2)+'</div>';
+  $("dailyLedgerTableArea").innerHTML = html;
+}
+
+function exportDailyLedgerExcel(){
+  if(!dailyLedgerDays.length){ alert("Load a month first."); return; }
+  var rows = dailyLedgerDays.map(function(d,i){
+    return { "Serial": i+1, "Date": d.date, "Total Litres": d.totalL, "Amount ₹": Number(d.amount) };
+  });
+  rows.push({ "Serial":"", "Date":"MONTH TOTAL", "Total Litres": dailyLedgerMonthTotalL, "Amount ₹": dailyLedgerMonthTotalAmt });
+  var ws = XLSX.utils.json_to_sheet(rows);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Daily Totals");
+  XLSX.writeFile(wb, "All_Suppliers_"+$("dailyLedgerMonth").value+".xlsx");
+}
+
+function exportDailyLedgerPDF(){
+  if(!dailyLedgerDays.length){ alert("Load a month first."); return; }
+  var doc = new jspdf.jsPDF();
+  doc.setFontSize(16); doc.setTextColor(27,42,90);
+  doc.text("RD Dairy — All Suppliers, Day-wise Collection", 14, 18);
+  doc.setFontSize(10); doc.setTextColor(100);
+  doc.text($("dailyLedgerMonth").value, 14, 25);
+  var body = dailyLedgerDays.map(function(d,i){
+    return [i+1, d.date, d.totalL, "Rs."+Number(d.amount).toFixed(2)];
+  });
+  body.push(["", "Month Total", dailyLedgerMonthTotalL.toFixed(1), "Rs."+dailyLedgerMonthTotalAmt.toFixed(2)]);
+  doc.autoTable({
+    startY:32,
+    head:[["#","Date","Total Litres","Amount"]],
+    body: body,
+    headStyles:{fillColor:[245,168,0], textColor:[27,42,90]},
+    styles:{fontSize:9}
+  });
+  doc.save("All_Suppliers_"+$("dailyLedgerMonth").value+".pdf");
 }
 
 /* ============================================================
