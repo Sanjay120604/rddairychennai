@@ -4487,10 +4487,12 @@
 
     /* ============================================================
        RD DAIRY BACKEND CONFIG
-       Paste your Apps Script Web App URL between the quotes.
-       (Same URL used by auth.html)
+       Supabase Edge Function URL + publishable key (replaces the old
+       Apps Script Web App URL — same used by auth.html / profile.html /
+       my-orders.html once those are migrated too)
     ============================================================ */
-    var RD_API_URL = "https://script.google.com/macros/s/AKfycbyB-pCn5FPFzHyHQWjziQ_QvsFFSlkpzdaRCeVGGVOWbYAXdMoTADMwAW6humC0-Eok/exec";
+    var RD_API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/store";
+    var RD_ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
     var RD_SESSION_KEY = "rd_dairy_user";
 
     function rdGetUser() {
@@ -4617,11 +4619,15 @@
     }
     async function rdSubmit(payload) {
       if (RD_API_URL.indexOf('PASTE_YOUR') !== -1) {
-        throw new Error('Backend not connected. Add your Apps Script URL (RD_API_URL) in index.html.');
+        throw new Error('Backend not connected. Add your Supabase URL (RD_API_URL) in index.html.');
       }
       var res = await fetch(RD_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + RD_ANON_KEY,
+          'apikey': RD_ANON_KEY
+        },
         body: JSON.stringify(payload)
       });
       var data = await res.json();

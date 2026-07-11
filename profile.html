@@ -99,8 +99,9 @@
   </div>
 
 <script>
-/* Same Apps Script Web App URL as the other pages */
-var API_URL = "https://script.google.com/macros/s/AKfycbyB-pCn5FPFzHyHQWjziQ_QvsFFSlkpzdaRCeVGGVOWbYAXdMoTADMwAW6humC0-Eok/exec";
+/* Supabase Edge Function — same backend as the other pages */
+var API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/store";
+var ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 var SESSION_KEY = "rd_dairy_user";
 function $(id){return document.getElementById(id);}
 
@@ -109,8 +110,12 @@ function setUser(u){ localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
 function logout(){ localStorage.removeItem(SESSION_KEY); window.location.href="auth.html"; }
 
 async function api(p){
-  if(API_URL.indexOf("PASTE_YOUR")!==-1) throw new Error("Add your Apps Script URL (API_URL) in profile.html.");
-  var res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(p)});
+  if(API_URL.indexOf("PASTE_YOUR")!==-1) throw new Error("Add your Supabase URL (API_URL) in profile.html.");
+  var res=await fetch(API_URL,{method:"POST",headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+ANON_KEY,
+    "apikey":ANON_KEY
+  },body:JSON.stringify(p)});
   return res.json();
 }
 

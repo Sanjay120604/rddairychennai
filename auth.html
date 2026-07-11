@@ -281,10 +281,12 @@
 <script>
 /* ============================================================
    ⚙️  CONFIG
-   After you deploy the Google Apps Script (instructions provided),
-   paste the Web App URL between the quotes below.
+   Supabase Edge Function URL + publishable key (replaces the old
+   Apps Script Web App URL — same backend used by index.html /
+   admin.html / profile.html / my-orders.html)
 ============================================================ */
-const API_URL = "https://script.google.com/macros/s/AKfycbyB-pCn5FPFzHyHQWjziQ_QvsFFSlkpzdaRCeVGGVOWbYAXdMoTADMwAW6humC0-Eok/exec";
+const API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/store";
+const ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
 /* ---- tiny helpers ---- */
 const $ = id => document.getElementById(id);
@@ -327,14 +329,18 @@ document.querySelectorAll(".pw-toggle").forEach(btn=>{
   $(id).addEventListener("input",e=>{ e.target.value = e.target.value.replace(/\D/g,"").slice(0,10); });
 });
 
-/* ---- call backend (Apps Script). Uses text/plain to avoid CORS preflight ---- */
+/* ---- call backend (Supabase Edge Function) ---- */
 async function callApi(action, payload){
   if(API_URL.includes("PASTE_YOUR")){
-    throw new Error("Backend not connected yet. Add your Apps Script URL in auth.html (API_URL).");
+    throw new Error("Backend not connected yet. Add your Supabase URL in auth.html (API_URL).");
   }
   const res = await fetch(API_URL, {
     method:"POST",
-    headers:{ "Content-Type":"text/plain;charset=utf-8" },
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+ANON_KEY,
+      "apikey":ANON_KEY
+    },
     body: JSON.stringify({ action, ...payload })
   });
   return res.json();
