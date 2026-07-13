@@ -250,10 +250,21 @@
     <section class="view" id="view-billing">
       <h2 style="margin-bottom:16px;">Create Monthly Bill</h2>
       <div class="card">
-        <div class="row">
+        <div class="row" style="margin-bottom:14px;">
           <div class="field">
+            <label>Bill for</label>
+            <select id="genMode" onchange="toggleGenMode()" style="min-width:160px;">
+              <option value="single">Single customer</option>
+              <option value="area">Entire area</option>
+            </select>
+          </div>
+          <div class="field" id="genCustomerField">
             <label>Customer</label>
             <select id="genCustomer" style="min-width:220px;"></select>
+          </div>
+          <div class="field" id="genAreaField" style="display:none;">
+            <label>Area</label>
+            <select id="genArea" style="min-width:200px;"></select>
           </div>
           <div class="field">
             <label>Billing month</label>
@@ -268,8 +279,9 @@
             <label style="margin:0;text-transform:none;">Include opening balance</label>
           </div>
         </div>
-        <div class="row" style="margin-top:16px;">
-          <button class="btn primary" onclick="generateInvoice()">Generate Bill</button>
+        <p class="muted" id="genAreaHint" style="display:none;margin-bottom:10px;">Generates one bill per active customer in this area for the selected month — each using their own milk quantity, leave days, and un-billed product entries. Customers who already have a bill for this month are skipped automatically.</p>
+        <div class="row">
+          <button class="btn primary" id="genSubmitBtn" onclick="generateInvoice()">Generate Bill</button>
         </div>
       </div>
       <div id="genResult" style="margin-top:20px;"></div>
@@ -346,6 +358,17 @@
     <div class="actions">
       <button class="btn ghost" onclick="closeModal('customerModalBackdrop')">Cancel</button>
       <button class="btn primary" onclick="saveCustomer()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="confirmModalBackdrop">
+  <div class="modal" style="max-width:400px;">
+    <h2 id="confirmModalTitle" style="font-size:18px;">Are you sure?</h2>
+    <p id="confirmModalMessage" class="muted" style="margin:12px 0 0;line-height:1.5;"></p>
+    <div class="actions">
+      <button class="btn ghost" onclick="closeConfirmModal(false)">Cancel</button>
+      <button class="btn danger" id="confirmModalOkBtn" onclick="closeConfirmModal(true)">Delete</button>
     </div>
   </div>
 </div>
@@ -504,8 +527,18 @@ async function loadAreas(){
   AREAS = await api('/areas');
   const filterSel = document.getElementById('custAreaFilter');
   const modalSel = document.getElementById('custArea');
+  const genAreaSel = document.getElementById('genArea');
   filterSel.innerHTML = '<option value="">All areas</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   modalSel.innerHTML = '<option value="">No area</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  genAreaSel.innerHTML = '<option value="">Select area</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+}
+function toggleGenMode(){
+  const mode = document.getElementById('genMode').value;
+  document.getElementById('genCustomerField').style.display = mode==='single' ? 'flex' : 'none';
+  document.getElementById('genAreaField').style.display = mode==='area' ? 'flex' : 'none';
+  document.getElementById('genAreaHint').style.display = mode==='area' ? 'block' : 'none';
+  document.getElementById('genSubmitBtn').textContent = mode==='area' ? 'Generate Bills for Area' : 'Generate Bill';
+  document.getElementById('genResult').innerHTML = '';
 }
 function openAreaModal(){ document.getElementById('areaName').value=''; document.getElementById('areaModalBackdrop').classList.add('active'); }
 async function saveArea(){
@@ -644,6 +677,20 @@ async function saveCustomer(){
 
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
+let _confirmResolve = null;
+function showConfirm(message, okLabel){
+  return new Promise(resolve=>{
+    document.getElementById('confirmModalMessage').textContent = message;
+    document.getElementById('confirmModalOkBtn').textContent = okLabel || 'Delete';
+    document.getElementById('confirmModalBackdrop').classList.add('active');
+    _confirmResolve = resolve;
+  });
+}
+function closeConfirmModal(result){
+  document.getElementById('confirmModalBackdrop').classList.remove('active');
+  if(_confirmResolve){ _confirmResolve(result); _confirmResolve = null; }
+}
+
 /* ============================================================
    MILK LOG
    ============================================================ */
@@ -732,6 +779,9 @@ async function deleteProductEntry(id){
    GENERATE BILL
    ============================================================ */
 async function generateInvoice(){
+  const mode = document.getElementById('genMode').value;
+  if(mode === 'area') return generateInvoicesForArea();
+
   const genMonth = document.getElementById('genMonth').value;
   if(!genMonth) return showToast('Select a billing month');
   const { start, end } = monthBounds(genMonth);
@@ -751,6 +801,135 @@ async function generateInvoice(){
   }catch(err){
     showToast(err.message);
   }
+}
+
+/* ---------- Bulk generation + bulk WhatsApp send for an entire area ---------- */
+let AREA_BATCH_RESULTS = [];
+
+async function generateInvoicesForArea(){
+  const areaId = document.getElementById('genArea').value;
+  const genMonth = document.getElementById('genMonth').value;
+  if(!areaId) return showToast('Select an area');
+  if(!genMonth) return showToast('Select a billing month');
+  const { start, end } = monthBounds(genMonth);
+  const discount = parseFloat(document.getElementById('genDiscount').value)||0;
+  const includeOpening = document.getElementById('genIncludeOpening').checked;
+
+  const btn = document.getElementById('genSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Generating...';
+  document.getElementById('genResult').innerHTML = `<div class="card muted">Working through customers in this area — please wait...</div>`;
+
+  try{
+    const areaCustomers = await api('/customers?area_id=' + areaId);
+    const existingInvoices = await api('/invoices?area_id=' + areaId);
+
+    AREA_BATCH_RESULTS = [];
+    for(const cust of areaCustomers){
+      if(cust.is_active === false) continue;
+      const already = existingInvoices.find(inv => inv.customer_id === cust.id && inv.period_start === start && inv.period_end === end);
+      if(already){
+        AREA_BATCH_RESULTS.push({ customer: cust, invoice: already, status: 'skipped' });
+        continue;
+      }
+      try{
+        const invoice = await api('/invoices/generate', {
+          method:'POST',
+          body: JSON.stringify({ customer_id: cust.id, period_start: start, period_end: end, discount, include_opening_balance: includeOpening })
+        });
+        AREA_BATCH_RESULTS.push({ customer: cust, invoice, status: 'created' });
+      }catch(err){
+        AREA_BATCH_RESULTS.push({ customer: cust, invoice: null, status: 'error', error: err.message });
+      }
+    }
+    renderAreaBatchResults();
+    loadInvoices();
+  }catch(err){
+    showToast(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Generate Bills for Area';
+  }
+}
+
+function renderAreaBatchResults(){
+  const created = AREA_BATCH_RESULTS.filter(r=>r.status==='created').length;
+  const skipped = AREA_BATCH_RESULTS.filter(r=>r.status==='skipped').length;
+  const errors = AREA_BATCH_RESULTS.filter(r=>r.status==='error').length;
+  const sendable = AREA_BATCH_RESULTS.filter(r=>r.invoice);
+
+  const rows = AREA_BATCH_RESULTS.map((r,i) => {
+    if(r.status==='error'){
+      return `<tr><td>${r.customer.name}</td><td colspan="2" style="color:var(--danger);">${r.error}</td><td></td></tr>`;
+    }
+    const badge = r.status==='skipped' ? '<span class="badge partial">Already billed</span>' : '<span class="badge paid">Created</span>';
+    return `<tr>
+      <td>${r.customer.name}</td>
+      <td>${r.invoice.invoice_number}</td>
+      <td>${money(r.invoice.total_amount)} ${badge}</td>
+      <td><a class="wa-btn" href="${buildWhatsAppLinkLite(r.customer, r.invoice)}" target="_blank" title="Send via WhatsApp">💬</a></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('genResult').innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <h3 style="font-size:16px;">${created} created, ${skipped} already billed${errors?`, ${errors} failed`:''}</h3>
+        <button class="btn primary" onclick="startSendQueue()" ${sendable.length?'':'disabled'}>Send via WhatsApp (${sendable.length})</button>
+      </div>
+      <p class="muted" style="margin-top:6px;">WhatsApp only allows opening one chat per tap (it can't be automated silently). Tapping "Send via WhatsApp" opens the first customer's chat pre-filled with their bill — hit send there, come back, tap "Next customer", and repeat. Or send individually using the 💬 buttons below.</p>
+      <div id="sendQueueProgress"></div>
+      <table style="margin-top:10px;">
+        <thead><tr><th>Customer</th><th>Invoice #</th><th>Total</th><th>Send</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function buildWhatsAppLinkLite(customer, invoice){
+  const balance = (invoice.total_amount - invoice.amount_paid).toFixed(2);
+  const msg = `Hi ${customer.name}, your ${BUSINESS_NAME} bill ${invoice.invoice_number} for ${monthLabel(invoice.period_start)} is ₹${Number(invoice.total_amount).toFixed(2)}.` +
+    (balance > 0 ? ` Balance due: ₹${balance}.` : ' Fully paid, thank you!') +
+    ` Pay via UPI: ${BUSINESS_UPI}`;
+  return `https://wa.me/${customer.phone}?text=${encodeURIComponent(msg)}`;
+}
+
+/* ---------- One-tap-per-customer WhatsApp send queue ---------- */
+let AREA_SEND_QUEUE = [];
+let AREA_SEND_INDEX = 0;
+
+function startSendQueue(){
+  AREA_SEND_QUEUE = AREA_BATCH_RESULTS.filter(r=>r.invoice);
+  AREA_SEND_INDEX = 0;
+  if(!AREA_SEND_QUEUE.length) return;
+  openCurrentQueueChat();
+  renderSendQueueProgress();
+}
+
+function openCurrentQueueChat(){
+  const r = AREA_SEND_QUEUE[AREA_SEND_INDEX];
+  if(!r) return;
+  window.open(buildWhatsAppLinkLite(r.customer, r.invoice), '_blank');
+}
+
+function advanceSendQueue(){
+  AREA_SEND_INDEX++;
+  if(AREA_SEND_INDEX >= AREA_SEND_QUEUE.length){
+    document.getElementById('sendQueueProgress').innerHTML = `<p class="muted" style="margin-top:10px;">All ${AREA_SEND_QUEUE.length} chats opened — done!</p>`;
+    return;
+  }
+  openCurrentQueueChat();
+  renderSendQueueProgress();
+}
+
+function renderSendQueueProgress(){
+  const r = AREA_SEND_QUEUE[AREA_SEND_INDEX];
+  const el = document.getElementById('sendQueueProgress');
+  el.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:center;margin-top:10px;background:var(--warn-bg);padding:10px 14px;border-radius:9px;">
+      <span style="font-size:13px;">Opened WhatsApp for <strong>${r.customer.name}</strong> (${AREA_SEND_INDEX+1} of ${AREA_SEND_QUEUE.length}) — send it, then come back and tap Next.</span>
+      <button class="btn primary sm" onclick="advanceSendQueue()">Next customer →</button>
+    </div>
+  `;
 }
 
 /* ============================================================
@@ -782,7 +961,11 @@ async function loadInvoices(){
 }
 
 async function deleteInvoice(id, invoiceNumber){
-  if(!confirm(`Delete invoice ${invoiceNumber}? This also removes its payment records. Any un-paid product entries billed on it will become un-billed again so they can be re-added to a future bill.`)) return;
+  const ok = await showConfirm(
+    `Delete invoice ${invoiceNumber}? This also removes its payment records. Any un-paid product entries billed on it will become un-billed again so they can be re-added to a future bill.`,
+    'Delete'
+  );
+  if(!ok) return;
   await api('/invoices/'+id, { method:'DELETE' });
   const el = document.getElementById('invoiceDetailCard');
   if(el) el.remove();
