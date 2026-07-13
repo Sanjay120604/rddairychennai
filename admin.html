@@ -34,7 +34,7 @@
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
   .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(27,42,90,.07);border-left:4px solid var(--amber)}
   .card .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--navy-light);font-weight:700}
-  .card .v{font-size:1.7rem;font-weight:800;font-family:'Playfair Display',serif;margin-top:4px}
+  .card .v{font-size:1.7rem;font-weight:800;font-family:'Nunito',sans-serif;margin-top:4px}
 
   .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
   .tab{background:#fff;border:1.5px solid var(--amber-light);color:var(--navy);padding:9px 18px;border-radius:99px;font-weight:800;cursor:pointer;font-size:.88rem}
@@ -115,6 +115,7 @@
       <button class="tab" data-view="delivery" onclick="switchView('delivery')">🚚 Delivery</button>
       <button class="tab" data-view="ledger" onclick="switchView('ledger')">🥛 Collection</button>
       <button class="tab" data-view="stock" onclick="switchView('stock')">📦 Stocks</button>
+      <button class="tab" onclick="window.location.href='billing/index.html'">💵 Billing</button>
     </div>
 
     <div id="ordersView">
