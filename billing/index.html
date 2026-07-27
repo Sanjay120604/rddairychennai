@@ -157,7 +157,7 @@
       </div>
       <div class="card">
         <table>
-          <thead><tr><th>Name</th><th>Phone</th><th>Area</th><th>Default Milk</th><th>Rate/L</th><th>Opening Bal.</th><th>Delivery</th><th></th></tr></thead>
+          <thead><tr><th>Name</th><th>Phone</th><th>Area</th><th>Milk Type</th><th>Default Milk</th><th>Rate/L</th><th>Opening Bal.</th><th>Delivery</th><th></th></tr></thead>
           <tbody id="customerTableBody"></tbody>
         </table>
         <div class="empty" id="customerEmpty" style="display:none;">No customers yet. Add your first one above.</div>
@@ -389,6 +389,12 @@
     <div class="field"><label>Phone (with 91, no + or spaces)</label><input id="custPhone" placeholder="919080502101"></div>
     <div class="field"><label>Address</label><input id="custAddress"></div>
     <div class="field"><label>Area</label><select id="custArea"></select></div>
+    <div class="field"><label>Milk Type</label>
+      <select id="custMilkType">
+        <option value="A2 Cow Milk">A2 Cow Milk</option>
+        <option value="Buffalo Milk">Buffalo Milk</option>
+      </select>
+    </div>
     <div class="row">
       <div class="field"><label>Default milk qty (L/day)</label><input type="number" step="0.1" id="custMilkQty" value="1"></div>
       <div class="field"><label>Rate per litre (₹)</label><input type="number" step="0.01" id="custMilkRate"></div>
@@ -707,6 +713,7 @@ function renderCustomerTable(){
       <td><strong>${c.name}</strong></td>
       <td>${c.phone}</td>
       <td>${c.areas?.name || '—'}</td>
+      <td>${c.milk_type || 'A2 Cow Milk'}</td>
       <td>${c.default_milk_qty} L/day</td>
       <td>${money(c.default_milk_rate)}</td>
       <td>${money(c.opening_balance)}</td>
@@ -767,6 +774,7 @@ function setupCustomerPickers(){
 function openCustomerModal(){
   document.getElementById('customerModalTitle').textContent = 'Add Customer';
   ['custId','custName','custPhone','custAddress','custArea'].forEach(id=> document.getElementById(id).value='');
+  document.getElementById('custMilkType').value = 'A2 Cow Milk';
   document.getElementById('custMilkQty').value = 1;
   document.getElementById('custMilkRate').value = '';
   document.getElementById('custOpening').value = 0;
@@ -782,6 +790,7 @@ function editCustomer(id){
   document.getElementById('custPhone').value = c.phone;
   document.getElementById('custAddress').value = c.address || '';
   document.getElementById('custArea').value = c.area_id || '';
+  document.getElementById('custMilkType').value = c.milk_type || 'A2 Cow Milk';
   document.getElementById('custMilkQty').value = c.default_milk_qty;
   document.getElementById('custMilkRate').value = c.default_milk_rate;
   document.getElementById('custOpening').value = c.opening_balance;
@@ -795,6 +804,7 @@ async function saveCustomer(){
     phone: document.getElementById('custPhone').value.trim(),
     address: document.getElementById('custAddress').value.trim(),
     area_id: document.getElementById('custArea').value || null,
+    milk_type: document.getElementById('custMilkType').value,
     default_milk_qty: parseFloat(document.getElementById('custMilkQty').value)||0,
     default_milk_rate: parseFloat(document.getElementById('custMilkRate').value)||0,
     opening_balance: parseFloat(document.getElementById('custOpening').value)||0,
