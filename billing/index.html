@@ -59,8 +59,10 @@
   .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
   .grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px;}
   .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
-  .stat .num{font-family:'Playfair Display';font-size:26px;color:var(--navy);font-weight:700;}
+  .stat .num{font-family:'Nunito',sans-serif;font-size:26px;color:var(--navy);font-weight:800;}
   .stat .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .mini-bar-track{background:var(--border);border-radius:6px;height:8px;width:100%;overflow:hidden;}
+  .mini-bar-fill{background:var(--amber);height:100%;border-radius:6px;}
 
   input,select,textarea{font-family:'Nunito';padding:9px 12px;border-radius:9px;border:1px solid var(--border);font-size:14px;background:#fff;color:var(--text);}
   input:focus,select:focus,textarea:focus{outline:2px solid var(--amber);outline-offset:1px;}
@@ -210,7 +212,7 @@
           </div>
         </div>
         <table>
-          <thead><tr><th>Date</th><th>Type</th><th>Qty (L)</th><th>Note</th><th></th></tr></thead>
+          <thead><tr><th>Date</th><th>Customer</th><th>Area</th><th>Type</th><th>Qty (L)</th><th>Note</th><th></th></tr></thead>
           <tbody id="milkLogTableBody"></tbody>
         </table>
         <div class="empty" id="milkLogEmpty" style="display:none;">No exceptions logged for this customer.</div>
@@ -351,28 +353,52 @@
     <!-- ============ REPORTS ============ -->
     <section class="view" id="view-reports">
       <h2 style="margin-bottom:16px;">Reports</h2>
-      <div class="row" style="margin-bottom:16px;">
+      <div class="row" style="margin-bottom:10px;flex-wrap:wrap;">
         <div class="field"><label>From</label><input type="date" id="repFrom"></div>
         <div class="field"><label>To</label><input type="date" id="repTo"></div>
         <button class="btn primary" onclick="loadReports()" style="align-self:flex-end;">Apply</button>
       </div>
+      <div class="row" style="margin-bottom:18px;gap:8px;">
+        <button class="btn ghost sm" onclick="setReportRange('month')">This Month</button>
+        <button class="btn ghost sm" onclick="setReportRange('lastMonth')">Last Month</button>
+        <button class="btn ghost sm" onclick="setReportRange('year')">This Year</button>
+        <button class="btn ghost sm" onclick="setReportRange('all')">All Time</button>
+      </div>
 
       <div class="grid-stats" id="repOverall"></div>
 
-      <div class="row" style="align-items:flex-start;gap:20px;">
-        <div class="card" style="flex:1;min-width:280px;">
+      <div class="row" style="align-items:flex-start;gap:20px;flex-wrap:wrap;">
+        <div class="card" style="flex:2;min-width:320px;">
           <h3 style="font-size:16px;margin-bottom:12px;">By Area</h3>
           <table>
-            <thead><tr><th>Area</th><th>Bills</th><th>Billed</th><th>Collected</th></tr></thead>
+            <thead><tr><th>Area</th><th>Bills</th><th>Billed</th><th>Collected</th><th>Collection Rate</th></tr></thead>
             <tbody id="repAreaBody"></tbody>
           </table>
         </div>
+        <div class="card" style="flex:1;min-width:260px;">
+          <h3 style="font-size:16px;margin-bottom:12px;">Payment Modes</h3>
+          <table>
+            <thead><tr><th>Mode</th><th>Count</th><th>Amount</th></tr></thead>
+            <tbody id="repPaymentModeBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row" style="align-items:flex-start;gap:20px;margin-top:20px;flex-wrap:wrap;">
         <div class="card" style="flex:1;min-width:280px;">
           <h3 style="font-size:16px;margin-bottom:12px;">By Product</h3>
           <table>
             <thead><tr><th>Product</th><th>Qty Sold</th><th>Revenue</th></tr></thead>
             <tbody id="repProductBody"></tbody>
           </table>
+        </div>
+        <div class="card" style="flex:1;min-width:320px;">
+          <h3 style="font-size:16px;margin-bottom:12px;">Top Outstanding Customers</h3>
+          <table>
+            <thead><tr><th>Customer</th><th>Area</th><th>Bills Due</th><th>Outstanding</th></tr></thead>
+            <tbody id="repOutstandingBody"></tbody>
+          </table>
+          <p class="muted" id="repOutstandingEmpty" style="display:none;margin-top:10px;">No outstanding balances in this period.</p>
         </div>
       </div>
     </section>
@@ -592,6 +618,7 @@ async function initApp(){
   loadInvoices();
   loadReports();
   loadProductEntryHistory();
+  loadMilkLogHistory();
 }
 
 function switchView(name){
@@ -726,13 +753,19 @@ function renderCustomerTable(){
 /* ---------- Area-first, then-Customer picker (used everywhere a customer dropdown appears) ---------- */
 const CUSTOMER_PICKERS = []; // {areaId, searchId, customerId, placeholder}
 
-function registerCustomerPicker(areaId, searchId, customerId, placeholder){
+function registerCustomerPicker(areaId, searchId, customerId, placeholder, onFilterChange){
   CUSTOMER_PICKERS.push({ areaId, searchId, customerId, placeholder });
-  document.getElementById(areaId).addEventListener('change', ()=> refreshCustomerPicker(areaId, searchId, customerId, placeholder));
+  document.getElementById(areaId).addEventListener('change', ()=>{
+    refreshCustomerPicker(areaId, searchId, customerId, placeholder);
+    if(onFilterChange) onFilterChange();
+  });
   let searchTimer;
   document.getElementById(searchId).addEventListener('input', ()=>{
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(()=> refreshCustomerPicker(areaId, searchId, customerId, placeholder), 250);
+    searchTimer = setTimeout(()=>{
+      refreshCustomerPicker(areaId, searchId, customerId, placeholder);
+      if(onFilterChange) onFilterChange();
+    }, 250);
   });
 }
 
@@ -760,9 +793,9 @@ function refreshAllCustomerPickers(){
 
 function setupCustomerPickers(){
   registerCustomerPicker('mlArea', 'mlSearch', 'mlCustomer', 'Select customer');
-  registerCustomerPicker('mlHistArea', 'mlHistSearch', 'mlHistoryCustomer', 'Select customer');
+  registerCustomerPicker('mlHistArea', 'mlHistSearch', 'mlHistoryCustomer', 'All customers', loadMilkLogHistory);
   registerCustomerPicker('peArea', 'peSearch', 'peCustomer', 'Select customer');
-  registerCustomerPicker('peFilterArea', 'peFilterSearch', 'peFilterCustomer', 'All customers');
+  registerCustomerPicker('peFilterArea', 'peFilterSearch', 'peFilterCustomer', 'All customers', loadProductEntryHistory);
   registerCustomerPicker('genSingleArea', 'genSingleSearch', 'genCustomer', 'Select customer');
   CUSTOMER_PICKERS.forEach(p=>{
     const areaSel = document.getElementById(p.areaId);
@@ -858,15 +891,25 @@ async function saveMilkLog(){
 }
 async function loadMilkLogHistory(){
   const customer_id = document.getElementById('mlHistoryCustomer').value;
+  const area_id = document.getElementById('mlHistArea').value;
   const body = document.getElementById('milkLogTableBody');
   const empty = document.getElementById('milkLogEmpty');
-  if(!customer_id){ body.innerHTML=''; empty.style.display='block'; empty.textContent='Select a customer to view history.'; return; }
-  const data = await api('/milk-log?customer_id='+customer_id);
-  if(!data.length){ body.innerHTML=''; empty.style.display='block'; empty.textContent='No exceptions logged for this customer.'; return; }
+  const params = new URLSearchParams();
+  if(customer_id) params.set('customer_id', customer_id);
+  if(area_id) params.set('area_id', area_id);
+  const data = await api('/milk-log?' + params.toString());
+  if(!data.length){
+    body.innerHTML='';
+    empty.style.display='block';
+    empty.textContent = 'No exceptions logged for this filter.';
+    return;
+  }
   empty.style.display='none';
   body.innerHTML = data.map(d=>`
     <tr>
       <td>${d.log_date}</td>
+      <td>${d.billing_customers?.name || '—'}</td>
+      <td>${d.billing_customers?.areas?.name || '—'}</td>
       <td>${d.is_leave ? '<span class="badge unpaid">Leave</span>' : '<span class="badge partial">Adjusted</span>'}</td>
       <td>${d.is_leave ? '—' : d.quantity}</td>
       <td>${d.note||'—'}</td>
@@ -913,11 +956,13 @@ function switchProductEntryTab(tab){
 async function loadProductEntryHistory(){
   const customerId = document.getElementById('peFilterCustomer').value;
   const productId = document.getElementById('peFilterProduct').value;
+  const areaId = document.getElementById('peFilterArea').value;
   const body = document.getElementById('productEntryTableBody');
   const empty = document.getElementById('productEntryEmpty');
   const params = new URLSearchParams();
   if(customerId) params.set('customer_id', customerId);
   if(productId) params.set('product_id', productId);
+  if(areaId) params.set('area_id', areaId);
   params.set('invoiced', PE_TAB==='billed' ? 'true' : 'false');
   const data = await api('/product-entries?' + params.toString());
   if(!data.length){
@@ -1639,30 +1684,81 @@ async function savePayment(){
 /* ============================================================
    REPORTS
    ============================================================ */
+function setReportRange(preset){
+  const now = new Date();
+  let start, end;
+  if(preset==='month'){
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end = new Date(now.getFullYear(), now.getMonth()+1, 0);
+  } else if(preset==='lastMonth'){
+    start = new Date(now.getFullYear(), now.getMonth()-1, 1);
+    end = new Date(now.getFullYear(), now.getMonth(), 0);
+  } else if(preset==='year'){
+    start = new Date(now.getFullYear(), 0, 1);
+    end = new Date(now.getFullYear(), 11, 31);
+  } else { // all time
+    start = new Date(2020, 0, 1);
+    end = now;
+  }
+  document.getElementById('repFrom').value = start.toISOString().split('T')[0];
+  document.getElementById('repTo').value = end.toISOString().split('T')[0];
+  loadReports();
+}
+
 async function loadReports(){
   const from = document.getElementById('repFrom').value;
   const to = document.getElementById('repTo').value;
   const params = `?from=${from}&to=${to}`;
-  const [overall, byArea, byProduct] = await Promise.all([
+  const [overall, byArea, byProduct, paymentModes, topOutstanding] = await Promise.all([
     api('/reports/overall'+params),
     api('/reports/by-area'+params),
     api('/reports/by-product'+params),
+    api('/reports/payment-modes'+params),
+    api('/reports/top-outstanding'+params),
   ]);
+
+  const collectionRate = overall.total_billed > 0 ? Math.round((overall.total_collected / overall.total_billed) * 100) : 0;
 
   document.getElementById('repOverall').innerHTML = `
     <div class="stat"><div class="num">${overall.invoice_count}</div><div class="lbl">Invoices</div></div>
     <div class="stat"><div class="num">${money(overall.total_billed)}</div><div class="lbl">Total Billed</div></div>
     <div class="stat"><div class="num">${money(overall.total_collected)}</div><div class="lbl">Collected</div></div>
     <div class="stat"><div class="num">${money(overall.total_outstanding)}</div><div class="lbl">Outstanding</div></div>
+    <div class="stat"><div class="num">${collectionRate}%</div><div class="lbl">Collection Rate</div></div>
   `;
 
-  document.getElementById('repAreaBody').innerHTML = byArea.map(a=>`
-    <tr><td>${a.area}</td><td>${a.count}</td><td>${money(a.billed)}</td><td>${money(a.collected)}</td></tr>
-  `).join('') || '<tr><td colspan="4" class="muted">No data for this period</td></tr>';
+  document.getElementById('repAreaBody').innerHTML = byArea.map(a=>{
+    const rate = a.billed > 0 ? Math.round((a.collected / a.billed) * 100) : 0;
+    return `
+    <tr>
+      <td>${a.area}</td><td>${a.count}</td><td>${money(a.billed)}</td><td>${money(a.collected)}</td>
+      <td>
+        <div class="row" style="gap:8px;align-items:center;flex-wrap:nowrap;">
+          <div class="mini-bar-track" style="max-width:80px;"><div class="mini-bar-fill" style="width:${rate}%;"></div></div>
+          <span style="font-size:12px;color:var(--muted);white-space:nowrap;">${rate}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" class="muted">No data for this period</td></tr>';
 
   document.getElementById('repProductBody').innerHTML = byProduct.map(p=>`
     <tr><td>${p.product}</td><td>${p.total_qty}</td><td>${money(p.total_amount)}</td></tr>
   `).join('') || '<tr><td colspan="3" class="muted">No data for this period</td></tr>';
+
+  document.getElementById('repPaymentModeBody').innerHTML = paymentModes.map(p=>`
+    <tr><td>${p.mode}</td><td>${p.count}</td><td>${money(p.total)}</td></tr>
+  `).join('') || '<tr><td colspan="3" class="muted">No payments in this period</td></tr>';
+
+  const outstandingEmpty = document.getElementById('repOutstandingEmpty');
+  if(!topOutstanding.length){
+    document.getElementById('repOutstandingBody').innerHTML = '';
+    outstandingEmpty.style.display = 'block';
+  } else {
+    outstandingEmpty.style.display = 'none';
+    document.getElementById('repOutstandingBody').innerHTML = topOutstanding.map(c=>`
+      <tr><td>${c.name}</td><td>${c.area}</td><td>${c.invoice_count}</td><td style="font-weight:800;color:var(--danger);">${money(c.outstanding)}</td></tr>
+    `).join('');
+  }
 }
 </script>
 </body>
