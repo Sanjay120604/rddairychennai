@@ -81,7 +81,17 @@
   .dform-actions{display:flex;gap:8px}
   .dsub{font-family:'Playfair Display',serif;margin:0 0 10px;font-size:1.05rem}
   .pw-cell{font-family:monospace;letter-spacing:1px}
+
+  /* landing grid */
+  .landing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:640px;margin:30px auto}
+  @media(max-width:640px){.landing-grid{grid-template-columns:repeat(2,1fr)}}
+  .lbox{background:#fff;border-radius:18px;padding:26px 12px;text-align:center;box-shadow:0 6px 18px rgba(27,42,90,.08);border:1.5px solid var(--amber-light);cursor:pointer;transition:transform .15s,box-shadow .15s}
+  .lbox:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(27,42,90,.15);border-color:var(--amber)}
+  .lbox-ico{font-size:2rem;margin-bottom:8px}
+  .lbox-label{font-weight:800;font-size:.92rem;color:var(--navy)}
+  .back-btn{margin-bottom:16px}
 </style>
+
 </head>
 <body>
 
@@ -107,18 +117,26 @@
   </header>
 
   <div class="wrap">
-    <div class="cards" id="cards"></div>
 
-    <div class="tabs">
-      <button class="tab active" data-view="orders" onclick="switchView('orders')">Orders</button>
-      <button class="tab" data-view="subs" onclick="switchView('subs')">Subscriptions</button>
-      <button class="tab" data-view="delivery" onclick="switchView('delivery')">🚚 Delivery</button>
-      <button class="tab" data-view="ledger" onclick="switchView('ledger')">🥛 Collection</button>
-      <button class="tab" data-view="stock" onclick="switchView('stock')">📦 Stocks</button>
-      <button class="tab" onclick="window.location.href='billing/index.html'">💵 Billing</button>
+    <!-- ============ LANDING GRID (shown first, on entry) ============ -->
+    <div id="landing">
+      <div class="landing-grid">
+        <div class="lbox" onclick="goSection('orders')"><div class="lbox-ico">🧾</div><div class="lbox-label">Orders</div></div>
+        <div class="lbox" onclick="goSection('subs')"><div class="lbox-ico">🔁</div><div class="lbox-label">Subscriptions</div></div>
+        <div class="lbox" onclick="goSection('delivery')"><div class="lbox-ico">🚚</div><div class="lbox-label">Delivery</div></div>
+        <div class="lbox" onclick="goSection('ledger')"><div class="lbox-ico">🥛</div><div class="lbox-label">Collection</div></div>
+        <div class="lbox" onclick="goSection('stock')"><div class="lbox-ico">📦</div><div class="lbox-label">Stocks</div></div>
+        <div class="lbox" onclick="window.location.href='billing/index.html'"><div class="lbox-ico">💵</div><div class="lbox-label">Billing</div></div>
+      </div>
     </div>
 
-    <div id="ordersView">
+    <!-- ============ SECTION CONTENT (hidden until a box is tapped) ============ -->
+    <div id="sections" class="hidden">
+      <button class="btn ghost sm back-btn" onclick="goLanding()">← Dashboard</button>
+
+      <div class="cards" id="cards"></div>
+
+      <div id="ordersView">
       <div class="toolbar">
         <input id="search" placeholder="Search name, mobile, product..." oninput="render()" />
         <button class="btn refresh" onclick="loadData()">↻ Refresh</button>
@@ -256,6 +274,8 @@
         </div>
       </div>
     </div>
+
+    </div><!-- /#sections -->
   </div>
 </div>
 
@@ -344,11 +364,21 @@ async function enter(){
   sessionStorage.setItem(ADMIN_SESSION, adminKey);
   $("gate").classList.add("hidden");
   $("dash").classList.remove("hidden");
-  renderCards(); render();
   loadData(); // fetch orders/subscriptions in the background; unlock doesn't wait on it
 }
 
 function logout(){ sessionStorage.removeItem(ADMIN_SESSION); location.reload(); }
+
+function goSection(v){
+  $("landing").classList.add("hidden");
+  $("sections").classList.remove("hidden");
+  switchView(v);
+}
+
+function goLanding(){
+  $("sections").classList.add("hidden");
+  $("landing").classList.remove("hidden");
+}
 
 async function loadData(){
   try{
