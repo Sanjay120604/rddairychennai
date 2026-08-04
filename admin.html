@@ -82,6 +82,17 @@
   .dsub{font-family:'Playfair Display',serif;margin:0 0 10px;font-size:1.05rem}
   .pw-cell{font-family:monospace;letter-spacing:1px}
 
+  /* reports */
+  .rchart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:820px){.rchart-grid{grid-template-columns:1fr}}
+  .rchart-card{background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 6px 18px rgba(27,42,90,.07);border-left:4px solid var(--amber)}
+  .rchart-card h4{font-family:'Playfair Display',serif;font-size:.98rem;margin-bottom:12px}
+  .rchart-card.wide{grid-column:1/-1}
+  .rchart-card canvas{max-height:280px}
+  .rmini{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--amber-pale);font-size:.85rem}
+  .rmini:first-child{border-top:none}
+  .rmini b{color:var(--navy)}
+
   /* landing grid */
   .landing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:640px;margin:30px auto}
   @media(max-width:640px){.landing-grid{grid-template-columns:repeat(2,1fr)}}
@@ -127,6 +138,8 @@
         <div class="lbox" onclick="goSection('ledger')"><div class="lbox-ico">🥛</div><div class="lbox-label">Collection</div></div>
         <div class="lbox" onclick="goSection('stock')"><div class="lbox-ico">📦</div><div class="lbox-label">Stocks</div></div>
         <div class="lbox" onclick="window.location.href='billing/index.html'"><div class="lbox-ico">💵</div><div class="lbox-label">Billing</div></div>
+        <div class="lbox" onclick="goSection('expenses')"><div class="lbox-ico">💰</div><div class="lbox-label">Expenses</div></div>
+        <div class="lbox" onclick="goSection('reports')"><div class="lbox-ico">📊</div><div class="lbox-label">Reports</div></div>
       </div>
     </div>
 
@@ -275,6 +288,148 @@
       </div>
     </div>
 
+    <!-- ============ EXPENSES VIEW ============ -->
+    <div id="expensesView" class="hidden">
+
+      <div class="dcard">
+        <h3 id="eFormTitle">Add expense</h3>
+        <div class="dform" style="grid-template-columns:1.2fr 1fr 1fr 1fr auto">
+          <div>
+            <label>Category</label>
+            <input id="eCategory" list="eCategoryList" placeholder="e.g. Fuel" />
+            <datalist id="eCategoryList">
+              <option value="Fuel"></option>
+              <option value="Electricity"></option>
+              <option value="Delivery Salary"></option>
+              <option value="Driver Salary"></option>
+              <option value="Worker Salary"></option>
+              <option value="Rent"></option>
+              <option value="Packaging"></option>
+              <option value="Maintenance"></option>
+              <option value="Misc"></option>
+            </datalist>
+          </div>
+          <div>
+            <label>Paid to (optional)</label>
+            <input id="ePaidTo" placeholder="e.g. Suresh" />
+          </div>
+          <div>
+            <label>Amount (₹)</label>
+            <input id="eAmount" type="number" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input id="eDate" type="date" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn" id="eSaveBtn" onclick="saveExpense()">Add</button>
+            <button class="btn ghost hidden" id="eCancelBtn" onclick="resetExpenseForm()">Cancel</button>
+          </div>
+        </div>
+        <div class="dform" style="grid-template-columns:2fr auto;margin-top:12px">
+          <div>
+            <label>Notes (optional)</label>
+            <input id="eNotes" placeholder="e.g. generator diesel top-up" />
+          </div>
+          <div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input id="eRecurring" type="checkbox" style="width:auto" /> Recurring monthly
+            </label>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="eErr"></div>
+      </div>
+
+      <div class="dcard">
+        <div class="dform" style="grid-template-columns:1fr auto auto">
+          <div>
+            <label>Month</label>
+            <input id="eMonth" type="month" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn ghost" onclick="loadExpenses()">Load</button>
+          </div>
+          <div class="dform-actions">
+            <button class="btn ghost" onclick="copyRecurringExpenses()">⤵ Copy from previous month</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="muted" id="eSummary" style="flex:1"></div>
+        <button class="btn ghost sm" onclick="exportExpenseExcel()">⬇ Excel</button>
+        <button class="btn ghost sm" onclick="exportExpensePDF()">⬇ PDF</button>
+      </div>
+      <div class="table-wrap">
+        <div id="eTableArea"><div class="empty">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ============ REPORTS VIEW ============ -->
+    <div id="reportsView" class="hidden">
+
+      <div class="dcard">
+        <div class="dform" style="grid-template-columns:1fr 1fr auto">
+          <div>
+            <label>Month</label>
+            <input id="rMonth" type="month" />
+          </div>
+          <div>
+            <label>Trend range</label>
+            <select id="rTrendMonths">
+              <option value="1">Current month</option>
+              <option value="2">Last month</option>
+              <option value="3">Last 3 months</option>
+              <option value="6" selected>Last 6 months</option>
+              <option value="12">Last 12 months</option>
+            </select>
+          </div>
+          <div class="dform-actions">
+            <button class="btn" onclick="loadReport()">Load</button>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="rErr"></div>
+      </div>
+
+      <div id="reportsResult" class="hidden">
+        <div class="cards" id="rCards"></div>
+
+        <div class="rchart-grid">
+          <div class="rchart-card wide">
+            <h4>Revenue vs Cost vs Profit — trend</h4>
+            <canvas id="rTrendChart"></canvas>
+          </div>
+
+          <div class="rchart-card">
+            <h4>Website — top products (this month)</h4>
+            <canvas id="rWebsiteProductChart"></canvas>
+          </div>
+          <div class="rchart-card">
+            <h4>Billing — product-wise (this month)</h4>
+            <canvas id="rBillingProductChart"></canvas>
+          </div>
+
+          <div class="rchart-card">
+            <h4>Billing — area-wise revenue (this month)</h4>
+            <canvas id="rAreaChart"></canvas>
+          </div>
+          <div class="rchart-card">
+            <h4>Payments by mode (this month)</h4>
+            <canvas id="rPaymentModeChart"></canvas>
+          </div>
+
+          <div class="rchart-card">
+            <h4>Expenses by category (this month)</h4>
+            <canvas id="rExpenseChart"></canvas>
+          </div>
+          <div class="rchart-card">
+            <h4>Operational summary</h4>
+            <div id="rOpsSummary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     </div><!-- /#sections -->
   </div>
 </div>
@@ -283,6 +438,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 
 <script>
 /* ⚙️ Admin password — checked instantly in the browser so unlocking feels
@@ -302,6 +458,10 @@ var DELIVERY_ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 /* ⚙️ Supabase — Collection backend (suppliers + milk collections) */
 var COLLECTION_API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/collection";
 var COLLECTION_ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
+
+/* ⚙️ Reports backend (reads across orders/subscriptions/expenses/billing/collection) */
+var REPORTS_API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/reports";
+var REPORTS_ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
 /* ⚙️ RD Dairy business details (for the printed bill / tax invoice) */
 var BIZ_NAME = "RD Dairy";
@@ -352,6 +512,16 @@ async function cApi(payload){
   return res.json();
 }
 
+/* talks to the Supabase reports Edge Function */
+async function rApi(payload){
+  var res = await fetch(REPORTS_API_URL,{method:"POST",headers:{
+    "Content-Type":"application/json",
+    "Authorization":"Bearer "+REPORTS_ANON_KEY,
+    "apikey":REPORTS_ANON_KEY
+  },body:JSON.stringify(payload)});
+  return res.json();
+}
+
 async function enter(){
   var key = $("adminKey").value.trim();
   if(!key) return;
@@ -393,11 +563,15 @@ function switchView(v){
   var isDelivery = (v==="delivery");
   var isLedger = (v==="ledger");
   var isStock = (v==="stock");
-  var isOrders = !isDelivery && !isLedger && !isStock;
+  var isExpenses = (v==="expenses");
+  var isReports = (v==="reports");
+  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
   $("stockView").classList.toggle("hidden", !isStock);
+  $("expensesView").classList.toggle("hidden", !isExpenses);
+  $("reportsView").classList.toggle("hidden", !isReports);
   if(isDelivery){
     if(!driversLoaded){ loadDrivers(); driversLoaded=true; }
     renderDeliveryCards();
@@ -407,6 +581,14 @@ function switchView(v){
   }else if(isStock){
     if(!$("stockMonth").value){ $("stockMonth").value = new Date().toISOString().slice(0,7); }
     renderStockCards();
+  }else if(isExpenses){
+    if(!$("eMonth").value){ $("eMonth").value = new Date().toISOString().slice(0,7); }
+    if(!$("eDate").value){ $("eDate").value = todayISTDate(); }
+    loadExpenses();
+  }else if(isReports){
+    if(!$("rMonth").value){ $("rMonth").value = new Date().toISOString().slice(0,7); }
+    $("cards").innerHTML = "";
+    loadReport();
   }else{
     renderCards();
     render();
@@ -825,6 +1007,327 @@ function exportStockPDF(){
   });
   doc.autoTable({ startY:22, head:[cols.map(function(c){return c.label;})], body: body });
   doc.save(stockTypeCur+"_"+$("stockMonth").value+".pdf");
+}
+
+/* ============================================================
+   EXPENSES (Supabase, via store Edge Function) — month-wise
+   ============================================================ */
+var expenseRows = [];
+var editingExpenseId = null;
+
+function eShowErr(msg){ var e=$("eErr"); e.textContent=msg; e.classList.remove("hidden"); }
+function eClearErr(){ $("eErr").classList.add("hidden"); }
+
+async function loadExpenses(){
+  var month = $("eMonth").value;
+  eClearErr();
+  if(!month){ eShowErr("Select a month"); return; }
+  $("eTableArea").innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    var r = await api({action:"listExpenses", adminKey:adminKey, month:month});
+    if(r.success){
+      expenseRows = r.expenses||[];
+      renderExpenseTable();
+      renderExpenseCards();
+    }else{
+      $("eTableArea").innerHTML = '<div class="empty">'+esc(r.message||"Could not load expenses")+'</div>';
+    }
+  }catch(e){
+    $("eTableArea").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
+  }
+}
+
+async function renderExpenseCards(){
+  var month = $("eMonth").value;
+  if(!month) return;
+  try{
+    var r = await api({action:"getExpenseSummary", adminKey:adminKey, month:month, trendMonths:1});
+    if(!r.success) return;
+    var cards = [["Total This Month", "₹"+Number(r.total||0).toFixed(2)]];
+    (r.byCategory||[]).forEach(function(c){
+      cards.push([c.category, "₹"+Number(c.amount).toFixed(2)]);
+    });
+    $("cards").innerHTML = cardsHtml(cards);
+  }catch(e){ /* leave existing cards on failure */ }
+}
+
+function renderExpenseTable(){
+  $("eSummary").innerHTML = '<b>'+esc($("eMonth").value)+'</b> · '+expenseRows.length+' entries';
+  if(!expenseRows.length){
+    $("eTableArea").innerHTML = '<div class="empty">No expenses logged for this month.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Category</th><th>Paid To</th><th>Amount</th><th>Date</th><th>Recurring</th><th>Notes</th><th></th></tr></thead><tbody>';
+  expenseRows.forEach(function(r){
+    html += '<tr>'+
+      '<td>'+esc(r.Category)+'</td>'+
+      '<td>'+esc(r.PaidTo)+'</td>'+
+      '<td>₹'+Number(r.Amount).toFixed(2)+'</td>'+
+      '<td>'+esc(r.ExpenseDate)+'</td>'+
+      '<td>'+(r.IsRecurring?'<span class="pill paid">Yes</span>':'')+'</td>'+
+      '<td>'+esc(r.Notes)+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn ghost sm" onclick=\'editExpense("'+r.Id+'")\'>Edit</button> '+
+        '<button class="btn danger sm" onclick=\'deleteExpenseRow("'+r.Id+'")\'>Delete</button>'+
+      '</td>'+
+    '</tr>';
+  });
+  html += '</tbody></table>';
+  $("eTableArea").innerHTML = html;
+}
+
+function resetExpenseForm(){
+  editingExpenseId = null;
+  $("eCategory").value = "";
+  $("ePaidTo").value = "";
+  $("eAmount").value = "";
+  $("eDate").value = todayISTDate();
+  $("eNotes").value = "";
+  $("eRecurring").checked = false;
+  $("eFormTitle").textContent = "Add expense";
+  $("eSaveBtn").textContent = "Add";
+  $("eCancelBtn").classList.add("hidden");
+  eClearErr();
+}
+
+function editExpense(id){
+  var r = expenseRows.filter(function(x){ return x.Id===id; })[0];
+  if(!r) return;
+  editingExpenseId = id;
+  $("eCategory").value = r.Category;
+  $("ePaidTo").value = r.PaidTo;
+  $("eAmount").value = r.Amount;
+  $("eDate").value = r.ExpenseDate;
+  $("eNotes").value = r.Notes;
+  $("eRecurring").checked = !!r.IsRecurring;
+  $("eFormTitle").textContent = "Edit expense";
+  $("eSaveBtn").textContent = "Save";
+  $("eCancelBtn").classList.remove("hidden");
+  eClearErr();
+  $("eCategory").scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+async function saveExpense(){
+  eClearErr();
+  var category = $("eCategory").value.trim();
+  var amount = Number($("eAmount").value);
+  var month = $("eMonth").value;
+  if(!category){ eShowErr("Category is required"); return; }
+  if(!amount || amount<=0){ eShowErr("Enter a valid amount"); return; }
+  if(!month){ eShowErr("Select a month first"); return; }
+
+  var payload = {
+    adminKey: adminKey,
+    category: category,
+    paidTo: $("ePaidTo").value.trim(),
+    amount: amount,
+    month: month,
+    expenseDate: $("eDate").value || undefined,
+    isRecurring: $("eRecurring").checked,
+    notes: $("eNotes").value.trim()
+  };
+  try{
+    var r;
+    if(editingExpenseId){
+      payload.id = editingExpenseId;
+      r = await api(Object.assign({action:"updateExpense"}, payload));
+    }else{
+      r = await api(Object.assign({action:"addExpense"}, payload));
+    }
+    if(r.success){
+      resetExpenseForm();
+      loadExpenses();
+    }else{
+      eShowErr(r.message||"Could not save expense");
+    }
+  }catch(e){ eShowErr(e.message); }
+}
+
+async function deleteExpenseRow(id){
+  if(!confirm("Delete this expense entry?")) return;
+  try{
+    var r = await api({action:"deleteExpense", adminKey:adminKey, id:id});
+    if(r.success) loadExpenses();
+    else alert(r.message||"Could not delete expense");
+  }catch(e){ alert(e.message); }
+}
+
+async function copyRecurringExpenses(){
+  var toMonth = $("eMonth").value;
+  if(!toMonth){ eShowErr("Select the target month first"); return; }
+  var d = new Date(toMonth+"-01T00:00:00");
+  d.setMonth(d.getMonth()-1);
+  var fromMonth = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+  if(!confirm("Copy recurring expenses from "+fromMonth+" into "+toMonth+"?")) return;
+  try{
+    var r = await api({action:"copyRecurringExpenses", adminKey:adminKey, fromMonth:fromMonth, toMonth:toMonth});
+    if(r.success){
+      alert(r.message);
+      loadExpenses();
+    }else{
+      alert(r.message||"Could not copy recurring expenses");
+    }
+  }catch(e){ alert(e.message); }
+}
+
+function exportExpenseExcel(){
+  if(!expenseRows.length){ alert("Load a month first."); return; }
+  var rows = expenseRows.map(function(r){
+    return {
+      Category: r.Category, "Paid To": r.PaidTo, Amount: r.Amount,
+      Date: r.ExpenseDate, Recurring: r.IsRecurring?"Yes":"No", Notes: r.Notes
+    };
+  });
+  var ws = XLSX.utils.json_to_sheet(rows);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+  XLSX.writeFile(wb, "Expenses_"+$("eMonth").value+".xlsx");
+}
+
+function exportExpensePDF(){
+  if(!expenseRows.length){ alert("Load a month first."); return; }
+  var doc = new jspdf.jsPDF();
+  doc.setFontSize(14);
+  doc.text("Expenses — "+$("eMonth").value, 14, 15);
+  var total = expenseRows.reduce(function(s,r){ return s+Number(r.Amount||0); },0);
+  var body = expenseRows.map(function(r){
+    return [r.Category, r.PaidTo||"", "Rs."+Number(r.Amount).toFixed(2), r.ExpenseDate||"", r.IsRecurring?"Yes":"", r.Notes||""];
+  });
+  body.push(["", "", "Rs."+total.toFixed(2), "Total", "", ""]);
+  doc.autoTable({
+    startY:22,
+    head:[["Category","Paid To","Amount","Date","Recurring","Notes"]],
+    body: body,
+    headStyles:{fillColor:[245,168,0], textColor:[27,42,90]},
+    styles:{fontSize:9}
+  });
+  doc.save("Expenses_"+$("eMonth").value+".pdf");
+}
+
+/* ============================================================
+   REPORTS (Supabase, via reports Edge Function)
+   ============================================================ */
+var lastReport = null;
+var reportCharts = {}; // canvas id -> Chart.js instance, so reload destroys old ones first
+
+var CHART_COLORS = ["#F5A800","#1B2A5A","#2D3F7A","#C47E00","#2e7d32","#c0392b","#6b4fbb","#1565c0"];
+
+function rShowErr(msg){ var e=$("rErr"); e.textContent=msg; e.classList.remove("hidden"); }
+function rClearErr(){ $("rErr").classList.add("hidden"); }
+
+function destroyChart(id){
+  if(reportCharts[id]){ reportCharts[id].destroy(); delete reportCharts[id]; }
+}
+
+async function loadReport(){
+  var month = $("rMonth").value;
+  var trendMonths = Number($("rTrendMonths").value)||6;
+  rClearErr();
+  if(!month){ rShowErr("Select a month"); return; }
+  $("reportsResult").classList.add("hidden");
+  try{
+    var r = await rApi({action:"getReport", adminKey:adminKey, month:month, trendMonths:trendMonths});
+    if(r.success){
+      lastReport = r;
+      renderReportCards(r);
+      renderReportCharts(r);
+      $("reportsResult").classList.remove("hidden");
+    }else{
+      rShowErr(r.message||"Could not load report");
+    }
+  }catch(e){ rShowErr(e.message); }
+}
+
+function renderReportCards(r){
+  $("rCards").innerHTML = cardsHtml([
+    ["Revenue (this month)", "₹"+Number(r.revenue).toFixed(2)],
+    ["Cost (this month)", "₹"+Number(r.cost).toFixed(2)],
+    ["Net Profit", "₹"+Number(r.profit).toFixed(2)],
+    ["Active Subscriptions", r.website.activeSubscriptions],
+    ["Billing Outstanding", "₹"+Number(r.billing.totalOutstanding).toFixed(2)]
+  ]);
+}
+
+function renderReportCharts(r){
+  // ---- trend: revenue vs cost vs profit ----
+  destroyChart("rTrendChart");
+  reportCharts.rTrendChart = new Chart($("rTrendChart"), {
+    type:"line",
+    data:{
+      labels: r.trend.map(function(t){ return t.month; }),
+      datasets:[
+        { label:"Revenue", data:r.trend.map(function(t){return t.revenue;}), borderColor:"#2e7d32", backgroundColor:"#2e7d3222", tension:.3 },
+        { label:"Cost", data:r.trend.map(function(t){return t.cost;}), borderColor:"#c0392b", backgroundColor:"#c0392b22", tension:.3 },
+        { label:"Profit", data:r.trend.map(function(t){return t.profit;}), borderColor:"#1B2A5A", backgroundColor:"#1B2A5A22", tension:.3 }
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:"bottom"}} }
+  });
+
+  // ---- website top products ----
+  destroyChart("rWebsiteProductChart");
+  var wp = r.website.topProducts||[];
+  reportCharts.rWebsiteProductChart = new Chart($("rWebsiteProductChart"), {
+    type:"bar",
+    data:{ labels: wp.map(function(p){return p.product;}), datasets:[{ label:"Orders", data:wp.map(function(p){return p.count;}), backgroundColor:CHART_COLORS }] },
+    options:{ responsive:true, plugins:{legend:{display:false}} }
+  });
+
+  // ---- billing product-wise ----
+  destroyChart("rBillingProductChart");
+  var bp = r.billing.byProduct||[];
+  reportCharts.rBillingProductChart = new Chart($("rBillingProductChart"), {
+    type:"bar",
+    data:{ labels: bp.map(function(p){return p.product;}), datasets:[{ label:"Amount (₹)", data:bp.map(function(p){return p.total_amount;}), backgroundColor:CHART_COLORS }] },
+    options:{ responsive:true, plugins:{legend:{display:false}} }
+  });
+
+  // ---- area-wise revenue ----
+  destroyChart("rAreaChart");
+  var ba = r.billing.byArea||[];
+  reportCharts.rAreaChart = new Chart($("rAreaChart"), {
+    type:"bar",
+    data:{
+      labels: ba.map(function(a){return a.area;}),
+      datasets:[
+        { label:"Billed", data:ba.map(function(a){return a.billed;}), backgroundColor:"#F5A800" },
+        { label:"Collected", data:ba.map(function(a){return a.collected;}), backgroundColor:"#1B2A5A" }
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:"bottom"}} }
+  });
+
+  // ---- payment modes ----
+  destroyChart("rPaymentModeChart");
+  var pm = r.billing.paymentModes||[];
+  reportCharts.rPaymentModeChart = new Chart($("rPaymentModeChart"), {
+    type:"doughnut",
+    data:{ labels: pm.map(function(m){return m.mode;}), datasets:[{ data:pm.map(function(m){return m.total;}), backgroundColor:CHART_COLORS }] },
+    options:{ responsive:true, plugins:{legend:{position:"bottom"}} }
+  });
+
+  // ---- expenses by category ----
+  destroyChart("rExpenseChart");
+  var ec = r.expenses.byCategory||[];
+  reportCharts.rExpenseChart = new Chart($("rExpenseChart"), {
+    type:"doughnut",
+    data:{ labels: ec.map(function(c){return c.category;}), datasets:[{ data:ec.map(function(c){return c.amount;}), backgroundColor:CHART_COLORS }] },
+    options:{ responsive:true, plugins:{legend:{position:"bottom"}} }
+  });
+
+  // ---- operational summary (procurement + stock) — plain numbers, no chart needed ----
+  $("rOpsSummary").innerHTML = [
+    ["Milk procured", Number(r.procurement.totalLitres).toFixed(1)+" L"],
+    ["Paid to suppliers", "₹"+Number(r.procurement.totalPaid).toFixed(2)],
+    ["Avg rate / litre", "₹"+Number(r.procurement.avgRatePerLitre).toFixed(2)],
+    ["Packets packed", r.stock.packetsPacked],
+    ["Ghee prepared", Number(r.stock.gheeAdded).toFixed(2)+" L"],
+    ["Paneer prepared", Number(r.stock.paneerAdded).toFixed(2)+" kg"],
+    ["New subscriptions", r.website.newSubscriptions],
+    ["Cancelled subscriptions", r.website.cancelledSubscriptions]
+  ].map(function(row){
+    return '<div class="rmini"><span>'+esc(row[0])+'</span><b>'+esc(String(row[1]))+'</b></div>';
+  }).join("");
 }
 
 function generateBillPDF(){
