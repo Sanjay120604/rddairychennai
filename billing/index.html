@@ -1442,6 +1442,7 @@ function buildInvoicePdfDoc(inv){
   doc.text('Scan to pay via UPI', 14 + qrSize + 8, qrTop + 18);
   doc.setFont(undefined, 'normal'); doc.setFontSize(9); doc.setTextColor(...DARK);
   doc.text(`UPI ID: ${BUSINESS_UPI}`, 14 + qrSize + 8, qrTop + 25);
+  doc.text(`UPI Number: 9080502101`, 14 + qrSize + 8, qrTop + 31);
 
   y = qrTop + qrSize + 12;
   if(y > 235){ doc.addPage(); y = 20; }
@@ -1561,6 +1562,7 @@ function buildInvoiceHTMLString(inv){
           <div style="font-size:12.5px;">
             <div style="font-weight:800;color:#1B2A5A;">Scan to pay via UPI</div>
             <div style="margin-top:2px;">UPI ID: ${BUSINESS_UPI}</div>
+            <div style="margin-top:2px;">UPI Number: 9080502101</div>
           </div>
         </div>
         <div style="font-size:12px;line-height:1.6;">
