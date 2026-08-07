@@ -292,76 +292,125 @@
     <div id="expensesView" class="hidden">
 
       <div class="dcard">
-        <h3 id="eFormTitle">Add expense</h3>
-        <div class="dform" style="grid-template-columns:1.2fr 1fr 1fr 1fr auto">
-          <div>
-            <label>Category</label>
-            <input id="eCategory" list="eCategoryList" placeholder="e.g. Fuel" />
-            <datalist id="eCategoryList">
-              <option value="Fuel"></option>
-              <option value="Electricity"></option>
-              <option value="Delivery Salary"></option>
-              <option value="Driver Salary"></option>
-              <option value="Worker Salary"></option>
-              <option value="Rent"></option>
-              <option value="Packaging"></option>
-              <option value="Maintenance"></option>
-              <option value="Misc"></option>
-            </datalist>
-          </div>
-          <div>
-            <label>Paid to (optional)</label>
-            <input id="ePaidTo" placeholder="e.g. Suresh" />
-          </div>
-          <div>
-            <label>Amount (₹)</label>
-            <input id="eAmount" type="number" step="0.01" placeholder="0.00" />
-          </div>
-          <div>
-            <label>Date</label>
-            <input id="eDate" type="date" />
-          </div>
-          <div class="dform-actions">
-            <button class="btn" id="eSaveBtn" onclick="saveExpense()">Add</button>
-            <button class="btn ghost hidden" id="eCancelBtn" onclick="resetExpenseForm()">Cancel</button>
-          </div>
-        </div>
-        <div class="dform" style="grid-template-columns:2fr auto;margin-top:12px">
-          <div>
-            <label>Notes (optional)</label>
-            <input id="eNotes" placeholder="e.g. generator diesel top-up" />
-          </div>
-          <div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-              <input id="eRecurring" type="checkbox" style="width:auto" /> Recurring monthly
-            </label>
-          </div>
-        </div>
-        <div class="err-msg hidden" id="eErr"></div>
-      </div>
-
-      <div class="dcard">
-        <div class="dform" style="grid-template-columns:1fr auto auto">
+        <div class="dform" style="grid-template-columns:1fr auto">
           <div>
             <label>Month</label>
-            <input id="eMonth" type="month" />
+            <input id="eMonth" type="month" onchange="loadExpenses()" />
           </div>
           <div class="dform-actions">
             <button class="btn ghost" onclick="loadExpenses()">Load</button>
           </div>
-          <div class="dform-actions">
-            <button class="btn ghost" onclick="copyRecurringExpenses()">⤵ Copy from previous month</button>
-          </div>
         </div>
       </div>
 
+      <div class="cards" id="eCards"></div>
+
+      <!-- ---- Direct / day-to-day expenses (CNG, electricity, petrol, repairs, etc.) ---- -->
+      <div class="dcard">
+        <h3 id="eeFormTitle">Log an expense</h3>
+        <div class="dform" style="grid-template-columns:1.3fr 1fr 1fr 2fr auto">
+          <div>
+            <label>Category</label>
+            <input id="eeCategory" />
+          </div>
+          <div>
+            <label>Amount (₹)</label>
+            <input id="eeAmount" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input id="eeDate" type="date" />
+          </div>
+          <div>
+            <label>Notes (optional)</label>
+            <input id="eeNotes" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn" id="eeSaveBtn" onclick="saveExpenseEntry()">Add</button>
+            <button class="btn ghost hidden" id="eeCancelBtn" onclick="resetExpenseEntryForm()">Cancel</button>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="eeErr"></div>
+      </div>
+
       <div class="toolbar">
-        <div class="muted" id="eSummary" style="flex:1"></div>
-        <button class="btn ghost sm" onclick="exportExpenseExcel()">⬇ Excel</button>
-        <button class="btn ghost sm" onclick="exportExpensePDF()">⬇ PDF</button>
+        <div class="muted" id="eeSummary" style="flex:1"></div>
+        <button class="btn ghost sm" onclick="exportExpenseEntryExcel()">⬇ Excel</button>
+        <button class="btn ghost sm" onclick="exportExpenseEntryPDF()">⬇ PDF</button>
       </div>
       <div class="table-wrap">
-        <div id="eTableArea"><div class="empty">Loading…</div></div>
+        <div id="eeTableArea"><div class="empty">Loading…</div></div>
+      </div>
+
+      <!-- ---- Salary / staff payments (delivery boys, drivers, workers, etc.) ---- -->
+      <div class="dcard" style="margin-top:24px">
+        <h3 id="spFormTitle">Add a category &amp; person</h3>
+        <div class="muted" style="margin-bottom:10px;font-size:.85rem">
+          e.g. Category "Delivery Boys Salary", Person "Ravi", Salary ₹15,000 — then log payments to Ravi below as you pay him through the month.
+        </div>
+        <div class="dform" style="grid-template-columns:1.3fr 1fr 1fr 2fr auto">
+          <div>
+            <label>Category</label>
+            <input id="spCategory" />
+          </div>
+          <div>
+            <label>Person name</label>
+            <input id="spPerson" />
+          </div>
+          <div>
+            <label>Salary for the month (₹)</label>
+            <input id="spSalary" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Notes (optional)</label>
+            <input id="spNotes" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn" id="spSaveBtn" onclick="saveSalaryPerson()">Add</button>
+            <button class="btn ghost hidden" id="spCancelBtn" onclick="resetSalaryPersonForm()">Cancel</button>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="spErr"></div>
+      </div>
+
+      <div class="table-wrap">
+        <div id="spTableArea"><div class="empty">Loading…</div></div>
+      </div>
+
+      <div class="dcard">
+        <h3>Log a payment</h3>
+        <div class="dform" style="grid-template-columns:1.3fr 1fr 1fr 2fr auto">
+          <div>
+            <label>Person</label>
+            <select id="payPersonId"></select>
+          </div>
+          <div>
+            <label>Amount paid (₹)</label>
+            <input id="payAmount" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input id="payDate" type="date" />
+          </div>
+          <div>
+            <label>Notes (optional)</label>
+            <input id="payNotes" />
+          </div>
+          <div class="dform-actions">
+            <button class="btn" onclick="saveSalaryPayment()">Save Payment</button>
+          </div>
+        </div>
+        <div class="err-msg hidden" id="payErr"></div>
+      </div>
+
+      <div id="payHistoryWrap" class="hidden">
+        <div class="toolbar">
+          <div class="muted" id="payHistoryTitle" style="flex:1"></div>
+          <button class="btn ghost sm" onclick="closePaymentHistory()">Close</button>
+        </div>
+        <div class="table-wrap">
+          <div id="payHistoryArea"></div>
+        </div>
       </div>
     </div>
 
@@ -438,7 +487,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.4/chart.umd.min.js"></script>
 
 <script>
 /* ⚙️ Admin password — checked instantly in the browser so unlocking feels
@@ -583,7 +632,8 @@ function switchView(v){
     renderStockCards();
   }else if(isExpenses){
     if(!$("eMonth").value){ $("eMonth").value = new Date().toISOString().slice(0,7); }
-    if(!$("eDate").value){ $("eDate").value = todayISTDate(); }
+    if(!$("eeDate").value){ $("eeDate").value = todayISTDate(); }
+    if(!$("payDate").value){ $("payDate").value = todayISTDate(); }
     loadExpenses();
   }else if(isReports){
     if(!$("rMonth").value){ $("rMonth").value = new Date().toISOString().slice(0,7); }
@@ -1011,172 +1061,148 @@ function exportStockPDF(){
 
 /* ============================================================
    EXPENSES (Supabase, via store Edge Function) — month-wise
+   Two independent tracks:
+     1. Direct expense entries (CNG, electricity, petrol, repairs, etc.)
+     2. Salary/staff: a person + their target salary for the month,
+        with payments logged against them over time.
    ============================================================ */
-var expenseRows = [];
-var editingExpenseId = null;
+var expenseEntryRows = [];
+var editingExpenseEntryId = null;
+var salaryPersonRows = [];
+var editingSalaryPersonId = null;
+var activePaymentPersonId = null;
 
-function eShowErr(msg){ var e=$("eErr"); e.textContent=msg; e.classList.remove("hidden"); }
-function eClearErr(){ $("eErr").classList.add("hidden"); }
+function eeShowErr(msg){ var e=$("eeErr"); e.textContent=msg; e.classList.remove("hidden"); }
+function eeClearErr(){ $("eeErr").classList.add("hidden"); }
+function spShowErr(msg){ var e=$("spErr"); e.textContent=msg; e.classList.remove("hidden"); }
+function spClearErr(){ $("spErr").classList.add("hidden"); }
+function payShowErr(msg){ var e=$("payErr"); e.textContent=msg; e.classList.remove("hidden"); }
+function payClearErr(){ $("payErr").classList.add("hidden"); }
 
 async function loadExpenses(){
   var month = $("eMonth").value;
-  eClearErr();
-  if(!month){ eShowErr("Select a month"); return; }
-  $("eTableArea").innerHTML = '<div class="empty">Loading…</div>';
+  if(!month) return;
+  await Promise.all([ loadExpenseEntries(), loadSalaryPersons() ]);
+  renderExpenseCards();
+}
+
+/* ---------------- direct expense entries ---------------- */
+
+async function loadExpenseEntries(){
+  var month = $("eMonth").value;
+  eeClearErr();
+  if(!month){ eeShowErr("Select a month"); return; }
+  $("eeTableArea").innerHTML = '<div class="empty">Loading…</div>';
   try{
-    var r = await api({action:"listExpenses", adminKey:adminKey, month:month});
+    var r = await api({action:"listExpenseEntries", adminKey:adminKey, month:month});
     if(r.success){
-      expenseRows = r.expenses||[];
-      renderExpenseTable();
-      renderExpenseCards();
+      expenseEntryRows = r.entries||[];
+      renderExpenseEntryTable();
     }else{
-      $("eTableArea").innerHTML = '<div class="empty">'+esc(r.message||"Could not load expenses")+'</div>';
+      $("eeTableArea").innerHTML = '<div class="empty">'+esc(r.message||"Could not load expenses")+'</div>';
     }
   }catch(e){
-    $("eTableArea").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
+    $("eeTableArea").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
   }
 }
 
-async function renderExpenseCards(){
-  var month = $("eMonth").value;
-  if(!month) return;
-  try{
-    var r = await api({action:"getExpenseSummary", adminKey:adminKey, month:month, trendMonths:1});
-    if(!r.success) return;
-    var cards = [["Total This Month", "₹"+Number(r.total||0).toFixed(2)]];
-    (r.byCategory||[]).forEach(function(c){
-      cards.push([c.category, "₹"+Number(c.amount).toFixed(2)]);
-    });
-    $("cards").innerHTML = cardsHtml(cards);
-  }catch(e){ /* leave existing cards on failure */ }
-}
-
-function renderExpenseTable(){
-  $("eSummary").innerHTML = '<b>'+esc($("eMonth").value)+'</b> · '+expenseRows.length+' entries';
-  if(!expenseRows.length){
-    $("eTableArea").innerHTML = '<div class="empty">No expenses logged for this month.</div>';
+function renderExpenseEntryTable(){
+  $("eeSummary").innerHTML = '<b>'+esc($("eMonth").value)+'</b> · '+expenseEntryRows.length+' entries';
+  if(!expenseEntryRows.length){
+    $("eeTableArea").innerHTML = '<div class="empty">No expenses logged for this month.</div>';
     return;
   }
-  var html = '<table><thead><tr><th>Category</th><th>Paid To</th><th>Amount</th><th>Date</th><th>Recurring</th><th>Notes</th><th></th></tr></thead><tbody>';
-  expenseRows.forEach(function(r){
+  var html = '<table><thead><tr><th>Category</th><th>Amount</th><th>Date</th><th>Notes</th><th></th></tr></thead><tbody>';
+  expenseEntryRows.forEach(function(r){
     html += '<tr>'+
       '<td>'+esc(r.Category)+'</td>'+
-      '<td>'+esc(r.PaidTo)+'</td>'+
       '<td>₹'+Number(r.Amount).toFixed(2)+'</td>'+
       '<td>'+esc(r.ExpenseDate)+'</td>'+
-      '<td>'+(r.IsRecurring?'<span class="pill paid">Yes</span>':'')+'</td>'+
       '<td>'+esc(r.Notes)+'</td>'+
       '<td style="white-space:nowrap">'+
-        '<button class="btn ghost sm" onclick=\'editExpense("'+r.Id+'")\'>Edit</button> '+
-        '<button class="btn danger sm" onclick=\'deleteExpenseRow("'+r.Id+'")\'>Delete</button>'+
+        '<button class="btn ghost sm" onclick=\'editExpenseEntry("'+r.Id+'")\'>Edit</button> '+
+        '<button class="btn danger sm" onclick=\'deleteExpenseEntry("'+r.Id+'")\'>Delete</button>'+
       '</td>'+
     '</tr>';
   });
   html += '</tbody></table>';
-  $("eTableArea").innerHTML = html;
+  $("eeTableArea").innerHTML = html;
 }
 
-function resetExpenseForm(){
-  editingExpenseId = null;
-  $("eCategory").value = "";
-  $("ePaidTo").value = "";
-  $("eAmount").value = "";
-  $("eDate").value = todayISTDate();
-  $("eNotes").value = "";
-  $("eRecurring").checked = false;
-  $("eFormTitle").textContent = "Add expense";
-  $("eSaveBtn").textContent = "Add";
-  $("eCancelBtn").classList.add("hidden");
-  eClearErr();
+function resetExpenseEntryForm(){
+  editingExpenseEntryId = null;
+  $("eeCategory").value = "";
+  $("eeAmount").value = "";
+  $("eeDate").value = todayISTDate();
+  $("eeNotes").value = "";
+  $("eeFormTitle").textContent = "Log an expense";
+  $("eeSaveBtn").textContent = "Add";
+  $("eeCancelBtn").classList.add("hidden");
+  eeClearErr();
 }
 
-function editExpense(id){
-  var r = expenseRows.filter(function(x){ return x.Id===id; })[0];
+function editExpenseEntry(id){
+  var r = expenseEntryRows.filter(function(x){ return x.Id===id; })[0];
   if(!r) return;
-  editingExpenseId = id;
-  $("eCategory").value = r.Category;
-  $("ePaidTo").value = r.PaidTo;
-  $("eAmount").value = r.Amount;
-  $("eDate").value = r.ExpenseDate;
-  $("eNotes").value = r.Notes;
-  $("eRecurring").checked = !!r.IsRecurring;
-  $("eFormTitle").textContent = "Edit expense";
-  $("eSaveBtn").textContent = "Save";
-  $("eCancelBtn").classList.remove("hidden");
-  eClearErr();
-  $("eCategory").scrollIntoView({behavior:"smooth", block:"center"});
+  editingExpenseEntryId = id;
+  $("eeCategory").value = r.Category;
+  $("eeAmount").value = r.Amount;
+  $("eeDate").value = r.ExpenseDate;
+  $("eeNotes").value = r.Notes;
+  $("eeFormTitle").textContent = "Edit expense";
+  $("eeSaveBtn").textContent = "Save";
+  $("eeCancelBtn").classList.remove("hidden");
+  eeClearErr();
+  $("eeCategory").scrollIntoView({behavior:"smooth", block:"center"});
 }
 
-async function saveExpense(){
-  eClearErr();
-  var category = $("eCategory").value.trim();
-  var amount = Number($("eAmount").value);
-  var month = $("eMonth").value;
-  if(!category){ eShowErr("Category is required"); return; }
-  if(!amount || amount<=0){ eShowErr("Enter a valid amount"); return; }
-  if(!month){ eShowErr("Select a month first"); return; }
+async function saveExpenseEntry(){
+  eeClearErr();
+  var category = $("eeCategory").value.trim();
+  var amount = Number($("eeAmount").value);
+  var expenseDate = $("eeDate").value;
+  if(!category){ eeShowErr("Category is required"); return; }
+  if(!amount || amount<=0){ eeShowErr("Enter a valid amount"); return; }
+  if(!expenseDate){ eeShowErr("Select a date"); return; }
 
   var payload = {
     adminKey: adminKey,
     category: category,
-    paidTo: $("ePaidTo").value.trim(),
     amount: amount,
-    month: month,
-    expenseDate: $("eDate").value || undefined,
-    isRecurring: $("eRecurring").checked,
-    notes: $("eNotes").value.trim()
+    expenseDate: expenseDate,
+    notes: $("eeNotes").value.trim()
   };
   try{
     var r;
-    if(editingExpenseId){
-      payload.id = editingExpenseId;
-      r = await api(Object.assign({action:"updateExpense"}, payload));
+    if(editingExpenseEntryId){
+      payload.id = editingExpenseEntryId;
+      r = await api(Object.assign({action:"updateExpenseEntry"}, payload));
     }else{
-      r = await api(Object.assign({action:"addExpense"}, payload));
+      r = await api(Object.assign({action:"addExpenseEntry"}, payload));
     }
     if(r.success){
-      resetExpenseForm();
+      resetExpenseEntryForm();
+      if(expenseDate.slice(0,7) !== $("eMonth").value){ $("eMonth").value = expenseDate.slice(0,7); }
       loadExpenses();
     }else{
-      eShowErr(r.message||"Could not save expense");
+      eeShowErr(r.message||"Could not save expense");
     }
-  }catch(e){ eShowErr(e.message); }
+  }catch(e){ eeShowErr(e.message); }
 }
 
-async function deleteExpenseRow(id){
+async function deleteExpenseEntry(id){
   if(!confirm("Delete this expense entry?")) return;
   try{
-    var r = await api({action:"deleteExpense", adminKey:adminKey, id:id});
+    var r = await api({action:"deleteExpenseEntry", adminKey:adminKey, id:id});
     if(r.success) loadExpenses();
     else alert(r.message||"Could not delete expense");
   }catch(e){ alert(e.message); }
 }
 
-async function copyRecurringExpenses(){
-  var toMonth = $("eMonth").value;
-  if(!toMonth){ eShowErr("Select the target month first"); return; }
-  var d = new Date(toMonth+"-01T00:00:00");
-  d.setMonth(d.getMonth()-1);
-  var fromMonth = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-  if(!confirm("Copy recurring expenses from "+fromMonth+" into "+toMonth+"?")) return;
-  try{
-    var r = await api({action:"copyRecurringExpenses", adminKey:adminKey, fromMonth:fromMonth, toMonth:toMonth});
-    if(r.success){
-      alert(r.message);
-      loadExpenses();
-    }else{
-      alert(r.message||"Could not copy recurring expenses");
-    }
-  }catch(e){ alert(e.message); }
-}
-
-function exportExpenseExcel(){
-  if(!expenseRows.length){ alert("Load a month first."); return; }
-  var rows = expenseRows.map(function(r){
-    return {
-      Category: r.Category, "Paid To": r.PaidTo, Amount: r.Amount,
-      Date: r.ExpenseDate, Recurring: r.IsRecurring?"Yes":"No", Notes: r.Notes
-    };
+function exportExpenseEntryExcel(){
+  if(!expenseEntryRows.length){ alert("Load a month first."); return; }
+  var rows = expenseEntryRows.map(function(r){
+    return { Category: r.Category, Amount: r.Amount, Date: r.ExpenseDate, Notes: r.Notes };
   });
   var ws = XLSX.utils.json_to_sheet(rows);
   var wb = XLSX.utils.book_new();
@@ -1184,24 +1210,254 @@ function exportExpenseExcel(){
   XLSX.writeFile(wb, "Expenses_"+$("eMonth").value+".xlsx");
 }
 
-function exportExpensePDF(){
-  if(!expenseRows.length){ alert("Load a month first."); return; }
+function exportExpenseEntryPDF(){
+  if(!expenseEntryRows.length){ alert("Load a month first."); return; }
   var doc = new jspdf.jsPDF();
   doc.setFontSize(14);
   doc.text("Expenses — "+$("eMonth").value, 14, 15);
-  var total = expenseRows.reduce(function(s,r){ return s+Number(r.Amount||0); },0);
-  var body = expenseRows.map(function(r){
-    return [r.Category, r.PaidTo||"", "Rs."+Number(r.Amount).toFixed(2), r.ExpenseDate||"", r.IsRecurring?"Yes":"", r.Notes||""];
+  var total = expenseEntryRows.reduce(function(s,r){ return s+Number(r.Amount||0); },0);
+  var body = expenseEntryRows.map(function(r){
+    return [r.Category, "Rs."+Number(r.Amount).toFixed(2), r.ExpenseDate||"", r.Notes||""];
   });
-  body.push(["", "", "Rs."+total.toFixed(2), "Total", "", ""]);
+  body.push(["Total", "Rs."+total.toFixed(2), "", ""]);
   doc.autoTable({
     startY:22,
-    head:[["Category","Paid To","Amount","Date","Recurring","Notes"]],
+    head:[["Category","Amount","Date","Notes"]],
     body: body,
     headStyles:{fillColor:[245,168,0], textColor:[27,42,90]},
     styles:{fontSize:9}
   });
   doc.save("Expenses_"+$("eMonth").value+".pdf");
+}
+
+/* ---------------- salary / staff payments ---------------- */
+
+async function loadSalaryPersons(){
+  var month = $("eMonth").value;
+  if(!month) return;
+  $("spTableArea").innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    var r = await api({action:"listSalaryPersons", adminKey:adminKey, month:month});
+    if(r.success){
+      salaryPersonRows = r.persons||[];
+      renderSalaryPersonTable();
+      renderPaymentPersonSelect();
+    }else{
+      $("spTableArea").innerHTML = '<div class="empty">'+esc(r.message||"Could not load")+'</div>';
+    }
+  }catch(e){
+    $("spTableArea").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
+  }
+}
+
+function renderSalaryPersonTable(){
+  if(!salaryPersonRows.length){
+    $("spTableArea").innerHTML = '<div class="empty">No salary entries for this month yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Category</th><th>Person</th><th>Salary</th><th>Paid</th><th>Balance</th><th></th></tr></thead><tbody>';
+  salaryPersonRows.forEach(function(r){
+    var balCls = r.Balance>0 ? 'style="color:#c0392b;font-weight:600"' : (r.Balance<0 ? 'style="color:#2e7d32;font-weight:600"' : '');
+    html += '<tr>'+
+      '<td>'+esc(r.Category)+'</td>'+
+      '<td>'+esc(r.PersonName)+'</td>'+
+      '<td>₹'+Number(r.SalaryAmount).toFixed(2)+'</td>'+
+      '<td>₹'+Number(r.Paid).toFixed(2)+'</td>'+
+      '<td '+balCls+'>₹'+Number(r.Balance).toFixed(2)+'</td>'+
+      '<td style="white-space:nowrap">'+
+        '<button class="btn ghost sm" onclick=\'viewPaymentHistory("'+r.Id+'")\'>History</button> '+
+        '<button class="btn ghost sm" onclick=\'editSalaryPerson("'+r.Id+'")\'>Edit</button> '+
+        '<button class="btn danger sm" onclick=\'deleteSalaryPerson("'+r.Id+'")\'>Delete</button>'+
+      '</td>'+
+    '</tr>';
+  });
+  html += '</tbody></table>';
+  $("spTableArea").innerHTML = html;
+}
+
+function renderPaymentPersonSelect(){
+  var sel = $("payPersonId");
+  var prev = sel.value;
+  sel.innerHTML = '<option value="">Select person…</option>' + salaryPersonRows.map(function(r){
+    return '<option value="'+r.Id+'">'+esc(r.Category)+' — '+esc(r.PersonName)+'</option>';
+  }).join("");
+  if(prev && salaryPersonRows.some(function(r){return r.Id===prev;})) sel.value = prev;
+}
+
+function resetSalaryPersonForm(){
+  editingSalaryPersonId = null;
+  $("spCategory").value = "";
+  $("spPerson").value = "";
+  $("spSalary").value = "";
+  $("spNotes").value = "";
+  $("spFormTitle").textContent = "Add a category & person";
+  $("spSaveBtn").textContent = "Add";
+  $("spCancelBtn").classList.add("hidden");
+  spClearErr();
+}
+
+function editSalaryPerson(id){
+  var r = salaryPersonRows.filter(function(x){ return x.Id===id; })[0];
+  if(!r) return;
+  editingSalaryPersonId = id;
+  $("spCategory").value = r.Category;
+  $("spPerson").value = r.PersonName;
+  $("spSalary").value = r.SalaryAmount;
+  $("spNotes").value = r.Notes;
+  $("spFormTitle").textContent = "Edit "+r.PersonName;
+  $("spSaveBtn").textContent = "Save";
+  $("spCancelBtn").classList.remove("hidden");
+  spClearErr();
+  $("spCategory").scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+async function saveSalaryPerson(){
+  spClearErr();
+  var category = $("spCategory").value.trim();
+  var personName = $("spPerson").value.trim();
+  var salaryAmount = Number($("spSalary").value);
+  var month = $("eMonth").value;
+  if(!category){ spShowErr("Category is required"); return; }
+  if(!personName){ spShowErr("Person name is required"); return; }
+  if(!salaryAmount || salaryAmount<=0){ spShowErr("Enter a valid salary amount"); return; }
+  if(!month){ spShowErr("Select a month first"); return; }
+
+  var payload = {
+    adminKey: adminKey,
+    category: category,
+    personName: personName,
+    salaryAmount: salaryAmount,
+    month: month,
+    notes: $("spNotes").value.trim()
+  };
+  try{
+    var r;
+    if(editingSalaryPersonId){
+      payload.id = editingSalaryPersonId;
+      r = await api(Object.assign({action:"updateSalaryPerson"}, payload));
+    }else{
+      r = await api(Object.assign({action:"addSalaryPerson"}, payload));
+    }
+    if(r.success){
+      resetSalaryPersonForm();
+      loadSalaryPersons();
+      renderExpenseCards();
+    }else{
+      spShowErr(r.message||"Could not save");
+    }
+  }catch(e){ spShowErr(e.message); }
+}
+
+async function deleteSalaryPerson(id){
+  if(!confirm("Delete this person? Their payment history will also be removed.")) return;
+  try{
+    var r = await api({action:"deleteSalaryPerson", adminKey:adminKey, id:id});
+    if(r.success){ loadSalaryPersons(); renderExpenseCards(); }
+    else alert(r.message||"Could not delete");
+  }catch(e){ alert(e.message); }
+}
+
+async function saveSalaryPayment(){
+  payClearErr();
+  var personId = $("payPersonId").value;
+  var amount = Number($("payAmount").value);
+  var paymentDate = $("payDate").value;
+  if(!personId){ payShowErr("Select a person"); return; }
+  if(!amount || amount<=0){ payShowErr("Enter a valid amount"); return; }
+  if(!paymentDate){ payShowErr("Select a date"); return; }
+
+  try{
+    var r = await api({
+      action:"addSalaryPayment", adminKey:adminKey, personId:personId,
+      amount:amount, paymentDate:paymentDate, notes:$("payNotes").value.trim()
+    });
+    if(r.success){
+      $("payAmount").value = "";
+      $("payNotes").value = "";
+      loadSalaryPersons();
+      renderExpenseCards();
+      if(activePaymentPersonId===personId) viewPaymentHistory(personId);
+    }else{
+      payShowErr(r.message||"Could not save payment");
+    }
+  }catch(e){ payShowErr(e.message); }
+}
+
+async function viewPaymentHistory(personId){
+  activePaymentPersonId = personId;
+  var person = salaryPersonRows.filter(function(x){ return x.Id===personId; })[0];
+  $("payHistoryWrap").classList.remove("hidden");
+  $("payHistoryTitle").innerHTML = person ? ('<b>'+esc(person.PersonName)+'</b> · '+esc(person.Category)+' payment history') : 'Payment history';
+  $("payHistoryArea").innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    var r = await api({action:"listSalaryPayments", adminKey:adminKey, personId:personId});
+    if(r.success){
+      renderPaymentHistoryTable(r.payments||[]);
+    }else{
+      $("payHistoryArea").innerHTML = '<div class="empty">'+esc(r.message||"Could not load")+'</div>';
+    }
+  }catch(e){
+    $("payHistoryArea").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
+  }
+  $("payHistoryWrap").scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function renderPaymentHistoryTable(rows){
+  if(!rows.length){
+    $("payHistoryArea").innerHTML = '<div class="empty">No payments logged yet.</div>';
+    return;
+  }
+  var html = '<table><thead><tr><th>Date</th><th>Amount</th><th>Notes</th><th></th></tr></thead><tbody>';
+  rows.forEach(function(p){
+    html += '<tr>'+
+      '<td>'+esc(p.PaymentDate)+'</td>'+
+      '<td>₹'+Number(p.Amount).toFixed(2)+'</td>'+
+      '<td>'+esc(p.Notes)+'</td>'+
+      '<td><button class="btn danger sm" onclick=\'deleteSalaryPayment("'+p.Id+'")\'>Delete</button></td>'+
+    '</tr>';
+  });
+  html += '</tbody></table>';
+  $("payHistoryArea").innerHTML = html;
+}
+
+async function deleteSalaryPayment(id){
+  if(!confirm("Delete this payment?")) return;
+  try{
+    var r = await api({action:"deleteSalaryPayment", adminKey:adminKey, id:id});
+    if(r.success){
+      loadSalaryPersons();
+      renderExpenseCards();
+      if(activePaymentPersonId) viewPaymentHistory(activePaymentPersonId);
+    }else{
+      alert(r.message||"Could not delete payment");
+    }
+  }catch(e){ alert(e.message); }
+}
+
+function closePaymentHistory(){
+  activePaymentPersonId = null;
+  $("payHistoryWrap").classList.add("hidden");
+}
+
+/* ---------------- combined summary cards ---------------- */
+
+async function renderExpenseCards(){
+  var month = $("eMonth").value;
+  if(!month) return;
+  try{
+    var r = await api({action:"getExpenseSummary", adminKey:adminKey, month:month});
+    if(!r.success) return;
+    var cards = [
+      ["Total This Month", "₹"+Number(r.total||0).toFixed(2)],
+      ["Salary Target", "₹"+Number(r.salaryTarget||0).toFixed(2)],
+      ["Salary Paid", "₹"+Number(r.salaryPaid||0).toFixed(2)],
+      ["Salary Balance", "₹"+Number(r.salaryBalance||0).toFixed(2)]
+    ];
+    (r.byCategory||[]).forEach(function(c){
+      cards.push([c.category, "₹"+Number(c.amount).toFixed(2)]);
+    });
+    $("eCards").innerHTML = cardsHtml(cards);
+  }catch(e){ /* leave existing cards on failure */ }
 }
 
 /* ============================================================
