@@ -98,6 +98,30 @@
   .modal .field{margin-bottom:12px;}
   .modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
 
+  /* ---------- Smart customer search ---------- */
+  .smart-search{position:relative;}
+  .smart-search .ss-box{position:relative;display:flex;align-items:center;}
+  .smart-search .ss-input{width:100%;padding-left:34px;padding-right:30px;}
+  .smart-search .ss-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted);pointer-events:none;}
+  .smart-search .ss-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:2px 6px;display:none;}
+  .smart-search.has-value .ss-clear{display:block;}
+  .smart-search.selected .ss-input{background:#FFF8E6;border-color:var(--amber);font-weight:700;color:var(--navy);}
+  .smart-search .ss-list{position:absolute;top:calc(100% + 4px);left:0;min-width:100%;width:max-content;max-width:360px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 28px rgba(27,42,90,.16);z-index:50;max-height:300px;overflow-y:auto;display:none;}
+  .smart-search.open .ss-list{display:block;}
+  .smart-search .ss-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid #F2EFE7;}
+  .smart-search .ss-item:last-child{border-bottom:none;}
+  .smart-search .ss-item.active,.smart-search .ss-item:hover{background:#FFF4DA;}
+  .smart-search .ss-name{font-weight:700;color:var(--navy);font-size:14px;}
+  .smart-search .ss-meta{font-size:12px;color:var(--muted);margin-top:1px;}
+  .smart-search .ss-item mark{background:none;color:var(--amber-dark);font-weight:800;padding:0;}
+  .smart-search .ss-none{padding:10px 12px;font-size:13px;color:var(--muted);}
+
+  .cust-history{display:none;background:var(--panel);border:1px solid var(--amber);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;}
+  .cust-history.active{display:block;}
+  .cust-history .ch-stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:8px;}
+  .cust-history .ch-stats div{font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.03em;}
+  .cust-history .ch-stats strong{display:block;font-size:17px;color:var(--navy);text-transform:none;letter-spacing:0;}
+
   .muted{color:var(--muted);font-size:13px;}
   .empty{text-align:center;padding:40px 20px;color:var(--muted);}
   .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:12px 20px;border-radius:9px;font-weight:700;font-size:14px;z-index:200;display:none;}
@@ -177,12 +201,9 @@
             <select id="mlArea" style="min-width:140px;"></select>
           </div>
           <div class="field">
-            <label>Search</label>
-            <input id="mlSearch" placeholder="Name, mobile, or address" style="min-width:190px;">
-          </div>
-          <div class="field">
             <label>Customer</label>
-            <select id="mlCustomer" style="min-width:220px;"></select>
+            <div class="smart-search" data-ss="mlCustomer" style="min-width:260px;"></div>
+            <input type="hidden" id="mlCustomer">
           </div>
           <div class="field">
             <label>Date</label>
@@ -207,8 +228,8 @@
           <h3 style="font-size:16px;">Recent exceptions</h3>
           <div class="row" style="gap:8px;">
             <select id="mlHistArea" style="min-width:130px;"></select>
-            <input id="mlHistSearch" placeholder="Name, mobile, or address" style="min-width:170px;">
-            <select id="mlHistoryCustomer" onchange="loadMilkLogHistory()" style="min-width:190px;"></select>
+            <div class="smart-search" data-ss="mlHistoryCustomer" style="min-width:240px;"></div>
+            <input type="hidden" id="mlHistoryCustomer">
           </div>
         </div>
         <table>
@@ -229,12 +250,9 @@
             <select id="peArea" style="min-width:140px;"></select>
           </div>
           <div class="field">
-            <label>Search</label>
-            <input id="peSearch" placeholder="Name, mobile, or address" style="min-width:190px;">
-          </div>
-          <div class="field">
             <label>Customer</label>
-            <select id="peCustomer" style="min-width:220px;"></select>
+            <div class="smart-search" data-ss="peCustomer" style="min-width:260px;"></div>
+            <input type="hidden" id="peCustomer">
           </div>
           <div class="field">
             <label>Product</label>
@@ -266,8 +284,8 @@
           </div>
           <div class="row" style="gap:8px;flex-wrap:wrap;">
             <select id="peFilterArea" style="min-width:120px;"></select>
-            <input id="peFilterSearch" placeholder="Name, mobile, or address" style="min-width:170px;">
-            <select id="peFilterCustomer" onchange="loadProductEntryHistory()" style="min-width:180px;"></select>
+            <div class="smart-search" data-ss="peFilterCustomer" style="min-width:230px;"></div>
+            <input type="hidden" id="peFilterCustomer">
             <select id="peFilterProduct" onchange="loadProductEntryHistory()" style="min-width:150px;"></select>
           </div>
         </div>
@@ -295,13 +313,10 @@
             <label>Area</label>
             <select id="genSingleArea" style="min-width:140px;"></select>
           </div>
-          <div class="field" id="genCustomerSearchField">
-            <label>Search</label>
-            <input id="genSingleSearch" placeholder="Name, mobile, or address" style="min-width:190px;">
-          </div>
           <div class="field" id="genCustomerSelectField">
             <label>Customer</label>
-            <select id="genCustomer" style="min-width:220px;"></select>
+            <div class="smart-search" data-ss="genCustomer" style="min-width:260px;"></div>
+            <input type="hidden" id="genCustomer">
           </div>
           <div class="field" id="genAreaField" style="display:none;">
             <label>Area</label>
@@ -310,6 +325,10 @@
           <div class="field">
             <label>Billing month</label>
             <input type="month" id="genMonth">
+          </div>
+          <div class="field">
+            <label>Bill date</label>
+            <input type="date" id="genBillDate">
           </div>
           <div class="field" style="flex-direction:row;align-items:center;gap:8px;margin-top:16px;">
             <input type="checkbox" id="genIncludeOpening" style="width:auto;">
@@ -329,6 +348,8 @@
       <div class="row" style="justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <h2>Invoices</h2>
         <div class="row">
+          <div class="smart-search" data-ss="invCustomer" style="min-width:280px;"></div>
+          <input type="hidden" id="invCustomer">
           <select id="invAreaFilter" onchange="loadInvoices()">
             <option value="">All areas</option>
           </select>
@@ -341,6 +362,7 @@
           <button class="btn danger" id="invDeleteSelectedBtn" onclick="deleteSelectedInvoices()" disabled>Delete Selected (0)</button>
         </div>
       </div>
+      <div class="cust-history" id="invCustHistory"></div>
       <div class="card">
         <table>
           <thead><tr><th><input type="checkbox" id="invSelectAll" onchange="toggleSelectAllInvoices()"></th><th>Invoice #</th><th>Customer</th><th>Month</th><th>Total</th><th>Paid</th><th>Status</th><th>WhatsApp</th><th></th></tr></thead>
@@ -577,7 +599,22 @@ function showToast(msg){
   setTimeout(()=> t.style.display='none', 2600);
 }
 function money(n){ return '₹' + Number(n||0).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-function todayStr(){ return new Date().toISOString().split('T')[0]; }
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+/* Bill date follows the last day of the chosen billing month (30th / 31st / 28th / 29th); change it by hand any time */
+function syncBillDateToMonth(){
+  const ym = document.getElementById('genMonth').value;
+  if(ym) document.getElementById('genBillDate').value = monthBounds(ym).end;
+}
+function billDateLabel(inv){
+  const raw = inv.bill_date || inv.created_at;
+  if(!raw) return '';
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? new Date(raw + 'T00:00:00') : new Date(raw);
+  return d.toLocaleDateString('en-IN');
+}
+function escHtml(str){ return String(str ?? '').replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 function invoiceFileName(inv){
   const rawName = inv.billing_customers?.name || 'Customer';
   const safeName = rawName.trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
@@ -610,6 +647,8 @@ async function initApp(){
   document.getElementById('payDate').value = todayStr();
   const now = new Date();
   document.getElementById('genMonth').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  syncBillDateToMonth();
+  document.getElementById('genMonth').addEventListener('change', syncBillDateToMonth);
   document.getElementById('repFrom').value = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   document.getElementById('repTo').value = todayStr();
 
@@ -641,8 +680,8 @@ async function loadAreas(){
   modalSel.innerHTML = '<option value="">No area</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   genAreaSel.innerHTML = '<option value="">Select area</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   invAreaSel.innerHTML = '<option value="">All areas</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
-  CUSTOMER_PICKERS.forEach(p=>{
-    const areaSel = document.getElementById(p.areaId);
+  PICKER_AREA_IDS.forEach(id=>{
+    const areaSel = document.getElementById(id);
     const prev = areaSel.value;
     areaSel.innerHTML = '<option value="">All Areas</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
     if(prev) areaSel.value = prev;
@@ -652,7 +691,6 @@ function toggleGenMode(){
   const mode = document.getElementById('genMode').value;
   const singleDisplay = mode==='single' ? 'flex' : 'none';
   document.getElementById('genCustomerField').style.display = singleDisplay;
-  document.getElementById('genCustomerSearchField').style.display = singleDisplay;
   document.getElementById('genCustomerSelectField').style.display = singleDisplay;
   document.getElementById('genAreaField').style.display = mode==='area' ? 'flex' : 'none';
   document.getElementById('genAreaHint').style.display = mode==='area' ? 'block' : 'none';
@@ -752,58 +790,168 @@ function renderCustomerTable(){
   `).join('');
 }
 
-/* ---------- Area-first, then-Customer picker (used everywhere a customer dropdown appears) ---------- */
-const CUSTOMER_PICKERS = []; // {areaId, searchId, customerId, placeholder}
+/* ---------- Smart customer search (type letters or digits, pick from the live list) ---------- */
+const SMART_SEARCHES = {}; // key = hidden input id
 
-function registerCustomerPicker(areaId, searchId, customerId, placeholder, onFilterChange){
-  CUSTOMER_PICKERS.push({ areaId, searchId, customerId, placeholder });
-  document.getElementById(areaId).addEventListener('change', ()=>{
-    refreshCustomerPicker(areaId, searchId, customerId, placeholder);
-    if(onFilterChange) onFilterChange();
-  });
-  let searchTimer;
-  document.getElementById(searchId).addEventListener('input', ()=>{
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(()=>{
-      refreshCustomerPicker(areaId, searchId, customerId, placeholder);
-      if(onFilterChange) onFilterChange();
-    }, 250);
-  });
+const SS_ICON = `<svg class="ss-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`;
+
+function ssHighlight(text, term){
+  const safe = escHtml(text);
+  if(!term) return safe;
+  const idx = String(text).toLowerCase().indexOf(term.toLowerCase());
+  if(idx < 0) return safe;
+  return escHtml(text.slice(0, idx)) + '<mark>' + escHtml(text.slice(idx, idx + term.length)) + '</mark>' + escHtml(text.slice(idx + term.length));
 }
 
-function customerMatchesSearch(c, term){
-  if(!term) return true;
+function ssRank(c, term){
   const t = term.toLowerCase();
-  return (c.name||'').toLowerCase().includes(t) || (c.phone||'').toLowerCase().includes(t) || (c.address||'').toLowerCase().includes(t);
+  const name = (c.name||'').toLowerCase();
+  const digits = t.replace(/\D/g, '');
+  const phone = String(c.phone||'').replace(/\D/g, '');
+  if(name.startsWith(t)) return 1;
+  if(name.split(/\s+/).some(w=>w.startsWith(t))) return 2;
+  if(name.includes(t)) return 3;
+  if(digits && digits.length === t.replace(/\s/g,'').length){
+    const local = phone.length > 10 ? phone.slice(-10) : phone;
+    if(local.startsWith(digits) || phone.startsWith(digits)) return 4;
+    if(phone.includes(digits)) return 5;
+  }
+  if((c.address||'').toLowerCase().includes(t)) return 6;
+  return 0;
 }
 
-function refreshCustomerPicker(areaId, searchId, customerId, placeholder){
-  const areaVal = document.getElementById(areaId).value;
-  const term = document.getElementById(searchId).value.trim();
-  const sel = document.getElementById(customerId);
-  const prev = sel.value;
-  let filtered = ALL_CUSTOMERS;
-  if(areaVal) filtered = filtered.filter(c=>c.area_id===areaVal);
-  filtered = filtered.filter(c=>customerMatchesSearch(c, term));
-  sel.innerHTML = `<option value="">${placeholder}</option>` + filtered.map(c=>`<option value="${c.id}">${c.name} — ${c.phone}</option>`).join('');
-  if(prev && filtered.some(c=>c.id===prev)) sel.value = prev;
+/*
+  cfg: { key, areaId, emptyLabel, onSelect(customer|null), source() -> customers list, meta(customer) -> extra text }
+*/
+function createSmartSearch(cfg){
+  const wrap = document.querySelector(`.smart-search[data-ss="${cfg.key}"]`);
+  const hidden = document.getElementById(cfg.key);
+  wrap.innerHTML = `<div class="ss-box">${SS_ICON}<input class="ss-input" autocomplete="off" spellcheck="false" placeholder="${cfg.emptyLabel||''}"><button type="button" class="ss-clear" title="Clear">×</button></div><div class="ss-list"></div>`;
+  const input = wrap.querySelector('.ss-input');
+  const list = wrap.querySelector('.ss-list');
+  const clearBtn = wrap.querySelector('.ss-clear');
+  const state = { cfg, wrap, input, hidden, results: [], active: -1 };
+  SMART_SEARCHES[cfg.key] = state;
+
+  const pool = ()=>{
+    let arr = cfg.source ? cfg.source() : ALL_CUSTOMERS;
+    const areaVal = cfg.areaId ? document.getElementById(cfg.areaId).value : '';
+    if(areaVal) arr = arr.filter(c=>c.area_id===areaVal);
+    return arr;
+  };
+
+  const render = ()=>{
+    const term = input.value.trim();
+    wrap.classList.toggle('has-value', !!term || !!hidden.value);
+    if(!term){ list.innerHTML=''; wrap.classList.remove('open'); state.results=[]; return; }
+    const ranked = pool().map(c=>({ c, r: ssRank(c, term) })).filter(x=>x.r>0)
+      .sort((a,b)=> a.r-b.r || (a.c.name||'').localeCompare(b.c.name||''));
+    state.results = ranked.slice(0, 12).map(x=>x.c);
+    state.active = state.results.length ? 0 : -1;
+    const digits = term.replace(/\D/g,'');
+    list.innerHTML = state.results.length ? state.results.map((c,i)=>`
+      <div class="ss-item ${i===state.active?'active':''}" data-i="${i}">
+        <div class="ss-name">${ssHighlight(c.name||'', term)}</div>
+        <div class="ss-meta">${digits ? ssHighlight(String(c.phone||''), digits) : escHtml(c.phone||'')} · ${escHtml(c.areas?.name || 'No area')}${cfg.meta ? ' · ' + cfg.meta(c) : ''}</div>
+      </div>`).join('') : `<div class="ss-none">No customer matches “${escHtml(term)}”</div>`;
+    wrap.classList.add('open');
+  };
+
+  const setActive = (i)=>{
+    state.active = i;
+    list.querySelectorAll('.ss-item').forEach((el,idx)=> el.classList.toggle('active', idx===i));
+    const el = list.querySelector(`.ss-item[data-i="${i}"]`);
+    if(el) el.scrollIntoView({ block:'nearest' });
+  };
+
+  input.addEventListener('input', ()=>{
+    if(hidden.value){
+      hidden.value = '';
+      wrap.classList.remove('selected');
+      if(cfg.onSelect) cfg.onSelect(null);
+    }
+    if(cfg.onType) cfg.onType(input.value.trim());
+    render();
+  });
+  input.addEventListener('focus', ()=>{ if(!hidden.value && input.value.trim()) render(); });
+  input.addEventListener('keydown', e=>{
+    if(!wrap.classList.contains('open')) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); if(state.results.length) setActive((state.active+1) % state.results.length); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); if(state.results.length) setActive((state.active-1+state.results.length) % state.results.length); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(state.results[state.active]) selectSmartSearch(cfg.key, state.results[state.active].id); }
+    else if(e.key==='Escape'){ wrap.classList.remove('open'); }
+  });
+  list.addEventListener('mousedown', e=>{
+    const item = e.target.closest('.ss-item');
+    if(!item) return;
+    e.preventDefault();
+    selectSmartSearch(cfg.key, state.results[Number(item.dataset.i)].id);
+  });
+  clearBtn.addEventListener('click', ()=>{ clearSmartSearch(cfg.key); input.focus(); });
+  document.addEventListener('click', e=>{ if(!wrap.contains(e.target)) wrap.classList.remove('open'); });
+
+  if(cfg.areaId){
+    document.getElementById(cfg.areaId).addEventListener('change', ()=>{
+      const cur = ALL_CUSTOMERS.find(c=>c.id===hidden.value);
+      const areaVal = document.getElementById(cfg.areaId).value;
+      if(cur && areaVal && cur.area_id !== areaVal) clearSmartSearch(cfg.key, true);
+      if(cfg.onAreaChange) cfg.onAreaChange();
+    });
+  }
+}
+
+function selectSmartSearch(key, customerId, silent){
+  const st = SMART_SEARCHES[key];
+  if(!st) return;
+  const c = ALL_CUSTOMERS.find(x=>x.id===customerId);
+  st.hidden.value = c ? c.id : '';
+  st.input.value = c ? c.name : '';
+  st.wrap.classList.toggle('selected', !!c);
+  st.wrap.classList.toggle('has-value', !!c);
+  st.wrap.classList.remove('open');
+  if(!silent && st.cfg.onSelect) st.cfg.onSelect(c || null);
+}
+
+function clearSmartSearch(key, fromArea){
+  const st = SMART_SEARCHES[key];
+  if(!st) return;
+  const had = !!st.hidden.value || !!st.input.value;
+  st.hidden.value = '';
+  st.input.value = '';
+  st.wrap.classList.remove('selected','has-value','open');
+  if(st.cfg.onType) st.cfg.onType('');
+  if(had && st.cfg.onSelect && !fromArea) st.cfg.onSelect(null);
+  else if(had && st.cfg.onSelect && fromArea && !st.cfg.onAreaChange) st.cfg.onSelect(null);
 }
 
 function refreshAllCustomerPickers(){
-  CUSTOMER_PICKERS.forEach(p=> refreshCustomerPicker(p.areaId, p.searchId, p.customerId, p.placeholder));
+  // keep selections in sync after customers reload (e.g. a name was edited)
+  Object.keys(SMART_SEARCHES).forEach(key=>{
+    const st = SMART_SEARCHES[key];
+    if(st.hidden.value){
+      const c = ALL_CUSTOMERS.find(x=>x.id===st.hidden.value);
+      if(c) st.input.value = c.name; else clearSmartSearch(key);
+    }
+  });
 }
 
+const PICKER_AREA_IDS = ['mlArea','mlHistArea','peArea','peFilterArea','genSingleArea'];
+
 function setupCustomerPickers(){
-  registerCustomerPicker('mlArea', 'mlSearch', 'mlCustomer', 'Select customer');
-  registerCustomerPicker('mlHistArea', 'mlHistSearch', 'mlHistoryCustomer', 'All customers', loadMilkLogHistory);
-  registerCustomerPicker('peArea', 'peSearch', 'peCustomer', 'Select customer');
-  registerCustomerPicker('peFilterArea', 'peFilterSearch', 'peFilterCustomer', 'All customers', loadProductEntryHistory);
-  registerCustomerPicker('genSingleArea', 'genSingleSearch', 'genCustomer', 'Select customer');
-  CUSTOMER_PICKERS.forEach(p=>{
-    const areaSel = document.getElementById(p.areaId);
-    areaSel.innerHTML = '<option value="">All Areas</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  PICKER_AREA_IDS.forEach(id=>{
+    document.getElementById(id).innerHTML = '<option value="">All Areas</option>' + AREAS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   });
-  refreshAllCustomerPickers();
+  createSmartSearch({ key:'mlCustomer', areaId:'mlArea', emptyLabel:'Type name or mobile' });
+  createSmartSearch({ key:'mlHistoryCustomer', areaId:'mlHistArea', emptyLabel:'All customers', onSelect: loadMilkLogHistory, onAreaChange: loadMilkLogHistory });
+  createSmartSearch({ key:'peCustomer', areaId:'peArea', emptyLabel:'Type name or mobile' });
+  createSmartSearch({ key:'peFilterCustomer', areaId:'peFilterArea', emptyLabel:'All customers', onSelect: loadProductEntryHistory, onAreaChange: loadProductEntryHistory });
+  createSmartSearch({ key:'genCustomer', areaId:'genSingleArea', emptyLabel:'Type name or mobile' });
+  createSmartSearch({
+    key:'invCustomer', areaId:'invAreaFilter', emptyLabel:'Search customer, mobile or bill no.',
+    meta: c => { const n = INVOICES.filter(i=>invoiceCustomerId(i)===c.id).length; return `${n} bill${n===1?'':'s'}`; },
+    onType: term => { INV_SEARCH_TERM = term; renderInvoiceTable(); },
+    onSelect: c => showCustomerBillHistory(c),
+  });
 }
 
 function openCustomerModal(){
@@ -888,7 +1036,8 @@ async function saveMilkLog(){
   if(type==='adjust') payload.quantity = parseFloat(document.getElementById('mlQty').value)||0;
   await api('/milk-log', { method:'POST', body: JSON.stringify(payload) });
   showToast('Saved');
-  document.getElementById('mlHistoryCustomer').value = customer_id;
+  document.getElementById('mlHistArea').value = '';
+  selectSmartSearch('mlHistoryCustomer', customer_id, true);
   loadMilkLogHistory();
 }
 async function loadMilkLogHistory(){
@@ -942,7 +1091,8 @@ async function saveProductEntry(){
   PE_TAB = 'unbilled';
   document.getElementById('peTabUnbilled').classList.add('active-toggle');
   document.getElementById('peTabBilled').classList.remove('active-toggle');
-  document.getElementById('peFilterCustomer').value = payload.customer_id;
+  document.getElementById('peFilterArea').value = '';
+  selectSmartSearch('peFilterCustomer', payload.customer_id, true);
   loadProductEntryHistory();
 }
 
@@ -1008,6 +1158,7 @@ async function generateInvoice(){
     period_start: start,
     period_end: end,
     include_opening_balance: document.getElementById('genIncludeOpening').checked,
+    bill_date: document.getElementById('genBillDate').value || end,
   };
   if(!payload.customer_id) return showToast('Select a customer');
   try{
@@ -1032,6 +1183,7 @@ async function generateInvoicesForArea(){
   if(!genMonth) return showToast('Select a billing month');
   const { start, end } = monthBounds(genMonth);
   const includeOpening = document.getElementById('genIncludeOpening').checked;
+  const billDate = document.getElementById('genBillDate').value || end;
 
   const btn = document.getElementById('genSubmitBtn');
   btn.disabled = true; btn.textContent = 'Generating...';
@@ -1052,7 +1204,7 @@ async function generateInvoicesForArea(){
       try{
         const invoice = await api('/invoices/generate', {
           method:'POST',
-          body: JSON.stringify({ customer_id: cust.id, period_start: start, period_end: end, include_opening_balance: includeOpening })
+          body: JSON.stringify({ customer_id: cust.id, period_start: start, period_end: end, include_opening_balance: includeOpening, bill_date: billDate })
         });
         AREA_BATCH_RESULTS.push({ customer: cust, invoice, status: 'created' });
       }catch(err){
@@ -1129,35 +1281,143 @@ async function sendAllAreaBatch(){
 /* ============================================================
    INVOICES
    ============================================================ */
+let INVOICES = [];
+let INV_SEARCH_TERM = '';
+
 async function loadInvoices(){
   const status = document.getElementById('invStatusFilter').value;
   const areaId = document.getElementById('invAreaFilter').value;
   const params = new URLSearchParams();
   if(status) params.set('status', status);
   if(areaId) params.set('area_id', areaId);
-  const data = await api('/invoices?' + params.toString());
+  INVOICES = await api('/invoices?' + params.toString());
+  renderInvoiceTable();
+  const selId = document.getElementById('invCustomer').value;
+  if(selId) renderCustomerHistoryPanel(ALL_CUSTOMERS.find(c=>c.id===selId));
+}
+
+function invoiceCustomerId(inv){
+  if(inv.customer_id) return inv.customer_id;
+  if(inv.billing_customers?.id) return inv.billing_customers.id;
+  const byName = ALL_CUSTOMERS.find(c=>(c.name||'').trim().toLowerCase() === (inv.billing_customers?.name||'').trim().toLowerCase());
+  return byName ? byName.id : null;
+}
+function invoiceCustomer(inv){
+  return ALL_CUSTOMERS.find(c=>c.id===invoiceCustomerId(inv)) || inv.billing_customers || {};
+}
+
+function filteredInvoices(){
+  const selId = document.getElementById('invCustomer').value;
+  if(selId) return INVOICES.filter(inv=>invoiceCustomerId(inv)===selId);
+  const term = INV_SEARCH_TERM.toLowerCase();
+  if(!term) return INVOICES;
+  const digits = term.replace(/\D/g,'');
+  const onlyDigits = digits && digits.length === term.replace(/\s/g,'').length;
+  return INVOICES.filter(inv=>{
+    const c = invoiceCustomer(inv);
+    const name = (inv.billing_customers?.name || c.name || '').toLowerCase();
+    if(name.includes(term)) return true;
+    if((inv.invoice_number||'').toLowerCase().includes(term)) return true;
+    if(onlyDigits && String(c.phone||'').replace(/\D/g,'').includes(digits)) return true;
+    return false;
+  });
+}
+
+function renderInvoiceTable(){
+  const data = filteredInvoices();
   const body = document.getElementById('invoiceTableBody');
   const empty = document.getElementById('invoiceEmpty');
   document.getElementById('invSelectAll').checked = false;
-  updateDeleteSelectedButton();
-  if(!data.length){ body.innerHTML=''; empty.style.display='block'; return; }
+  if(!data.length){
+    body.innerHTML='';
+    empty.style.display='block';
+    empty.textContent = INVOICES.length ? 'No bills match this search.' : 'No invoices yet.';
+    updateDeleteSelectedButton();
+    return;
+  }
   empty.style.display='none';
   body.innerHTML = data.map(inv => `
     <tr>
       <td><input type="checkbox" class="inv-select" value="${inv.id}" data-number="${inv.invoice_number}" onchange="updateDeleteSelectedButton()"></td>
       <td>${inv.invoice_number}</td>
-      <td>${inv.billing_customers?.name||'—'}</td>
+      <td>${escHtml(inv.billing_customers?.name||'—')}</td>
       <td>${monthLabel(inv.period_start)}</td>
       <td>${money(inv.total_amount)}</td>
       <td>${money(inv.amount_paid)}</td>
       <td><span class="badge ${inv.status}">${inv.status}</span></td>
       <td>${inv.whatsapp_sent_count ? `<span class="badge paid">Sent ${inv.whatsapp_sent_count}×</span>` : `<span class="badge unpaid">Not sent</span>`}</td>
       <td class="row" style="gap:6px;flex-wrap:nowrap;">
+        <button class="wa-btn" id="waRowBtn_${inv.id}" style="border:none;cursor:pointer;" title="Send bill on WhatsApp" onclick="sendInvoiceFromRow('${inv.id}')">${WA_ICON_SVG}</button>
         <button class="btn ghost sm" onclick="viewInvoice('${inv.id}')">View</button>
         <button class="btn danger sm" onclick="deleteInvoice('${inv.id}','${inv.invoice_number}')">Delete</button>
       </td>
     </tr>
   `).join('');
+  updateDeleteSelectedButton();
+}
+
+/* ---------- Customer bill history (after picking a customer in the Invoices search) ---------- */
+function showCustomerBillHistory(c){
+  if(!c){
+    document.getElementById('invCustHistory').classList.remove('active');
+    renderInvoiceTable();
+    return;
+  }
+  // show the complete history: reset area / status filters
+  const areaSel = document.getElementById('invAreaFilter');
+  const statusSel = document.getElementById('invStatusFilter');
+  if(areaSel.value || statusSel.value){
+    areaSel.value = ''; statusSel.value = '';
+    loadInvoices();
+    return;
+  }
+  renderInvoiceTable();
+  renderCustomerHistoryPanel(c);
+}
+
+function renderCustomerHistoryPanel(c){
+  const panel = document.getElementById('invCustHistory');
+  if(!c){ panel.classList.remove('active'); return; }
+  const bills = INVOICES.filter(inv=>invoiceCustomerId(inv)===c.id);
+  const billed = bills.reduce((s,i)=>s+Number(i.total_amount||0),0);
+  const paid = bills.reduce((s,i)=>s+Number(i.amount_paid||0),0);
+  const unpaidCount = bills.filter(i=>i.status!=='paid').length;
+  panel.innerHTML = `
+    <div class="row" style="justify-content:space-between;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);font-weight:700;">${escHtml(c.name)}</div>
+        <div class="muted">${escHtml(c.phone||'')} · ${escHtml(c.areas?.name||'No area')}${c.address ? ' · ' + escHtml(c.address) : ''}</div>
+      </div>
+      <span class="muted">Showing only ${escHtml(c.name)}'s bills · clear the search (×) to see everyone</span>
+    </div>
+    <div class="ch-stats">
+      <div>Bills<strong>${bills.length}</strong></div>
+      <div>Billed<strong>${money(billed)}</strong></div>
+      <div>Paid<strong>${money(paid)}</strong></div>
+      <div>Outstanding<strong style="color:${billed-paid>0?'var(--danger)':'var(--success)'};">${money(billed-paid)}</strong></div>
+      <div>Open bills<strong>${unpaidCount}</strong></div>
+    </div>`;
+  panel.classList.add('active');
+}
+
+/* ---------- Send straight from the invoice row ---------- */
+async function sendInvoiceFromRow(id){
+  const btn = document.getElementById('waRowBtn_' + id);
+  const row = INVOICES.find(i=>i.id===id);
+  if(row && row.whatsapp_sent_count){
+    const ok = await showConfirm(`${row.invoice_number} was already sent ${row.whatsapp_sent_count}× to ${row.billing_customers?.name || 'this customer'}. Send it again?`, 'Send again');
+    if(!ok) return;
+  }
+  if(btn){ btn.style.pointerEvents='none'; btn.style.opacity='0.5'; }
+  try{
+    const inv = await api('/invoices/'+id);
+    const cust = (inv.billing_customers && inv.billing_customers.phone) ? inv.billing_customers : ALL_CUSTOMERS.find(c=>c.id===inv.customer_id);
+    await sendInvoiceViaWhatsApp(cust, inv, btn);
+  }catch(err){
+    showToast(err.message);
+  }finally{
+    if(btn){ btn.style.pointerEvents=''; btn.style.opacity=''; }
+  }
 }
 
 function toggleSelectAllInvoices(){
@@ -1361,7 +1621,7 @@ function buildInvoicePdfDoc(inv){
   doc.setFont(undefined, 'bold');
   doc.text(`Invoice No: ${inv.invoice_number}`, 14, y);
   doc.setFont(undefined, 'normal');
-  doc.text(`Date: ${new Date(inv.created_at).toLocaleDateString('en-IN')}`, pageWidth - 14, y, { align: 'right' });
+  doc.text(`Date: ${billDateLabel(inv)}`, pageWidth - 14, y, { align: 'right' });
   y += 8;
   doc.setFont(undefined, 'bold');
   doc.text(`Customer: ${inv.billing_customers?.name || ''}`, 14, y);
@@ -1527,7 +1787,7 @@ function buildInvoiceHTMLString(inv){
     <div style="padding:26px 28px 20px;">
       <div style="display:flex;justify-content:space-between;font-size:14px;">
         <div style="font-weight:800;">Invoice No: ${inv.invoice_number}</div>
-        <div>Date: ${new Date(inv.created_at).toLocaleDateString('en-IN')}</div>
+        <div>Date: ${billDateLabel(inv)}</div>
       </div>
       <div style="margin-top:12px;font-size:14px;line-height:1.6;">
         <div style="font-weight:800;">Customer: ${inv.billing_customers?.name||''}</div>
