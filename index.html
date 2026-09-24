@@ -3021,11 +3021,7 @@
   </style>
 </head>
 
-<body><a href="https://wa.me/919080502101?text=Hi%20RD%20Dairy!" class="fwa" target="_blank"><svg width="26" height="26"
-      viewBox="0 0 24 24" fill="white">
-      <path
-        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-    </svg></a>
+<body>
   <div class="toast" id="toast"></div>
   <div class="pwa-banner" id="pwaBanner">
     <div class="pwa-banner-icon"><img src="icon-192.png" alt="RD Dairy" /></div>
@@ -5170,4 +5166,485 @@
     }
   </script>
 
+
+  <!-- ============================================================
+       RD DAIRY HELP ASSISTANT (AI chat, replaces the corner WhatsApp button)
+       Typed questions go to the rd-chat Edge Function (AI).
+       Suggested questions and any offline moment use the built in answers below.
+       ============================================================ -->
+  <style>
+    .rdc-launch{position:fixed;right:22px;bottom:22px;z-index:985;height:54px;padding:0 24px 0 20px;border-radius:40px;border:none;cursor:pointer;display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#F5A800 0%,#E09000 50%,#C47E00 100%);color:#1B2A5A;font:800 1rem 'Nunito',sans-serif;letter-spacing:.01em;box-shadow:0 10px 28px rgba(196,126,0,.45);transition:transform .2s ease,box-shadow .2s ease,padding .25s ease,width .25s ease;animation:rdcGlow 3.2s ease-in-out infinite}
+    .rdc-launch:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(196,126,0,.55)}
+    .rdc-launch svg{width:21px;height:21px;flex-shrink:0}
+    .rdc-launch .rdc-ico-close{display:none}
+    .rdc-open .rdc-launch{width:54px;padding:0;justify-content:center;animation:none}
+    .rdc-open .rdc-launch .rdc-ico-chat,.rdc-open .rdc-launch .rdc-label{display:none}
+    .rdc-open .rdc-launch .rdc-ico-close{display:block}
+    @keyframes rdcGlow{0%,100%{box-shadow:0 10px 28px rgba(196,126,0,.45)}50%{box-shadow:0 10px 34px rgba(245,168,0,.75)}}
+    .rdc-launch .rdc-ico-chat{animation:rdcTwinkle 3.2s ease-in-out infinite}
+    @keyframes rdcTwinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.15) rotate(12deg)}}
+    .rdc-nudge{position:fixed;right:92px;bottom:30px;z-index:985;background:#fff;color:#1B2A5A;font:700 .88rem 'Nunito',sans-serif;padding:10px 14px;border-radius:14px 14px 4px 14px;box-shadow:0 8px 24px rgba(27,42,90,.18);cursor:pointer;opacity:0;transform:translateY(8px);pointer-events:none;transition:all .35s ease;max-width:220px}
+    .rdc-nudge.show{opacity:1;transform:none;pointer-events:auto}
+    .rdc-nudge{display:none}
+    .rdc-open .rdc-nudge{display:none}
+
+    .rdc-panel{position:fixed;right:22px;bottom:92px;z-index:986;width:380px;max-width:calc(100vw - 24px);height:580px;max-height:calc(100vh - 120px);background:#FEFCF5;border-radius:22px;box-shadow:0 18px 50px rgba(27,42,90,.3);display:flex;flex-direction:column;overflow:hidden;opacity:0;transform:translateY(16px) scale(.98);pointer-events:none;transition:all .25s ease;font-family:'Nunito',sans-serif}
+    .rdc-open .rdc-panel{opacity:1;transform:none;pointer-events:auto}
+
+    .rdc-head{background:linear-gradient(135deg,#1B2A5A 0%,#2D3F7A 100%);color:#fff;padding:16px 16px 14px;display:flex;align-items:center;gap:12px}
+    .rdc-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #F5A800;background:#F5A800;flex-shrink:0}
+    .rdc-title{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;line-height:1.2}
+    .rdc-sub{font-size:.74rem;opacity:.85;display:flex;align-items:center;gap:6px;margin-top:2px}
+    .rdc-sub i{width:7px;height:7px;border-radius:50%;background:#25D366;display:inline-block}
+    .rdc-wa{margin-left:auto;display:flex;align-items:center;gap:6px;background:#25D366;color:#fff;text-decoration:none;font-weight:800;font-size:.74rem;padding:7px 11px;border-radius:20px;white-space:nowrap}
+    .rdc-wa svg{width:14px;height:14px}
+
+    .rdc-body{flex:1;overflow-y:auto;padding:16px 14px 8px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+    .rdc-msg{max-width:86%;padding:10px 13px;border-radius:16px;font-size:.9rem;line-height:1.5;word-wrap:break-word;animation:rdcIn .25s ease}
+    .rdc-bot{align-self:flex-start;background:#fff;color:#2A2A2A;border:1px solid #F0E6C8;border-bottom-left-radius:5px}
+    .rdc-user{align-self:flex-end;background:#F5A800;color:#1B2A5A;font-weight:700;border-bottom-right-radius:5px}
+    .rdc-bot b{color:#1B2A5A}
+    .rdc-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .rdc-actions a{font-size:.78rem;font-weight:800;text-decoration:none;color:#1B2A5A;background:#FFF8DC;border:1px solid #FFEAA0;padding:5px 10px;border-radius:14px}
+    .rdc-actions a.wa{background:#E8F9EF;border-color:#BDEFD0;color:#128C4A}
+    .rdc-typing{align-self:flex-start;background:#fff;border:1px solid #F0E6C8;border-radius:16px;border-bottom-left-radius:5px;padding:12px 14px;display:flex;gap:4px}
+    .rdc-typing span{width:7px;height:7px;border-radius:50%;background:#C47E00;opacity:.4;animation:rdcDot 1.2s infinite}
+    .rdc-typing span:nth-child(2){animation-delay:.2s}.rdc-typing span:nth-child(3){animation-delay:.4s}
+    @keyframes rdcDot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+    @keyframes rdcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+    .rdc-chips{padding:4px 14px 10px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+    .rdc-chips::-webkit-scrollbar{display:none}
+    .rdc-chip{flex-shrink:0;border:1.5px solid #F5A800;background:#fff;color:#1B2A5A;font:700 .8rem 'Nunito',sans-serif;padding:7px 12px;border-radius:18px;cursor:pointer;white-space:nowrap;transition:background .15s}
+    .rdc-chip:hover{background:#FFF8DC}
+    .rdc-starters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+    .rdc-starters .rdc-chip{white-space:normal;text-align:left;border-radius:12px;padding:10px 12px;line-height:1.3}
+
+    .rdc-foot{border-top:1px solid #F0E6C8;padding:10px 12px;display:flex;gap:8px;align-items:center;background:#fff}
+    .rdc-input{flex:1;border:1.5px solid #F0E6C8;border-radius:22px;padding:11px 15px;font:600 .92rem 'Nunito',sans-serif;color:#2A2A2A;outline:none;background:#FEFCF5}
+    .rdc-input:focus{border-color:#F5A800}
+    .rdc-send{width:42px;height:42px;border-radius:50%;border:none;background:#F5A800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .rdc-send:disabled{opacity:.5;cursor:default}
+    .rdc-send svg{width:18px;height:18px}
+    .rdc-note{text-align:center;font-size:.68rem;color:#9A9384;padding:0 0 8px;background:#fff}
+
+    @media(max-width:520px){
+      .rdc-launch{right:14px;bottom:14px;height:50px;padding:0 20px 0 16px;font-size:.95rem}
+      .rdc-open .rdc-launch{width:50px;padding:0}
+      .rdc-nudge{right:80px;bottom:22px}
+      .rdc-panel{right:8px;left:8px;bottom:80px;width:auto;max-width:none;height:calc(100vh - 100px);height:calc(100dvh - 100px);border-radius:18px}
+    }
+  </style>
+
+  <div id="rdChat">
+    <div class="rdc-nudge" id="rdcNudge">Hi! Ask me about milk, prices or delivery 🥛</div>
+    <div class="rdc-panel" id="rdcPanel" role="dialog" aria-label="RD Dairy help chat">
+      <div class="rdc-head">
+        <img class="rdc-avatar" id="rdcAvatar" alt="RD Dairy">
+        <div>
+          <div class="rdc-title">RD Dairy Help</div>
+          <div class="rdc-sub"><i></i>Here to help, any time</div>
+        </div>
+        <a class="rdc-wa" href="https://wa.me/919080502101?text=Hi%20RD%20Dairy!" target="_blank" rel="noopener" title="Chat with our team on WhatsApp">
+          <svg viewBox="0 0 24 24" fill="#fff"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35zM12 2a10 10 0 0 0-8.56 15.15L2 22l4.98-1.4A10 10 0 1 0 12 2zm0 18.06a8.02 8.02 0 0 1-4.3-1.25l-.31-.19-2.96.83.79-2.88-.2-.3A8.02 8.02 0 1 1 12 20.06z"/></svg>
+          Team
+        </a>
+      </div>
+      <div class="rdc-body" id="rdcBody"></div>
+      <div class="rdc-chips" id="rdcChips"></div>
+      <form class="rdc-foot" id="rdcForm" autocomplete="off">
+        <input class="rdc-input" id="rdcInput" maxlength="500" placeholder="Ask anything" aria-label="Type your question">
+        <button class="rdc-send" id="rdcSend" type="submit" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="#1B2A5A"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.1 15 12 3.4 13.9z"/></svg>
+        </button>
+      </form>
+      <div class="rdc-note">For order changes, our team replies on WhatsApp from 6 AM to 8 PM</div>
+    </div>
+    <button class="rdc-launch" id="rdcLaunch" aria-label="Ask RD Dairy">
+      <svg class="rdc-ico-chat" viewBox="0 0 24 24" fill="#1B2A5A"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+      <span class="rdc-label">Ask RD Dairy</span>
+      <svg class="rdc-ico-close" viewBox="0 0 24 24" fill="none" stroke="#1B2A5A" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+
+  <script>
+  (function(){
+    /* ---------- CONFIG ---------- */
+    var USE_AI = false; // set to true only after the rd-chat Edge Function and API key are live
+    var RDC_API = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/rd-chat";
+    var RDC_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
+    var WA_LINK = "https://wa.me/919080502101?text=";
+
+    var STARTERS = [
+      "What are your prices?",
+      "Which areas do you deliver to?",
+      "How do I start a subscription?",
+      "How can I pause my delivery?",
+      "What is A2 milk?",
+      "How do I pay my bill?",
+      "பால் விலை என்ன?",
+      "டெலிவரியை எப்படி நிறுத்துவது?"
+    ];
+    var FOLLOWUPS = [
+      "Milk price", "Ghee price", "Delivery charges", "Pause delivery", "Payment options",
+      "Glass bottles", "Visit the farm", "Talk to the team"
+    ];
+
+    /* ---------- BUILT IN ANSWERS (used for suggested questions and whenever the AI is unreachable) ---------- */
+    var A = {
+      prices: {
+        k: ["விலை","எவ்வளவு","ரேட்","price","cost","rate","how much","rs","₹","products","list","menu","vilai","evlo","evvalavu","enna vilai"],
+        t: "Here is our current price list:\n\n🥛 <b>A2 Cow Milk</b>: 500ml ₹50 · 1 Litre ₹90\n🥛 <b>Milk Pouch</b> (GoA2 & RD Dairy): 500ml ₹50\n🧈 <b>A2 Bilona Ghee</b>: 250g ₹350 · 500g ₹700 · 1 Litre ₹1400\n🧀 <b>Paneer</b>: 250g ₹200 · 500g ₹400\n🥣 <b>Curd</b>: 500g ₹75 · 1 Litre ₹150\n🧈 <b>Butter</b>: 500g ₹450 · 1kg ₹900",
+        a: [["See products","#products"],["Start subscription","#subscription"]]
+      },
+      milk: {
+        k: ["பால்","பால் விலை","milk","milk price","milk rate","a2 milk price","litre","liter","1l","500ml","paal"],
+        t: "Our <b>A2 Cow Milk</b> is ₹50 for 500ml and ₹90 for 1 Litre, fresh from native Gir, Red Sindhi and Sahiwal cows. Daily use <b>milk pouches</b> are ₹50 for 500ml.",
+        a: [["Subscribe for daily milk","#subscription"]]
+      },
+      ghee: {
+        k: ["நெய்","ghee","bilona","nei","neyyi"],
+        t: "Our <b>A2 Bilona Ghee</b> is made the traditional Bilona way: aromatic, golden and pure.\n\n250g ₹350 · 500g ₹700 · 1 Litre ₹1400",
+        a: [["Order ghee","#products"]]
+      },
+      paneer: { k:["பனீர்","paneer"], t:"Fresh <b>paneer</b> made daily from pure A2 milk: 250g ₹200 · 500g ₹400.", a:[["Order paneer","#products"]] },
+      curd: { k:["தயிர்","curd","thayir","yogurt","yoghurt"], t:"Our <b>curd</b> is naturally set, thick and creamy: 500g ₹75 · 1 Litre ₹150.", a:[["Order curd","#products"]] },
+      butter: { k:["வெண்ணெய்","butter","vennai"], t:"Freshly churned <b>butter</b>, perfect on hot rotis: 500g ₹450 · 1kg ₹900.", a:[["Order butter","#products"]] },
+      delivery: {
+        k: ["டெலிவரி","ஏரியா","இடம்","deliver","delivery","area","location","chennai","pincode","service","reach","free delivery","delivery charge","shipping"],
+        t: "We deliver fresh every morning across <b>Chennai</b>, and delivery is <b>free</b> in all our delivery areas.\n\nShare your area with our team on WhatsApp and we will confirm your slot.",
+        a: [["Check my area on WhatsApp","wa:Hi RD Dairy! Do you deliver to my area? My area is "]]
+      },
+      subscribe: {
+        k: ["subscribe","subscription","daily","alternate","plan","start","regular","monthly","custom schedule"],
+        t: "Starting is easy! Pick <b>Daily</b>, <b>Alternate Day</b> or a <b>Custom Schedule</b>, fill in your name, WhatsApp number and address, and we confirm on WhatsApp within 24 hours.\n\nYou can pause, change quantity or update your address any time.",
+        a: [["Start my subscription","#subscription"]]
+      },
+      pause: {
+        w: 2,
+        k: ["நிறுத்த","நிறுத்து","வேண்டாம்","லீவு","pause","pause delivery","pause my","stop delivery","stop milk","stop","hold","leave","holiday","vacation","out of town","skip","cancel","resume","nirutha","venam"],
+        t: "Sure! Just message or call us on <b>+91 90805 02101</b> and we will pause it right away.\n\nPlease let us know by <b>8:30 PM the day before</b> so the next morning's delivery is updated in time.",
+        a: [["Pause on WhatsApp","wa:Hi RD Dairy! Please pause my milk delivery from "]]
+      },
+      payment: {
+        w: 2,
+        k: ["பணம்","கட்டணம்","பில்","pay","payment","upi","gpay","phonepe","paytm","cash","bank","bill","invoice","due","balance","qr"],
+        t: "You can pay by <b>UPI</b>, <b>cash</b> or <b>bank transfer</b>. Subscriptions are billed monthly and your bill reaches you on WhatsApp.\n\nUPI ID: <b>uranga14-1@okicici</b>\nUPI number: <b>9080502101</b>",
+        a: [["Ask about my bill","wa:Hi RD Dairy! I have a question about my bill."]]
+      },
+      a2: {
+        k: ["a2","a1","a2 milk","difference","beta","casein","benefit","healthy","kids","children","digest","native breed"],
+        t: "<b>A2 milk</b> comes from Indian native breed cows like <b>Gir, Red Sindhi and Sahiwal</b>. It carries the A2 beta casein protein, which many families find gentler and easier to digest than regular milk.\n\nOurs is 100% pure A2, straight from our farm with zero mixing and zero preservatives.",
+        a: [["Try A2 milk","#products"]]
+      },
+      purity: {
+        k: ["pure","preservative","adulter","mix","water","chemical","hormone","fresh","quality","hygien","organic","natural"],
+        t: "Every bottle is <b>100% pure A2 milk</b>: collected each morning, handled hygienically and delivered the same day. Zero preservatives, zero chemicals, zero mixing. Many customers notice the thick cream layer after boiling!",
+        a: []
+      },
+      bottles: {
+        w: 2,
+        k: ["பாட்டில்","bottle","glass","empty","return","container"],
+        t: "Please rinse the empty glass bottles and keep them ready. Our delivery partner collects them during your next delivery. Thank you for helping us keep it green! 🌿",
+        a: []
+      },
+      farm: {
+        w: 2,
+        k: ["பண்ணை","மாடு","farm","visit","gaushala","cow","cows","directions","address","where are you"],
+        t: "You are welcome to visit <b>Sri Ranga Gaushala</b>, our farm at No 7, RD Dairy & GoA2 Dairy Farm, Chennai. Please call ahead so we can plan a good time for you.",
+        a: [["Schedule a visit","wa:Hi RD Dairy! I would like to visit the farm."],["See cow gallery","cow-life-gallery.html"]]
+      },
+      contact: {
+        k: ["போன்","நம்பர்","தொடர்பு","contact","call","phone","number","email","whatsapp","talk","human","person","team","support","help me","instagram","timing","open","hours"],
+        t: "Our team is happy to help:\n\n📞 Call / WhatsApp: <b>+91 90805 02101</b> (6 AM to 8 PM, all days)\n✉️ Email: <b>rddairy14@gmail.com</b>\n📸 Instagram: <b>@rd_dairy_chennai</b>",
+        a: [["Chat on WhatsApp","wa:Hi RD Dairy!"],["Call now","tel:+919080502101"]]
+      },
+      orders: {
+        w: 2,
+        k: ["order status","my order","track","where is my","not delivered","late","missed","complaint","wrong","damaged","refund","account","login"],
+        t: "You can see your orders under <b>My Orders</b>. If a delivery was missed or something looks off, please message our team on WhatsApp and they will sort it out quickly.",
+        a: [["My Orders","my-orders.html"],["Message the team","wa:Hi RD Dairy! I need help with my order."]]
+      },
+      storage: {
+        k: ["store","storage","fridge","boil","how long","shelf","keep","spoil","expire"],
+        t: "For the best taste, keep the milk refrigerated as soon as it arrives and boil it before drinking. Fresh milk is best enjoyed within a day or two.",
+        a: []
+      },
+      app: {
+        k: ["app","install","download","android","iphone","ios"],
+        t: "You can install the RD Dairy app from the <b>Download App</b> buttons at the top of the page. On iPhone, open this site in Safari, tap <b>Share</b> and then <b>Add to Home Screen</b>.",
+        a: [["Go to top","#home"]]
+      },
+      greet: {
+        k: ["வணக்கம்","hi","hello","hey","vanakkam","good morning","good evening","namaste"],
+        t: "Vanakkam! 🙏 I am the RD Dairy assistant. Ask me about our A2 milk, prices, delivery or subscriptions.",
+        a: []
+      },
+      thanks: { k:["நன்றி","thank","thanks","nandri","super","great","ok","okay"], t:"Happy to help! 😊 Anything else you would like to know?", a:[] }
+    };
+    /* ---------- TAMIL REPLIES (used when the customer writes in Tamil) ---------- */
+    var TA = {
+      prices: "எங்கள் தற்போதைய விலை பட்டியல்:\n\n🥛 <b>A2 பசும் பால்</b>: 500ml ₹50 · 1 லிட்டர் ₹90\n🥛 <b>பால் பாக்கெட்</b> (GoA2 & RD Dairy): 500ml ₹50\n🧈 <b>A2 பிலோனா நெய்</b>: 250g ₹350 · 500g ₹700 · 1 லிட்டர் ₹1400\n🧀 <b>பனீர்</b>: 250g ₹200 · 500g ₹400\n🥣 <b>தயிர்</b>: 500g ₹75 · 1 லிட்டர் ₹150\n🧈 <b>வெண்ணெய்</b>: 500g ₹450 · 1kg ₹900",
+      milk: "எங்கள் <b>A2 பசும் பால்</b>: 500ml ₹50, 1 லிட்டர் ₹90. கிர், ரெட் சிந்தி, சாஹிவால் நாட்டு மாடுகளிடமிருந்து தினமும் புதிதாக. தினசரி பயன்பாட்டுக்கான <b>பால் பாக்கெட்</b> 500ml ₹50.",
+      ghee: "பாரம்பரிய பிலோனா முறையில் தயாரிக்கும் எங்கள் <b>A2 பிலோனா நெய்</b>: நல்ல மணமும் பொன்னிறமும் கொண்டது.\n\n250g ₹350 · 500g ₹700 · 1 லிட்டர் ₹1400",
+      paneer: "தூய A2 பாலில் தினமும் தயாரிக்கும் புதிய <b>பனீர்</b>: 250g ₹200 · 500g ₹400.",
+      curd: "இயற்கையாக உறைய வைத்த கெட்டியான <b>தயிர்</b>: 500g ₹75 · 1 லிட்டர் ₹150.",
+      butter: "புதிதாகக் கடைந்த <b>வெண்ணெய்</b>, சூடான சப்பாத்திக்கு ஏற்றது: 500g ₹450 · 1kg ₹900.",
+      delivery: "<b>சென்னை</b> முழுவதும் தினமும் காலையில் புதிதாக டெலிவரி செய்கிறோம். எங்கள் எல்லா டெலிவரி பகுதிகளிலும் டெலிவரி <b>இலவசம்</b>.\n\nஉங்கள் பகுதியை WhatsApp இல் அனுப்புங்கள், உடனே உறுதிசெய்கிறோம்.",
+      subscribe: "தொடங்குவது மிக எளிது! <b>தினசரி</b>, <b>ஒரு நாள் விட்டு ஒரு நாள்</b> அல்லது <b>உங்கள் விருப்ப நாட்கள்</b> தேர்வு செய்து, பெயர், WhatsApp எண், முகவரி கொடுத்தால் 24 மணி நேரத்தில் WhatsApp இல் உறுதிசெய்கிறோம்.\n\nஎப்போது வேண்டுமானாலும் நிறுத்தி வைக்கலாம், அளவையும் முகவரியையும் மாற்றலாம்.",
+      pause: "நிச்சயமாக! <b>+91 90805 02101</b> க்கு அழைக்கவும் அல்லது WhatsApp செய்யவும், உடனே நிறுத்தி வைக்கிறோம்.\n\nடெலிவரிக்கு <b>முந்தைய நாள் இரவு 8:30 மணிக்குள்</b> தெரிவித்தால், மறுநாள் காலை டெலிவரி சரியாக மாற்றப்படும்.",
+      payment: "<b>UPI</b>, <b>ரொக்கம்</b> அல்லது <b>வங்கி பரிமாற்றம்</b> மூலம் செலுத்தலாம். சந்தா பில் மாதந்தோறும் WhatsApp இல் வரும்.\n\nUPI ID: <b>uranga14-1@okicici</b>\nUPI எண்: <b>9080502101</b>",
+      a2: "<b>A2 பால்</b> <b>கிர், ரெட் சிந்தி, சாஹிவால்</b> போன்ற நம் நாட்டு மாடுகளிடமிருந்து கிடைக்கிறது. இதில் உள்ள A2 பீட்டா கேசின் புரதம் பலருக்கு எளிதில் செரிக்கிறது.\n\nஎங்கள் பண்ணையிலிருந்து நேரடியாக, 100% தூய A2 பால்.",
+      purity: "ஒவ்வொரு பாட்டிலும் <b>100% தூய A2 பால்</b>: தினமும் காலையில் கறந்து, சுத்தமாகக் கையாண்டு, அதே நாளில் உங்கள் வீட்டுக்கு. காய்ச்சிய பின் வரும் கெட்டியான ஆடையே அதன் தூய்மைக்குச் சான்று!",
+      bottles: "காலி கண்ணாடி பாட்டில்களைக் கழுவி தயாராக வையுங்கள். அடுத்த டெலிவரியின் போது எங்கள் டெலிவரி நண்பர் எடுத்துக்கொள்வார். நன்றி! 🌿",
+      farm: "எங்கள் பண்ணையான <b>ஸ்ரீ ரங்கா கோசாலை</b>க்கு (No 7, RD Dairy & GoA2 Dairy Farm, சென்னை) உங்களை அன்புடன் வரவேற்கிறோம். வருவதற்கு முன் அழைத்தால் நல்ல நேரத்தை ஏற்பாடு செய்வோம்.",
+      contact: "எங்கள் குழு உதவத் தயாராக உள்ளது:\n\n📞 அழைப்பு / WhatsApp: <b>+91 90805 02101</b> (காலை 6 முதல் இரவு 8 வரை, எல்லா நாட்களும்)\n✉️ மின்னஞ்சல்: <b>rddairy14@gmail.com</b>\n📸 Instagram: <b>@rd_dairy_chennai</b>",
+      orders: "உங்கள் ஆர்டர்களை <b>My Orders</b> பகுதியில் பார்க்கலாம். டெலிவரியில் ஏதேனும் சிக்கல் இருந்தால் WhatsApp இல் தெரிவியுங்கள், உடனே சரிசெய்கிறோம்.",
+      storage: "சுவை மாறாமல் இருக்க, பால் வந்தவுடன் குளிர்சாதனப் பெட்டியில் வைத்து, காய்ச்சி அருந்துங்கள். ஓரிரு நாட்களுக்குள் பயன்படுத்துவது சிறந்தது.",
+      app: "பக்கத்தின் மேலே உள்ள <b>Download App</b> பொத்தான்கள் மூலம் RD Dairy செயலியை நிறுவலாம். iPhone இல் Safari இல் திறந்து <b>Share</b>, பிறகு <b>Add to Home Screen</b> அழுத்துங்கள்.",
+      greet: "வணக்கம்! 🙏 நான் RD Dairy உதவியாளர். A2 பால், விலை, டெலிவரி, சந்தா பற்றி தமிழிலேயே கேளுங்கள்.",
+      thanks: "மகிழ்ச்சி! 😊 வேறு ஏதாவது தெரிந்துகொள்ள வேண்டுமா?",
+      unknown: "இதற்கு எங்கள் குழுவே சரியான பதில் தரும். காலை 6 முதல் இரவு 8 வரை WhatsApp இல் பதிலளிப்பார்கள்.\n\nஇதற்கிடையில், நான் உடனே உதவக்கூடியவை 👇"
+    };
+    function isTamil(q){ return /[஀-௿]/.test(q || ""); }
+    function txt(key, ta){ return (ta && TA[key]) ? TA[key] : A[key].t; }
+
+    var CHIP_TO = {
+      "What are your prices?":"prices","Which areas do you deliver to?":"delivery","How do I start a subscription?":"subscribe",
+      "How can I pause my delivery?":"pause","What is A2 milk?":"a2","How do I pay my bill?":"payment",
+      "Milk price":"milk","Ghee price":"ghee","Delivery charges":"delivery","Pause delivery":"pause","Payment options":"payment",
+      "Glass bottles":"bottles","Visit the farm":"farm","Talk to the team":"contact",
+      "பால் விலை என்ன?":"prices","டெலிவரியை எப்படி நிறுத்துவது?":"pause"
+    };
+
+    function lev(a, b){
+      if(Math.abs(a.length - b.length) > 1) return 2;
+      var prev = [], cur = [], i, j;
+      for(j = 0; j <= b.length; j++) prev[j] = j;
+      for(i = 1; i <= a.length; i++){
+        cur = [i];
+        for(j = 1; j <= b.length; j++){
+          cur[j] = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+        }
+        prev = cur;
+      }
+      return prev[b.length];
+    }
+    function scoreTopics(q){
+      var t = " " + q.toLowerCase().replace(/[?!.,]/g, " ").replace(/\s+/g, " ") + " ";
+      var words = t.trim().split(" ");
+      var scores = {};
+      Object.keys(A).forEach(function(key){
+        var score = 0;
+        A[key].k.forEach(function(kw){
+          var hit;
+          if(/^[a-z0-9 ]+$/.test(kw) && kw.length <= 3){
+            hit = new RegExp("[^a-z0-9]" + kw + "[^a-z0-9]").test(t);
+          } else {
+            hit = t.indexOf(kw) > -1;
+            // allow one typo on longer single words (e.g. "subcription", "delivry", "paneeer")
+            if(!hit && kw.length >= 5 && kw.indexOf(" ") < 0 && /^[a-z]+$/.test(kw)){
+              hit = words.some(function(w){ return w.length >= 4 && lev(w, kw) <= 1; });
+            }
+          }
+          if(hit) score += kw.length;
+        });
+        score *= (A[key].w || 1);
+        if((key === "greet" || key === "thanks") && words.length > 4) score = 0;
+        if(score > 0) scores[key] = score;
+      });
+      return scores;
+    }
+    var PRODUCT_KEYS = ["milk","ghee","paneer","curd","butter"];
+    function localAnswer(q){
+      var scores = scoreTopics(q);
+      var keys = Object.keys(scores).sort(function(a,b){ return scores[b] - scores[a]; });
+      var ta = isTamil(q);
+      if(!keys.length){
+        return {
+          t: ta ? TA.unknown : "I want to get this right for you, so our team is the best to answer that one. They reply on WhatsApp from 6 AM to 8 PM.\n\nMeanwhile, here are things I can help with right away 👇",
+          a: [["Ask the team on WhatsApp","wa:Hi RD Dairy! " + q]],
+          topics: true
+        };
+      }
+      // several products asked together, e.g. "ghee and paneer price"
+      var prods = keys.filter(function(k){ return PRODUCT_KEYS.indexOf(k) > -1; });
+      // "ghee price" / "நெய் விலை": a named product beats the full price list
+      if(prods.length === 1 && keys[0] === "prices") return { t: txt(prods[0], ta), a: A[prods[0]].a };
+      if(prods.length >= 2){
+        return {
+          t: prods.map(function(k){ return txt(k, ta); }).join("\n\n"),
+          a: [["See all products","#products"]]
+        };
+      }
+      return { t: txt(keys[0], ta), a: A[keys[0]].a };
+    }
+
+    /* ---------- DOM ---------- */
+    var root = document.getElementById("rdChat");
+    var panel = document.getElementById("rdcPanel");
+    var body = document.getElementById("rdcBody");
+    var chips = document.getElementById("rdcChips");
+    var form = document.getElementById("rdcForm");
+    var input = document.getElementById("rdcInput");
+    var sendBtn = document.getElementById("rdcSend");
+    var nudge = document.getElementById("rdcNudge");
+    var history = [];
+    var busy = false, started = false;
+
+    var logo = document.querySelector("#mainNav img");
+    if(logo && logo.src) document.getElementById("rdcAvatar").src = logo.src;
+
+    function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+    function fmtAI(s){
+      return esc(s)
+        .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+        .replace(/(\+91[\s]?\d{5}[\s]?\d{5})/g, '<a href="tel:+919080502101" style="color:#C47E00;font-weight:800;">$1</a>')
+        .replace(/\n/g, "<br>");
+    }
+    function actionHref(h){ return h.indexOf("wa:") === 0 ? WA_LINK + encodeURIComponent(h.slice(3)) : h; }
+
+    function addMsg(html, who, actions){
+      var d = document.createElement("div");
+      d.className = "rdc-msg " + (who === "user" ? "rdc-user" : "rdc-bot");
+      d.innerHTML = html;
+      if(actions && actions.length){
+        var row = document.createElement("div");
+        row.className = "rdc-actions";
+        actions.forEach(function(a){
+          var el = document.createElement("a");
+          var href = actionHref(a[1]);
+          el.href = href;
+          el.textContent = a[0];
+          if(a[1].indexOf("wa:") === 0){ el.className = "wa"; el.target = "_blank"; el.rel = "noopener"; }
+          if(href.charAt(0) === "#") el.addEventListener("click", function(){ setTimeout(closeChat, 150); });
+          row.appendChild(el);
+        });
+        d.appendChild(row);
+      }
+      body.appendChild(d);
+      body.scrollTop = body.scrollHeight;
+      return d;
+    }
+    function showTyping(){
+      var d = document.createElement("div");
+      d.className = "rdc-typing"; d.id = "rdcTyping";
+      d.innerHTML = "<span></span><span></span><span></span>";
+      body.appendChild(d); body.scrollTop = body.scrollHeight;
+    }
+    function hideTyping(){ var d = document.getElementById("rdcTyping"); if(d) d.remove(); }
+
+    function renderChips(list){
+      chips.innerHTML = "";
+      list.forEach(function(q){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "rdc-chip"; b.textContent = q;
+        b.addEventListener("click", function(){ ask(q, true); });
+        chips.appendChild(b);
+      });
+    }
+
+    function welcome(){
+      addMsg("Vanakkam! 🙏 Welcome to <b>RD Dairy</b>.<br>I can help with our A2 milk, prices, delivery, subscriptions and payments. What would you like to know?" +
+        "<div style=\"margin-top:10px;padding-top:10px;border-top:1px dashed #F0E6C8;\">வணக்கம்! 🙏 <b>RD Dairy</b> உங்களை அன்புடன் வரவேற்கிறது.<br>நீங்கள் <b>தமிழிலும்</b> எங்களுடன் பேசலாம்! பால், விலை, டெலிவரி, சந்தா பற்றி எதுவும் கேளுங்கள்.</div>", "bot");
+      var wrap = document.createElement("div");
+      wrap.className = "rdc-starters";
+      STARTERS.forEach(function(q){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "rdc-chip"; b.textContent = q;
+        b.addEventListener("click", function(){ ask(q, true); });
+        wrap.appendChild(b);
+      });
+      body.appendChild(wrap);
+      renderChips([]);
+    }
+
+    function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+    async function askAI(q){
+      var ctrl = new AbortController();
+      var timer = setTimeout(function(){ ctrl.abort(); }, 20000);
+      try{
+        var res = await fetch(RDC_API, {
+          method: "POST",
+          signal: ctrl.signal,
+          headers: { "Content-Type":"application/json", "apikey": RDC_KEY, "Authorization": "Bearer " + RDC_KEY },
+          body: JSON.stringify({ messages: history.slice(-10) })
+        });
+        var data = await res.json().catch(function(){ return {}; });
+        if(!res.ok || !data.reply) throw new Error(data.error || "no reply");
+        return data.reply;
+      } finally { clearTimeout(timer); }
+    }
+
+    async function ask(q, fromChip){
+      q = (q || "").trim();
+      if(!q || busy) return;
+      busy = true; sendBtn.disabled = true;
+      var starters = body.querySelector(".rdc-starters");
+      if(starters) starters.remove();
+      addMsg(esc(q), "user");
+      history.push({ role:"user", content:q });
+      input.value = "";
+      showTyping();
+
+      var ans;
+      var local = fromChip && CHIP_TO[q] ? { t: txt(CHIP_TO[q], isTamil(q)), a: A[CHIP_TO[q]].a } : null;
+      if(local){
+        await sleep(450);
+        hideTyping();
+        addMsg(local.t.replace(/\n/g,"<br>"), "bot", local.a);
+        history.push({ role:"assistant", content: local.t.replace(/<[^>]+>/g,"") });
+      } else if(!USE_AI){
+        await sleep(500);
+        hideTyping();
+        ans = localAnswer(q);
+        addMsg(ans.t.replace(/\n/g,"<br>"), "bot", ans.a);
+        history.push({ role:"assistant", content: ans.t.replace(/<[^>]+>/g,"") });
+      } else {
+        try{
+          var reply = await askAI(q);
+          hideTyping();
+          var match = localAnswer(q);
+          var acts = /whatsapp|team|call us|message us/i.test(reply) ? [["Chat on WhatsApp","wa:Hi RD Dairy! " + q]] : (match.a || []).slice(0,2);
+          addMsg(fmtAI(reply), "bot", acts);
+          history.push({ role:"assistant", content: reply });
+        }catch(e){
+          ans = localAnswer(q);
+          hideTyping();
+          addMsg(ans.t.replace(/\n/g,"<br>"), "bot", ans.a);
+          history.push({ role:"assistant", content: ans.t.replace(/<[^>]+>/g,"") });
+        }
+      }
+      renderChips(ans && ans.topics ? STARTERS : FOLLOWUPS);
+      busy = false; sendBtn.disabled = false;
+      if(window.matchMedia("(min-width:521px)").matches) input.focus();
+    }
+
+    function openChat(){
+      root.classList.add("rdc-open");
+      nudge.classList.remove("show");
+      if(!started){ started = true; welcome(); }
+      if(window.matchMedia("(min-width:521px)").matches) setTimeout(function(){ input.focus(); }, 250);
+      try{ sessionStorage.setItem("rdc_seen","1"); }catch(e){}
+    }
+    function closeChat(){ root.classList.remove("rdc-open"); }
+
+    document.getElementById("rdcLaunch").addEventListener("click", function(){
+      root.classList.contains("rdc-open") ? closeChat() : openChat();
+    });
+    nudge.addEventListener("click", openChat);
+    form.addEventListener("submit", function(e){ e.preventDefault(); ask(input.value, false); });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeChat(); });
+
+    var seen = false;
+    try{ seen = sessionStorage.getItem("rdc_seen") === "1"; }catch(e){}
+    if(!seen){
+      setTimeout(function(){ if(!root.classList.contains("rdc-open")) nudge.classList.add("show"); }, 5000);
+      setTimeout(function(){ nudge.classList.remove("show"); }, 15000);
+    }
+  })();
+  </script>
+
+</body>
 </html>
