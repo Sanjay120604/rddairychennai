@@ -5041,11 +5041,19 @@
     // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js').then(function (reg) {
-          console.log('SW registered');
+        navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function (reg) {
+          reg.update(); // check for a newer version on every visit
         }).catch(function (err) {
           console.log('SW error:', err);
         });
+      });
+      // When a new version takes over, reload once so the visitor sees the latest page
+      var rdSwReloaded = false;
+      var rdHadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (!rdHadController || rdSwReloaded) return;
+        rdSwReloaded = true;
+        window.location.reload();
       });
     }
 
