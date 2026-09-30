@@ -4490,6 +4490,26 @@
     var RD_API_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/store";
     var RD_ANON_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
     var RD_SESSION_KEY = "rd_dairy_user";
+    var RD_NOTIFY_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/order-notify";
+
+    // Sends the WhatsApp order confirmation to the customer and the order alert to RD Dairy.
+    // Runs in the background so the customer's checkout stays instant.
+    function rdNotifyOrder(info) {
+      try {
+        fetch(RD_NOTIFY_URL, {
+          method: 'POST',
+          keepalive: true,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + RD_ANON_KEY,
+            'apikey': RD_ANON_KEY
+          },
+          body: JSON.stringify(info)
+        }).then(function (res) { return res.json(); })
+          .then(function (d) { if (!d || !d.success) console.warn('WhatsApp notify:', d); })
+          .catch(function (e) { console.warn('WhatsApp notify failed:', e); });
+      } catch (e) { console.warn('WhatsApp notify failed:', e); }
+    }
 
     function rdGetUser() {
       try { return JSON.parse(localStorage.getItem(RD_SESSION_KEY)); } catch (e) { return null; }
@@ -4819,6 +4839,7 @@
       showToast('Placing your order...');
       try {
         var msgs = [];
+        var refs = [];
         // one-time items -> Orders
         if (parts.once.length) {
           var r = await rdSubmit({
@@ -4827,7 +4848,7 @@
             items: parts.once, total: itemsTotal(parts.once),
             payMethod: payMethod, paymentRef: paymentRef
           });
-          if (r.success) msgs.push('Order ' + r.orderId); else throw new Error(r.message || 'Order failed');
+          if (r.success) { msgs.push('Order ' + r.orderId); refs.push(r.orderId); } else throw new Error(r.message || 'Order failed');
         }
         // subscription items -> Subscriptions (one row each)
         for (var i = 0; i < parts.subs.length; i++) {
@@ -4838,9 +4859,25 @@
             product: s.name + ' (' + s.variant + ')', qty: s.qty,
             plan: 'Daily Delivery', total: s.price * s.qty, paymentRef: paymentRef
           });
-          if (sr.success) msgs.push('Subscription ' + sr.subId);
+          if (sr.success) { msgs.push('Subscription ' + sr.subId); refs.push(sr.subId); }
         }
         showToast('Done! ' + msgs.join(', '));
+
+        // WhatsApp: confirmation to the customer + alert to RD Dairy
+        if (refs.length) {
+          rdNotifyOrder({
+            name: u.name,
+            phone: u.mobile,
+            address: address + (mapLink ? ' (Map: ' + mapLink + ')' : ''),
+            orderNumber: refs.join(', '),
+            items: items.map(function (it) {
+              return it.name + ' ' + it.variant + ' x ' + it.qty + (it.isSub ? ' (daily subscription)' : '');
+            }),
+            total: itemsTotal(items),
+            paymentStatus: payMethod === 'COD' ? 'Cash on Delivery' : 'Paid via UPI, Ref ' + paymentRef,
+            deliveryDate: parts.once.length ? 'Within 2 days of order' : 'Our team will confirm your start date'
+          });
+        }
         // clear only if we used the cart (not single "order now")
         if (!window._orderNowItems) { cart = []; updateCartUI(); renderCartItems(); }
         window._orderNowItems = null;
