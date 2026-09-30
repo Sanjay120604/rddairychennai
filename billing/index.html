@@ -785,7 +785,10 @@ function renderCustomerTable(){
       <td>${money(c.default_milk_rate)}</td>
       <td>${money(c.opening_balance)}</td>
       <td>${money(c.delivery_charge != null ? c.delivery_charge : 150)}</td>
-      <td><button class="btn ghost sm" onclick="editCustomer('${c.id}')">Edit</button></td>
+      <td>
+        <button class="btn ghost sm" onclick="editCustomer('${c.id}')">Edit</button>
+        <button class="btn ghost sm" onclick="deleteCustomer('${c.id}')">Delete</button>
+      </td>
     </tr>
   `).join('');
 }
@@ -1003,6 +1006,20 @@ async function saveCustomer(){
   await loadCustomers();
   await loadAllCustomers();
   showToast('Customer saved');
+}
+
+async function deleteCustomer(id){
+  const c = CUSTOMERS.find(x=>x.id===id) || ALL_CUSTOMERS.find(x=>x.id===id);
+  if(!c) return;
+  const ok = await showConfirm(
+    `Remove ${c.name} from the customer list? Their past bills and payment history stay intact and stay visible in Billing History — they just won't show up here or in customer pickers anymore.`,
+    'Delete'
+  );
+  if(!ok) return;
+  await api('/customers/'+id, { method:'DELETE' });
+  showToast('Customer removed');
+  await loadCustomers();
+  await loadAllCustomers();
 }
 
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
