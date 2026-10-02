@@ -49,7 +49,7 @@
   .chat{background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 6px 18px rgba(27,42,90,.07);margin-bottom:14px;border-left:4px solid var(--amber-light)}
   .chat.open{border-left-color:var(--amber)}
   .who{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-  .name{font-weight:800;font-size:1.05rem}
+  .name{font-family:'Nunito',sans-serif;font-style:normal;font-weight:800;font-size:1.05rem;color:var(--navy)}
   .phone{color:var(--navy-light);font-weight:700;font-size:.84rem;margin-left:6px}
   .pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.72rem;font-weight:800;margin-left:8px;vertical-align:middle}
   .pill.waiting{background:#fff3e0;color:var(--warn)}
@@ -113,6 +113,12 @@ function $(id){ return document.getElementById(id); }
 
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 function fmt(t){ return new Date(t).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}); }
+function cleanName(n){
+  if(!n) return "";
+  var s = n.normalize("NFKC").replace(/[\u200B-\u200D\uFE0F]/g,"").trim();
+  if(s === s.toUpperCase() && /[A-Z]/.test(s)) s = s.toLowerCase().replace(/(^|\s)\S/g, function(c){ return c.toUpperCase(); });
+  return s;
+}
 function prettyPhone(p){ return (p.indexOf("91")===0 && p.length===12) ? "+91 "+p.slice(2,7)+" "+p.slice(7) : "+"+p; }
 function linkify(s){ return esc(s).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>'); }
 
@@ -191,7 +197,7 @@ function render(){
     }).join("");
     var more = (g.items.length>3 && !expanded[g.phone]) ? '<button class="more" data-more="'+esc(g.phone)+'">Show all '+g.items.length+' messages</button>' : "";
     return '<div class="chat'+(g.open?" open":"")+'">'+
-      '<div class="who"><div><span class="name">'+esc(g.name||"Customer")+'</span><span class="phone">'+prettyPhone(g.phone)+'</span>'+
+      '<div class="who"><div><span class="name">'+esc(cleanName(g.name)||"Customer")+'</span><span class="phone">'+prettyPhone(g.phone)+'</span>'+
       '<span class="pill '+(g.open?"waiting":"done")+'">'+(g.open?"Waiting":"Done")+'</span></div>'+
       '<span class="when">'+fmt(g.items[0].received_at)+'</span></div>'+
       more+'<div class="msgs">'+bubbles+'</div>'+
