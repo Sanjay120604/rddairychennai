@@ -233,8 +233,9 @@
    SETTINGS: paste your Supabase Project URL here (one time)
    ========================================================= */
 const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
-const API = SUPABASE_URL.replace(/\/$/, "") + "/functions/v1";
+const API = SUPABASE_URL.trim().replace(/\/(rest|functions)\/v1.*$/, "").replace(/\/+$/, "") + "/functions/v1";
 const STEP = 0.5;
 
 /* ---------- storage: phone storage inside the app, browser storage in preview ---------- */
@@ -292,7 +293,7 @@ async function call(fn, body) {
   try {
     res = await fetch(`${API}/${fn}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", apikey: SUPABASE_KEY },
       body: JSON.stringify({ ...body, token: S.token || undefined }),
     });
     data = await res.json();
