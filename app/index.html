@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#1E2B4A" />
+<meta name="color-scheme" content="light" />
+<title>RD Dairy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #1E2B4A;
+    --butter: #F5A800;
+    --butter-soft: #FFF3D1;
+    --milk: #FFFFFF;
+    --mist: #EDF1F6;
+    --line: #D9E0EA;
+    --soft: #5B6780;
+    --pause: #8A96AD;
+    --leaf: #2F8F5B;
+    --danger: #B4442E;
+    --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+    --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: var(--body);
+    color: var(--ink);
+    background: var(--mist);
+    font-size: 16px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; }
+  :focus-visible { outline: 3px solid var(--butter); outline-offset: 2px; }
+  .hidden { display: none !important; }
+
+  /* ---------- shell ---------- */
+  #app { min-height: 100%; display: flex; flex-direction: column; }
+  .topbar {
+    background: var(--ink);
+    color: var(--milk);
+    padding: calc(var(--safe-top) + 14px) 20px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+  .brand span { color: var(--butter); }
+  .topbar small { opacity: 0.75; font-size: 14px; }
+  main { flex: 1; padding: 18px 16px calc(var(--safe-bottom) + 96px); max-width: 560px; width: 100%; margin: 0 auto; }
+
+  .tabs {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: var(--milk);
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-around;
+    padding: 8px 8px calc(var(--safe-bottom) + 8px);
+    z-index: 20;
+  }
+  .tabs button {
+    flex: 1; padding: 8px 4px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; color: var(--soft);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .tabs button svg { width: 24px; height: 24px; }
+  .tabs button.active { color: var(--ink); }
+  .tabs button.active svg { color: var(--butter); }
+
+  h2 { font-family: var(--display); font-weight: 700; font-size: 22px; margin: 26px 4px 12px; letter-spacing: -0.01em; }
+  .muted { color: var(--soft); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 50px; padding: 0 20px; border-radius: 14px;
+    font-weight: 700; font-size: 16px;
+  }
+  .btn-main { background: var(--butter); color: var(--ink); }
+  .btn-dark { background: var(--ink); color: var(--milk); }
+  .btn-line { background: var(--milk); border: 1.5px solid var(--line); color: var(--ink); }
+  .btn-quiet { color: var(--soft); font-weight: 600; min-height: 44px; }
+  .btn-block { width: 100%; }
+  .btn[disabled] { opacity: 0.5; pointer-events: none; }
+
+  /* ---------- login ---------- */
+  .login {
+    min-height: 100vh; min-height: 100dvh;
+    background: var(--ink); color: var(--milk);
+    padding: calc(var(--safe-top) + 48px) 24px calc(var(--safe-bottom) + 32px);
+    display: flex; flex-direction: column;
+  }
+  .login .brand { font-size: 40px; }
+  .login .lead { font-size: 18px; opacity: 0.85; margin: 8px 0 40px; max-width: 30ch; }
+  .login label { display: block; font-weight: 600; margin-bottom: 8px; }
+  .phone-row { display: flex; gap: 10px; }
+  .phone-row .cc {
+    display: flex; align-items: center; padding: 0 14px;
+    border-radius: 14px; background: rgba(255,255,255,0.12); font-weight: 700;
+  }
+  .login input {
+    width: 100%; min-height: 56px; border-radius: 14px; border: 2px solid transparent;
+    background: var(--milk); color: var(--ink); padding: 0 16px; font-size: 20px; font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .login input:focus { outline: none; border-color: var(--butter); }
+  .otp-input { text-align: center; letter-spacing: 0.5em !important; font-family: var(--display); font-size: 26px !important; }
+  .login .btn { margin-top: 18px; }
+  .login .note { margin-top: 16px; font-size: 15px; opacity: 0.8; }
+  .login .err { color: #FFC9BC; margin-top: 14px; font-weight: 600; min-height: 1.4em; }
+  .login .back { color: var(--butter); margin-top: 10px; font-weight: 600; min-height: 44px; text-align: left; }
+  .login .milkline { margin-top: auto; padding-top: 40px; font-size: 14px; opacity: 0.6; }
+
+  /* ---------- tomorrow card (the hero) ---------- */
+  .hello { margin: 4px 4px 14px; font-size: 18px; }
+  .hello b { font-family: var(--display); font-weight: 700; }
+  .tomorrow {
+    background: var(--milk); border-radius: 26px; padding: 22px 20px 20px;
+    display: grid; grid-template-columns: 112px 1fr; gap: 18px; align-items: center;
+  }
+  .tomorrow .when { font-weight: 600; color: var(--soft); font-size: 15px; }
+  .tomorrow .qty {
+    font-family: var(--display); font-weight: 800; font-size: 54px; line-height: 1;
+    letter-spacing: -0.03em; margin: 6px 0 4px;
+  }
+  .tomorrow .qty small { font-size: 22px; font-weight: 700; margin-left: 4px; }
+  .tomorrow .state { font-weight: 600; font-size: 15px; }
+  .state-paused { color: var(--pause); }
+  .state-extra { color: #A86F00; }
+  .state-less { color: var(--soft); }
+  .state-normal { color: var(--leaf); }
+  .tomorrow-actions { grid-column: 1 / -1; display: grid; gap: 10px; }
+  .lock-note { grid-column: 1 / -1; font-size: 15px; color: var(--soft); background: var(--mist); padding: 12px 14px; border-radius: 14px; }
+
+  .bottle { width: 112px; height: 168px; }
+  .bottle .fill { transition: y 0.5s ease, height 0.5s ease; }
+  @media (prefers-reduced-motion: reduce) { .bottle .fill { transition: none; } }
+
+  /* stepper */
+  .stepper { display: flex; align-items: center; justify-content: space-between; background: var(--mist); border-radius: 16px; padding: 6px; }
+  .stepper button {
+    width: 52px; height: 52px; border-radius: 12px; background: var(--milk);
+    font-size: 26px; font-weight: 700; display: grid; place-items: center;
+  }
+  .stepper output { font-family: var(--display); font-weight: 700; font-size: 24px; }
+
+  /* week strip */
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .day {
+    background: var(--milk); border-radius: 14px; padding: 10px 2px 10px; text-align: center;
+    border: 2px solid transparent;
+  }
+  .day .dn { font-size: 12px; color: var(--soft); font-weight: 600; }
+  .day .dd { font-family: var(--display); font-weight: 700; font-size: 18px; }
+  .day .dq { font-size: 12px; font-weight: 700; margin-top: 2px; }
+  .day.paused { background: transparent; border: 2px dashed var(--line); }
+  .day.paused .dq { color: var(--pause); }
+  .day.extra { background: var(--butter-soft); }
+  .day.extra .dq { color: #A86F00; }
+  .day.locked { opacity: 0.55; }
+
+  .row-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+
+  /* ---------- calendar ---------- */
+  .cal { background: var(--milk); border-radius: 22px; padding: 16px; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cal-head b { font-family: var(--display); font-size: 20px; font-weight: 700; }
+  .cal-head button { width: 44px; height: 44px; border-radius: 12px; background: var(--mist); font-size: 20px; font-weight: 700; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+  .cal-grid .wd { font-size: 12px; font-weight: 600; color: var(--soft); padding: 4px 0; }
+  .cd { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 600; position: relative; }
+  .cd .q { font-size: 11px; font-weight: 700; }
+  .cd.past { color: var(--pause); }
+  .cd.today { box-shadow: inset 0 0 0 2px var(--ink); }
+  .cd.paused { border: 2px dashed var(--line); color: var(--pause); }
+  .cd.extra { background: var(--butter-soft); }
+  .cd.less { background: var(--mist); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: 13px; color: var(--soft); }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; }
+
+  /* ---------- account ---------- */
+  .card { background: var(--milk); border-radius: 22px; padding: 6px 18px; }
+  .kv { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--mist); }
+  .kv:last-child { border-bottom: 0; }
+  .kv span { color: var(--soft); }
+  .kv b { text-align: right; font-weight: 600; }
+  .pad { padding: 18px; }
+  .pending { background: var(--butter-soft); border-radius: 14px; padding: 12px 14px; font-weight: 600; margin-bottom: 12px; }
+  .field { margin-top: 14px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .field input[type=date] {
+    width: 100%; min-height: 50px; border-radius: 14px; border: 1.5px solid var(--line);
+    padding: 0 14px; background: var(--milk);
+  }
+
+  /* ---------- sheet ---------- */
+  .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
+  .sheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--milk); border-radius: 26px 26px 0 0;
+    padding: 10px 20px calc(var(--safe-bottom) + 20px);
+    max-width: 560px; margin: 0 auto;
+    transform: translateY(0); transition: transform 0.25s ease;
+  }
+  .sheet .grip { width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 16px; }
+  .sheet h3 { font-family: var(--display); font-weight: 700; font-size: 22px; margin: 0 0 4px; }
+  .sheet .sub { color: var(--soft); margin: 0 0 16px; }
+  .sheet .stack { display: grid; gap: 10px; margin-top: 14px; }
+
+  /* ---------- toast + loading ---------- */
+  .toast {
+    position: fixed; left: 16px; right: 16px; bottom: calc(var(--safe-bottom) + 92px); z-index: 60;
+    background: var(--ink); color: var(--milk); border-radius: 14px; padding: 14px 16px;
+    font-weight: 600; max-width: 528px; margin: 0 auto;
+  }
+  .toast.bad { background: var(--danger); }
+  .loading { padding: 60px 0; text-align: center; color: var(--soft); }
+  .confirm-box { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px; background: rgba(30, 43, 74, 0.5); }
+  .confirm-box .inner { background: var(--milk); border-radius: 22px; padding: 22px; max-width: 360px; width: 100%; }
+  .confirm-box p { margin: 0 0 18px; font-weight: 600; font-size: 17px; }
+  .confirm-box .row-actions { margin-top: 0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =========================================================
+   SETTINGS: paste your Supabase Project URL here (one time)
+   ========================================================= */
+const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
+
+const API = SUPABASE_URL.replace(/\/$/, "") + "/functions/v1";
+const STEP = 0.5;
+
+/* ---------- storage: phone storage inside the app, browser storage in preview ---------- */
+const store = {
+  async get(k) {
+    const P = window.Capacitor?.Plugins?.Preferences;
+    if (P) return (await P.get({ key: k })).value;
+    try { return localStorage.getItem(k); } catch { return null; }
+  },
+  async set(k, v) {
+    const P = window.Capacitor?.Plugins?.Preferences;
+    if (P) return P.set({ key: k, value: v });
+    try { localStorage.setItem(k, v); } catch {}
+  },
+  async remove(k) {
+    const P = window.Capacitor?.Plugins?.Preferences;
+    if (P) return P.remove({ key: k });
+    try { localStorage.removeItem(k); } catch {}
+  },
+};
+
+/* ---------- state ---------- */
+const S = { token: null, tab: "home", home: null, calMonth: null, cal: null, phone: "" };
+
+/* ---------- helpers ---------- */
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmtQty = (q) => {
+  q = Number(q || 0);
+  if (q === 0) return "None";
+  if (q < 1) return `${Math.round(q * 1000)} ml`;
+  return `${+q.toFixed(2)} L`;
+};
+const shortQty = (q) => `${+Number(q || 0).toFixed(2)} L`;
+const qtyParts = (q) => {
+  q = Number(q || 0);
+  if (q === 0) return { n: "0", u: "L" };
+  if (q < 1) return { n: String(Math.round(q * 1000)), u: "ml" };
+  return { n: String(+q.toFixed(2)), u: "L" };
+};
+const d0 = (s) => new Date(s + "T00:00:00Z");
+const fmtDay = (s, opts) => d0(s).toLocaleDateString("en-IN", { timeZone: "UTC", ...opts });
+const longDate = (s) => fmtDay(s, { weekday: "long", day: "numeric", month: "long" });
+const shortDate = (s) => fmtDay(s, { weekday: "short", day: "numeric", month: "short" });
+const addDays = (s, n) => { const d = d0(s); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const todayIST = () => new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
+const cutoffLabel = (t) => {
+  const [h, m] = String(t || "21:00").split(":").map(Number);
+  const hh = ((h + 11) % 12) + 1;
+  return `${hh}${m ? ":" + String(m).padStart(2, "0") : ""} ${h < 12 ? "AM" : "PM"}`;
+};
+
+async function call(fn, body) {
+  let res, data;
+  try {
+    res = await fetch(`${API}/${fn}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, token: S.token || undefined }),
+    });
+    data = await res.json();
+  } catch {
+    return { ok: false, code: "network", message: "Check your internet connection and try again." };
+  }
+  if (res.status === 401 && fn === "app-api") { await signOutLocal(); return { ok: false, code: "logged_out", message: "Please log in again." }; }
+  return data;
+}
+
+let toastTimer;
+function toast(msg, bad = false) {
+  document.querySelector(".toast")?.remove();
+  const el = document.createElement("div");
+  el.className = "toast" + (bad ? " bad" : "");
+  el.setAttribute("role", "status");
+  el.textContent = msg;
+  document.body.appendChild(el);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 3200);
+}
+
+function confirmBox(message, yesLabel) {
+  return new Promise((resolve) => {
+    const box = document.createElement("div");
+    box.className = "confirm-box";
+    box.innerHTML = `<div class="inner"><p>${esc(message)}</p>
+      <div class="row-actions"><button class="btn btn-line" data-no>Stay</button>
+      <button class="btn btn-dark" data-yes>${esc(yesLabel)}</button></div></div>`;
+    document.body.appendChild(box);
+    box.addEventListener("click", (e) => {
+      if (e.target.closest("[data-yes]")) { box.remove(); resolve(true); }
+      else if (e.target.closest("[data-no]") || e.target === box) { box.remove(); resolve(false); }
+    });
+  });
+}
+
+/* ---------- bottle ---------- */
+function bottleSVG(qty, usual) {
+  const scale = Math.max(usual * 2, 2);
+  const ratio = Math.max(0, Math.min(1, qty / scale));
+  const bodyTop = 58, bodyBottom = 190, h = (bodyBottom - bodyTop) * ratio;
+  return `
+  <svg class="bottle" viewBox="0 0 120 200" aria-hidden="true">
+    <defs><clipPath id="bclip"><path d="M44 8h32v26c0 8 22 14 22 34v112a12 12 0 0 1-12 12H34a12 12 0 0 1-12-12V68c0-20 22-26 22-34z"/></clipPath></defs>
+    <rect x="40" y="0" width="40" height="14" rx="4" fill="${qty > 0 ? "#F5A800" : "#C9D1DE"}"/>
+    <g clip-path="url(#bclip)">
+      <rect x="0" y="0" width="120" height="200" fill="#FFFFFF"/>
+      <rect class="fill" x="0" y="${bodyBottom - h}" width="120" height="${h + 10}" fill="#FFF3D1"/>
+      <rect class="fill" x="0" y="${bodyBottom - h}" width="120" height="4" fill="#F5A800" opacity="${qty > 0 ? 0.9 : 0}"/>
+    </g>
+    <path d="M44 8h32v26c0 8 22 14 22 34v112a12 12 0 0 1-12 12H34a12 12 0 0 1-12-12V68c0-20 22-26 22-34z"
+      fill="none" stroke="#1E2B4A" stroke-width="3"/>
+    <text x="60" y="132" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="20" fill="#1E2B4A" opacity="0.18">A2</text>
+  </svg>`;
+}
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+function renderLogin(step = "phone", err = "") {
+  const app = $("#app");
+  if (step === "phone") {
+    app.innerHTML = `
+      <section class="login">
+        <div class="brand">RD <span>Dairy</span></div>
+        <p class="lead">Fresh A2 milk at your door every morning.</p>
+        <label for="ph">Your mobile number</label>
+        <div class="phone-row">
+          <div class="cc">+91</div>
+          <input id="ph" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" value="${esc(S.phone)}" />
+        </div>
+        <button class="btn btn-main btn-block" id="send">Send code on WhatsApp</button>
+        <div class="err" role="alert">${esc(err)}</div>
+        <div class="milkline">Serving Chennai for over 20 years</div>
+      </section>`;
+    const ph = $("#ph");
+    ph.focus();
+    ph.addEventListener("input", () => { ph.value = ph.value.replace(/\D/g, "").slice(0, 10); });
+    ph.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#send").click(); });
+    $("#send").onclick = async () => {
+      const phone = ph.value.replace(/\D/g, "");
+      if (phone.length !== 10) return renderLogin("phone", "Enter your 10 digit mobile number.");
+      S.phone = phone;
+      $("#send").disabled = true; $("#send").textContent = "Sending…";
+      const r = await call("app-auth", { action: "send_otp", phone });
+      if (!r.ok) return renderLogin("phone", r.message);
+      renderLogin("otp");
+    };
+  } else {
+    app.innerHTML = `
+      <section class="login">
+        <div class="brand">RD <span>Dairy</span></div>
+        <p class="lead">We sent a 6 digit code to your WhatsApp on +91 ${esc(S.phone)}.</p>
+        <label for="otp">Code</label>
+        <input id="otp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
+        <button class="btn btn-main btn-block" id="verify">Log in</button>
+        <div class="err" role="alert">${esc(err)}</div>
+        <button class="back" id="resend">Send a new code</button>
+        <button class="back" id="change">Use a different number</button>
+      </section>`;
+    const otp = $("#otp");
+    otp.focus();
+    otp.addEventListener("input", () => {
+      otp.value = otp.value.replace(/\D/g, "").slice(0, 6);
+      if (otp.value.length === 6) $("#verify").click();
+    });
+    $("#verify").onclick = async () => {
+      if (otp.value.length !== 6) return renderLogin("otp", "Enter the 6 digit code.");
+      $("#verify").disabled = true; $("#verify").textContent = "Checking…";
+      const device = /iPhone|iPad/i.test(navigator.userAgent) ? "ios" : /Android/i.test(navigator.userAgent) ? "android" : "web";
+      const r = await call("app-auth", { action: "verify_otp", phone: S.phone, code: otp.value, device });
+      if (!r.ok) return renderLogin("otp", r.message);
+      S.token = r.token;
+      await store.set("rd_token", r.token);
+      startApp();
+    };
+    $("#resend").onclick = async () => {
+      const r = await call("app-auth", { action: "send_otp", phone: S.phone });
+      if (r.ok) toast("New code sent on WhatsApp"); else toast(r.message, true);
+    };
+    $("#change").onclick = () => renderLogin("phone");
+  }
+}
+
+async function signOutLocal() {
+  S.token = null; S.home = null; S.cal = null;
+  await store.remove("rd_token");
+  renderLogin("phone");
+}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+const icons = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6v4c0 1.5 4 2.5 4 6v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9c0-3.5 4-4.5 4-6z"/><path d="M5 14h14"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  account: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+};
+
+function shell() {
+  $("#app").innerHTML = `
+    <header class="topbar"><div class="brand">RD <span>Dairy</span></div><small id="tb-area"></small></header>
+    <main id="view"><div class="loading">Loading…</div></main>
+    <nav class="tabs" aria-label="Main">
+      <button data-tab="home">${icons.home}Home</button>
+      <button data-tab="calendar">${icons.calendar}Calendar</button>
+      <button data-tab="account">${icons.account}Account</button>
+    </nav>`;
+  $(".tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tab]");
+    if (b) go(b.dataset.tab);
+  });
+}
+
+function go(tab) {
+  S.tab = tab;
+  document.querySelectorAll(".tabs button").forEach((b) => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+    b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
+  });
+  if (tab === "home") renderHome();
+  if (tab === "calendar") renderCalendar();
+  if (tab === "account") renderAccount();
+  window.scrollTo(0, 0);
+}
+
+async function loadHome() {
+  const r = await call("app-api", { action: "home" });
+  if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return null; }
+  S.home = r;
+  const ta = $("#tb-area"); if (ta) ta.textContent = r.area || "";
+  return r;
+}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+async function renderHome() {
+  const v = $("#view");
+  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
+  const h = S.home;
+  if (S.tab !== "home") return;
+
+  if (!h.is_subscriber) {
+    v.innerHTML = `
+      <p class="hello">Hello <b>${esc(h.name || "")}</b></p>
+      <div class="card pad">
+        <p style="margin:0 0 6px;font-weight:700;font-size:18px">Your number is registered with RD Dairy.</p>
+        <p class="muted" style="margin:0">Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here.</p>
+      </div>`;
+    return;
+  }
+
+  const t = h.tomorrow;
+  const canEditTomorrow = t.date >= h.first_editable_date;
+  const p = qtyParts(t.qty);
+  const stateText = { normal: "Your usual delivery", paused: "Paused for this day", extra: "Extra milk added", less: "Less than usual" }[t.status];
+
+  v.innerHTML = `
+    <p class="hello">Hello <b>${esc(h.name)}</b></p>
+    <section class="tomorrow" aria-label="Tomorrow's delivery">
+      <div>${bottleSVG(t.qty, h.default_qty)}</div>
+      <div>
+        <div class="when">Tomorrow, ${esc(shortDate(t.date))}</div>
+        <div class="qty">${p.n}<small>${p.u}</small></div>
+        <div class="state state-${t.status}">${stateText}</div>
+      </div>
+      ${canEditTomorrow ? `
+        <div class="tomorrow-actions">
+          <button class="btn btn-dark btn-block" data-edit="${t.date}">Change tomorrow</button>
+        </div>
+        <div class="lock-note">Changes for tomorrow are open until ${cutoffLabel(h.cutoff_time)} tonight.</div>
+      ` : `
+        <div class="lock-note">Tomorrow's delivery is set. You can change deliveries from ${esc(shortDate(h.first_editable_date))} onwards.</div>
+      `}
+    </section>
+
+    <h2>Next 7 days</h2>
+    <div class="week">
+      ${h.next7.map((d) => {
+        const locked = d.date < h.first_editable_date;
+        return `<button class="day ${d.status} ${locked ? "locked" : ""}" data-edit="${d.date}" ${locked ? 'aria-disabled="true"' : ""}
+          aria-label="${esc(longDate(d.date))}, ${esc(fmtQty(d.qty))}">
+          <div class="dn">${esc(fmtDay(d.date, { weekday: "short" }))}</div>
+          <div class="dd">${esc(fmtDay(d.date, { day: "numeric" }))}</div>
+          <div class="dq">${d.status === "paused" ? "Paused" : esc(shortQty(d.qty))}</div>
+        </button>`;
+      }).join("")}
+    </div>
+
+    <div class="row-actions">
+      <button class="btn btn-line" id="away">Going away?</button>
+      <button class="btn btn-line" id="tocal">Full calendar</button>
+    </div>`;
+
+  v.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
+    const date = b.dataset.edit;
+    if (date < h.first_editable_date) return toast(`Changes for ${shortDate(date)} are closed.`);
+    const day = h.next7.find((d) => d.date === date);
+    openDaySheet(date, day ? day.qty : h.default_qty, day ? day.status : "normal");
+  }));
+  $("#away").onclick = openAwaySheet;
+  $("#tocal").onclick = () => go("calendar");
+}
+
+/* ---------- sheets ---------- */
+function openSheet(html) {
+  closeSheet();
+  const scrim = document.createElement("div");
+  scrim.className = "scrim";
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.setAttribute("role", "dialog");
+  sheet.setAttribute("aria-modal", "true");
+  sheet.innerHTML = `<div class="grip"></div>${html}`;
+  scrim.onclick = closeSheet;
+  document.body.append(scrim, sheet);
+  return sheet;
+}
+function closeSheet() { document.querySelectorAll(".scrim,.sheet").forEach((e) => e.remove()); }
+
+async function saveDays(payload, okMsg) {
+  const r = await call("app-api", { action: "set_days", ...payload });
+  if (!r.ok) { toast(r.message, true); return false; }
+  closeSheet();
+  toast(okMsg);
+  S.home = null; S.cal = null;
+  await loadHome();
+  if (S.tab === "home") renderHome();
+  if (S.tab === "calendar") renderCalendar();
+  return true;
+}
+
+function openDaySheet(date, currentQty, status) {
+  const h = S.home;
+  const usual = Number(h.default_qty);
+  const max = usual + Number(h.max_extra_qty || 5);
+  let q = status === "paused" ? usual : Number(currentQty);
+
+  const sheet = openSheet(`
+    <h3>${esc(longDate(date))}</h3>
+    <p class="sub">Your usual is ${esc(fmtQty(usual))} a day.</p>
+    <div class="stepper">
+      <button data-minus aria-label="Less milk">−</button>
+      <output aria-live="polite">${esc(fmtQty(q))}</output>
+      <button data-plus aria-label="More milk">+</button>
+    </div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" data-save>Save ${esc(fmtQty(q))} for this day</button>
+      ${status === "paused"
+        ? `<button class="btn btn-line btn-block" data-normal>Resume my usual ${esc(fmtQty(usual))}</button>`
+        : `<button class="btn btn-line btn-block" data-pause>Pause this day</button>`}
+    </div>`);
+
+  const out = $("output", sheet), save = $("[data-save]", sheet);
+  const sync = () => { out.textContent = fmtQty(q); save.textContent = `Save ${fmtQty(q)} for this day`; };
+  $("[data-minus]", sheet).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); sync(); };
+  $("[data-plus]", sheet).onclick = () => { q = Math.min(max, +(q + STEP).toFixed(2)); sync(); };
+  save.onclick = () => saveDays({ mode: "qty", qty: q, from: date }, `${fmtQty(q)} saved for ${shortDate(date)}`);
+  $("[data-pause]", sheet)?.addEventListener("click", () => saveDays({ mode: "pause", from: date }, `Paused for ${shortDate(date)}`));
+  $("[data-normal]", sheet)?.addEventListener("click", () => saveDays({ mode: "normal", from: date }, `Back to your usual for ${shortDate(date)}`));
+}
+
+function openAwaySheet() {
+  const h = S.home;
+  const first = h.first_editable_date;
+  const sheet = openSheet(`
+    <h3>Going away?</h3>
+    <p class="sub">Choose the days you need no milk. Deliveries restart on their own after the last day.</p>
+    <div class="field"><label for="af">First day without milk</label><input id="af" type="date" min="${first}" value="${first}" /></div>
+    <div class="field"><label for="at">Last day without milk</label><input id="at" type="date" min="${first}" value="${first}" /></div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" data-go>Pause these days</button>
+      <button class="btn btn-quiet btn-block" data-resume>Back early? Resume these days</button>
+    </div>`);
+  const af = $("#af", sheet), at = $("#at", sheet);
+  af.onchange = () => { at.min = af.value; if (at.value < af.value) at.value = af.value; };
+  const range = () => {
+    if (!af.value || !at.value) { toast("Choose both dates", true); return null; }
+    return { from: af.value, to: at.value };
+  };
+  $("[data-go]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "pause", ...r }, `Paused from ${shortDate(r.from)} to ${shortDate(r.to)}`); };
+  $("[data-resume]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "normal", ...r }, `Deliveries resume from ${shortDate(r.from)}`); };
+}
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+async function renderCalendar() {
+  const v = $("#view");
+  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
+  if (!S.home.is_subscriber) { v.innerHTML = `<div class="card pad">Your delivery calendar appears here once your subscription starts.</div>`; return; }
+  if (!S.calMonth) S.calMonth = todayIST().slice(0, 7);
+  if (!S.cal || S.cal.month !== S.calMonth) {
+    v.innerHTML = `<div class="loading">Loading…</div>`;
+    const r = await call("app-api", { action: "calendar", month: S.calMonth });
+    if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return; }
+    S.cal = r;
+  }
+  if (S.tab !== "calendar") return;
+
+  const h = S.home, c = S.cal, today = todayIST();
+  const usual = Number(c.default_qty);
+  const map = new Map(c.changes.map((x) => [x.date, x]));
+  const first = d0(S.calMonth + "-01");
+  const lead = (first.getUTCDay() + 6) % 7; // Monday first
+  const days = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
+  const title = first.toLocaleDateString("en-IN", { timeZone: "UTC", month: "long", year: "numeric" });
+
+  let cells = ["M", "T", "W", "T", "F", "S", "S"].map((d) => `<div class="wd">${d}</div>`).join("");
+  for (let i = 0; i < lead; i++) cells += "<div></div>";
+  for (let n = 1; n <= days; n++) {
+    const date = `${S.calMonth}-${String(n).padStart(2, "0")}`;
+    const ch = map.get(date);
+    let cls = "", q = usual;
+    if (ch) { q = ch.qty; cls = ch.paused ? "paused" : q > usual ? "extra" : q < usual ? "less" : ""; }
+    if (date < today) cls += " past";
+    if (date === today) cls += " today";
+    const label = ch?.paused ? "Paused" : fmtQty(q);
+    cells += `<button class="cd ${cls}" data-date="${date}" aria-label="${esc(longDate(date))}, ${esc(label)}">
+      ${n}<span class="q">${ch?.paused ? "–" : esc(+Number(q).toFixed(2))}</span></button>`;
+  }
+
+  v.innerHTML = `
+    <div class="cal">
+      <div class="cal-head">
+        <button data-m="-1" aria-label="Previous month">‹</button>
+        <b>${esc(title)}</b>
+        <button data-m="1" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid">${cells}</div>
+      <div class="legend">
+        <span><i style="background:var(--milk);border:1.5px solid var(--line)"></i>Usual ${esc(fmtQty(usual))}</span>
+        <span><i style="background:var(--butter-soft)"></i>Extra</span>
+        <span><i style="background:var(--mist)"></i>Less</span>
+        <span><i style="border:2px dashed var(--line)"></i>Paused</span>
+      </div>
+    </div>
+    <p class="muted" style="margin:14px 4px">Tap any day from ${esc(shortDate(h.first_editable_date))} to change it.</p>`;
+
+  v.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => {
+    const d = d0(S.calMonth + "-01");
+    d.setUTCMonth(d.getUTCMonth() + Number(b.dataset.m));
+    S.calMonth = d.toISOString().slice(0, 7);
+    renderCalendar();
+  });
+  v.querySelectorAll("[data-date]").forEach((b) => b.onclick = () => {
+    const date = b.dataset.date;
+    if (date < h.first_editable_date) return toast(`Changes for ${shortDate(date)} are closed.`);
+    const ch = map.get(date);
+    openDaySheet(date, ch ? ch.qty : usual, ch ? (ch.paused ? "paused" : "changed") : "normal");
+  });
+}
+
+/* =========================================================
+   ACCOUNT
+   ========================================================= */
+async function renderAccount() {
+  const v = $("#view");
+  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
+  const h = S.home;
+  if (S.tab !== "account") return;
+
+  const details = h.is_subscriber ? `
+      <div class="kv"><span>Name</span><b>${esc(h.name)}</b></div>
+      <div class="kv"><span>Mobile</span><b>+91 ${esc(h.phone)}</b></div>
+      <div class="kv"><span>Address</span><b>${esc(h.address)}</b></div>
+      <div class="kv"><span>Area</span><b>${esc(h.area)}</b></div>
+      <div class="kv"><span>Milk</span><b>${esc(h.milk_type)}</b></div>
+      <div class="kv"><span>Usual quantity</span><b>${esc(fmtQty(h.default_qty))} a day</b></div>
+      <div class="kv"><span>Rate</span><b>₹${esc(h.rate)} per litre</b></div>
+      ${h.delivery_charge ? `<div class="kv"><span>Delivery charge</span><b>₹${esc(h.delivery_charge)} a month</b></div>` : ""}`
+    : `
+      <div class="kv"><span>Name</span><b>${esc(h.name)}</b></div>
+      <div class="kv"><span>Mobile</span><b>+91 ${esc(h.phone)}</b></div>`;
+
+  const pq = h.pending_qty_change;
+  v.innerHTML = `
+    <h2 style="margin-top:6px">Your details</h2>
+    <div class="card">${details}</div>
+
+    ${h.is_subscriber ? `
+      <h2>Change your usual quantity</h2>
+      <div class="card pad">
+        ${pq ? `<div class="pending">Your request for ${esc(fmtQty(pq.new_qty))} a day from ${esc(shortDate(pq.effective_from))} is with RD Dairy.</div>` : ""}
+        <div class="stepper">
+          <button data-minus aria-label="Less milk">−</button>
+          <output aria-live="polite">${esc(fmtQty(h.default_qty))}</output>
+          <button data-plus aria-label="More milk">+</button>
+        </div>
+        <div class="field"><label for="qf">Starting from</label><input id="qf" type="date" min="${h.first_editable_date}" value="${h.first_editable_date}" /></div>
+        <button class="btn btn-dark btn-block" style="margin-top:14px" data-req>Send request</button>
+        <p class="muted" style="margin:10px 0 0;font-size:14px">RD Dairy confirms the new quantity before it starts.</p>
+      </div>` : ""}
+
+    <div style="margin-top:28px">
+      <button class="btn btn-line btn-block" id="logout">Log out</button>
+    </div>`;
+
+  if (h.is_subscriber) {
+    let q = Number(h.default_qty);
+    const out = $("output", v);
+    $("[data-minus]", v).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); out.textContent = fmtQty(q); };
+    $("[data-plus]", v).onclick = () => { q = Math.min(20, +(q + STEP).toFixed(2)); out.textContent = fmtQty(q); };
+    $("[data-req]", v).onclick = async (e) => {
+      if (q === Number(h.default_qty) && !pq) return toast(`${fmtQty(q)} is already your usual quantity`);
+      e.target.disabled = true;
+      const r = await call("app-api", { action: "request_qty_change", new_qty: q, effective_from: $("#qf").value });
+      e.target.disabled = false;
+      if (!r.ok) return toast(r.message, true);
+      toast("Request sent to RD Dairy");
+      S.home = null; await loadHome(); renderAccount();
+    };
+  }
+
+  $("#logout").onclick = async () => {
+    if (!(await confirmBox("Log out of RD Dairy on this phone? You will need a WhatsApp code to log in again.", "Log out"))) return;
+    await call("app-auth", { action: "logout" });
+    await signOutLocal();
+  };
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+async function startApp() {
+  shell();
+  go("home");
+}
+
+(async function init() {
+  S.token = await store.get("rd_token");
+  if (S.token) startApp(); else renderLogin("phone");
+})();
+</script>
+</body>
+</html>
