@@ -78,7 +78,7 @@
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     min-height: 50px; padding: 0 20px; border-radius: 14px;
-    font-weight: 700; font-size: 16px;
+    font-weight: 700; font-size: 16px; text-decoration: none;
   }
   .btn-main { background: var(--butter); color: var(--ink); }
   .btn-dark { background: var(--ink); color: var(--milk); }
@@ -221,6 +221,26 @@
   .line.total span:first-child { color: var(--ink); }
   .sheet.tall { max-height: 88vh; overflow-y: auto; }
   .sheet h4 { font-family: var(--display); font-weight: 700; font-size: 17px; margin: 18px 0 2px; }
+
+  .pill.wait { background: var(--mist); color: var(--soft); }
+  .due .wait-note { margin-top: 12px; background: rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 12px; font-weight: 600; }
+  .upi-box { background: var(--mist); border-radius: 16px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .upi-box b { word-break: break-all; }
+  .upi-box button { color: var(--ink); font-weight: 700; text-decoration: underline; min-height: 44px; }
+  .utr-row { display: flex; gap: 8px; }
+  .utr-row input {
+    flex: 1; min-height: 52px; border-radius: 14px; border: 1.5px solid var(--line); padding: 0 14px;
+    font-size: 18px; font-weight: 600; letter-spacing: 0.06em; background: var(--milk); min-width: 0;
+  }
+  .utr-row input:focus { outline: none; border-color: var(--butter); }
+  .utr-row button { min-height: 52px; padding: 0 16px; border-radius: 14px; background: var(--mist); font-weight: 700; }
+  .or { text-align: center; color: var(--soft); font-weight: 600; margin: 14px 0; }
+  .attach { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border-radius: 14px; border: 1.5px dashed var(--line); font-weight: 700; cursor: pointer; }
+  .attach input { display: none; }
+  .proof { display: flex; align-items: center; gap: 12px; background: var(--mist); border-radius: 14px; padding: 10px; }
+  .proof img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; }
+  .proof span { flex: 1; font-weight: 600; }
+  .proof button { color: var(--danger); font-weight: 700; min-height: 44px; padding: 0 8px; }
 
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
@@ -812,12 +832,16 @@ async function renderBills() {
 
   const due = b.total_due;
   const unpaid = b.bills.filter((x) => x.due > 0).length;
+  const payable = b.bills.filter((x) => x.due > 0 && !x.pending);
+  const payableAmt = payable.reduce((a, x) => a + x.due, 0);
 
   v.innerHTML = `
     <section class="due" aria-label="Amount due">
       <div class="lbl">${due > 0 ? "Amount due" : "All bills paid"}</div>
       <div class="amt ${due > 0 ? "" : "zero"}">${esc(inr(due))}</div>
       <p>${due > 0 ? `Across ${unpaid} ${unpaid === 1 ? "bill" : "bills"}. Tap a bill below to see the details.` : "Thank you. Your account is up to date."}</p>
+      ${b.pending_amount > 0 ? `<div class="wait-note">${esc(inr(b.pending_amount))} sent. RD Dairy is confirming it.</div>` : ""}
+      ${payableAmt > 0 ? `<button class="btn btn-main btn-block" style="margin-top:16px" id="payall">Pay ${esc(inr(payableAmt))}</button>` : ""}
     </section>
 
     <h2>Bills</h2>
@@ -826,7 +850,7 @@ async function renderBills() {
         <div><div class="t">${esc(periodLabel(x.period_start, x.period_end))}</div>
           <div class="s">${x.milk_qty ? esc(fmtQty(x.milk_qty)) + " of milk" : ""}${x.number ? (x.milk_qty ? ", " : "") + "Bill " + esc(x.number) : ""}</div></div>
         <div class="r"><b>${esc(inr(x.total))}</b><br>
-          ${x.due > 0 ? `<span class="pill due-p">${esc(inr(x.due))} due</span>` : `<span class="pill paid">Paid</span>`}</div>
+          ${x.due <= 0 ? `<span class="pill paid">Paid</span>` : x.pending ? `<span class="pill wait">Being confirmed</span>` : `<span class="pill due-p">${esc(inr(x.due))} due</span>`}</div>
       </button>`).join("")}</div>`
     : `<div class="empty">Your first bill appears here at the end of the month.</div>`}
 
@@ -840,6 +864,104 @@ async function renderBills() {
     : `<div class="empty">Payments you make show up here.</div>`}`;
 
   v.querySelectorAll("[data-bill]").forEach((el) => el.onclick = () => openBillSheet(el.dataset.bill));
+  $("#payall")?.addEventListener("click", () => openUpiSheet(payable.map((x) => x.id)));
+}
+
+/* ---------- UPI payment with proof ---------- */
+function compressImage(file, maxSide = 1400, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * scale);
+      cv.height = Math.round(img.height * scale);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.src = url;
+  });
+}
+
+async function openUpiSheet(invoiceIds) {
+  const sheet = openSheet(`<div class="loading">Loading…</div>`);
+  sheet.classList.add("tall");
+  const r = await call("app-api", { action: "upi_start", invoice_ids: invoiceIds });
+  if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
+
+  sheet.innerHTML = `<div class="grip"></div>
+    <h3>Pay ${esc(inr(r.amount))}</h3>
+    <p class="sub">To ${esc(r.upi_name)}. The amount and bill number fill in on their own.</p>
+    <a class="btn btn-main btn-block" href="${esc(r.upi_link)}" data-open>Pay with GPay, PhonePe or Paytm</a>
+    <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">UPI ID</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>Copy</button></div>
+
+    <h4>After paying</h4>
+    <p class="sub" style="margin-bottom:12px">Share the UPI reference number or a screenshot of the payment.</p>
+    <label for="utr" style="display:block;font-weight:600;margin-bottom:6px">UPI reference number (12 digits)</label>
+    <div class="utr-row">
+      <input id="utr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" />
+      <button data-paste>Paste</button>
+    </div>
+    <div class="or">or</div>
+    <div data-proofwrap>
+      <label class="attach">Attach screenshot<input type="file" accept="image/*" data-file /></label>
+    </div>
+    <div class="stack">
+      <button class="btn btn-dark btn-block" data-send disabled>Send payment details</button>
+      <button class="btn btn-quiet btn-block" data-close>Close</button>
+    </div>`;
+
+  let imageData = "";
+  const utr = $("#utr", sheet), send = $("[data-send]", sheet), wrap = $("[data-proofwrap]", sheet);
+  const digits = () => utr.value.replace(/\D/g, "");
+  const refresh = () => { send.disabled = !(digits().length === 12 || imageData); };
+
+  utr.addEventListener("input", () => { utr.value = utr.value.replace(/[^\d ]/g, ""); refresh(); });
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-copy]", sheet).onclick = async () => {
+    try { await navigator.clipboard.writeText(r.upi_id); toast("UPI ID copied"); } catch { toast(r.upi_id); }
+  };
+  $("[data-paste]", sheet).onclick = async () => {
+    try {
+      const t = await navigator.clipboard.readText();
+      const m = String(t).match(/\d{12}/);
+      if (m) { utr.value = m[0]; refresh(); } else toast("Copy the 12 digit reference in your UPI app first", true);
+    } catch { toast("Tap and hold the box to paste", true); }
+  };
+
+  const bindFile = () => {
+    $("[data-file]", wrap).onchange = async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      try { imageData = await compressImage(f); } catch { return toast("That image could not be opened", true); }
+      wrap.innerHTML = `<div class="proof"><img src="${imageData}" alt="Payment screenshot" /><span>Screenshot added</span><button data-remove>Remove</button></div>`;
+      $("[data-remove]", wrap).onclick = () => {
+        imageData = "";
+        wrap.innerHTML = `<label class="attach">Attach screenshot<input type="file" accept="image/*" data-file /></label>`;
+        bindFile(); refresh();
+      };
+      refresh();
+    };
+  };
+  bindFile();
+
+  send.onclick = async () => {
+    if (utr.value.trim() && digits().length !== 12) return toast("The UPI reference number has 12 digits", true);
+    send.disabled = true; send.textContent = "Sending…";
+    const res = await call("app-api", {
+      action: "payment_claim",
+      invoice_ids: r.invoice_ids,
+      utr: digits().length === 12 ? digits() : "",
+      image_base64: imageData || undefined,
+    });
+    if (!res.ok) { send.textContent = "Send payment details"; refresh(); return toast(res.message, true); }
+    closeSheet();
+    toast("Payment details sent. RD Dairy will confirm shortly.");
+    if (S.tab === "bills") renderBills();
+  };
 }
 
 async function openBillSheet(id) {
@@ -868,8 +990,14 @@ async function openBillSheet(id) {
         : `<div class="line"><span>Payments for this bill show up here</span><span></span></div>`}
       <div class="line total"><span>${b.due > 0 ? "Balance due" : "Fully paid"}</span><span>${esc(inr(b.due))}</span></div>
     </div>
-    <div class="stack"><button class="btn btn-line btn-block" data-close>Close</button></div>`;
+    <div class="stack">
+      ${b.due > 0 && (S.bills || []).find((x) => x.id === b.id)?.pending
+        ? `<div class="pending" style="margin:0">Your payment for this bill is being confirmed by RD Dairy.</div>`
+        : b.due > 0 ? `<button class="btn btn-main btn-block" data-pay>Pay ${esc(inr(b.due))} for this bill</button>` : ""}
+      <button class="btn btn-line btn-block" data-close>Close</button>
+    </div>`;
   $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-pay]", sheet)?.addEventListener("click", () => openUpiSheet([b.id]));
 }
 
 /* =========================================================
