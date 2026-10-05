@@ -117,8 +117,31 @@
   .rd-viewer img{max-width:100%;max-height:100%;border-radius:12px;background:#fff}
   .rd-viewer-x{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
 
+
+  /* support chat */
+  .ch-wrap{display:grid;grid-template-columns:320px 1fr;gap:14px;min-height:60vh}
+  @media(max-width:820px){.ch-wrap{grid-template-columns:1fr}}
+  .ch-list{display:flex;flex-direction:column;gap:8px;max-height:72vh;overflow:auto}
+  .ch-item{position:relative;text-align:left;background:#fff;border:1.5px solid transparent;border-radius:14px;padding:12px 14px;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(27,42,90,.06)}
+  .ch-item.on{border-color:var(--amber)}
+  .ch-top{display:flex;justify-content:space-between;gap:8px}
+  .ch-top span{font-size:.75rem;color:var(--navy-light)}
+  .ch-sub{font-size:.84rem;color:var(--navy-light);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ch-unread{position:absolute;right:10px;bottom:10px;background:var(--err);color:#fff;font-style:normal;font-weight:800;font-size:.75rem;min-width:22px;height:22px;border-radius:11px;display:grid;place-items:center;padding:0 6px}
+  .ch-conv{background:#fff;border-radius:16px;box-shadow:0 6px 18px rgba(27,42,90,.07);display:flex;flex-direction:column;min-height:60vh;max-height:78vh}
+  .ch-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--amber-pale)}
+  .ch-msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:#FAF7EB}
+  .ch-msg{max-width:75%;padding:10px 13px;border-radius:14px;font-size:.92rem;line-height:1.4}
+  .ch-msg.them{align-self:flex-start;background:#fff}
+  .ch-msg.me{align-self:flex-end;background:var(--navy);color:#fff}
+  .ch-msg span{display:block;font-size:.7rem;opacity:.6;margin-top:4px;text-align:right}
+  .ch-msg img{max-width:200px;border-radius:10px;display:block;margin-bottom:6px}
+  .ch-compose{display:flex;gap:8px;padding:12px;border-top:1px solid var(--amber-pale)}
+  .ch-compose textarea{flex:1;border:1.5px solid var(--amber-light);border-radius:10px;padding:10px;font-family:inherit;resize:vertical}
+
   /* app payments */
   .lbox{position:relative}
+  .lbox-count.hidden{display:none !important}
   .lbox-count{position:absolute;top:10px;right:10px;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:var(--err);color:#fff;font-weight:800;font-size:.78rem;display:grid;place-items:center}
   .ap-alert{max-width:640px;margin:22px auto 0;background:var(--navy);color:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;box-shadow:0 6px 18px rgba(27,42,90,.18)}
   .ap-alert b{color:var(--amber)}
@@ -178,6 +201,7 @@
         <div class="lbox" onclick="window.location.href='inbox.html'"><div class="lbox-ico">💬</div><div class="lbox-label">Messages</div></div>
         <div class="lbox" onclick="goSection('apppay')"><div class="lbox-ico">📲</div><div class="lbox-label">App Payments</div><span class="lbox-count hidden" id="apCount"></span></div>
         <div class="lbox" onclick="goSection('appreq')"><div class="lbox-ico">🗓️</div><div class="lbox-label">App Requests</div><span class="lbox-count hidden" id="arCount"></span></div>
+        <div class="lbox" onclick="goSection('chat')"><div class="lbox-ico">🗨️</div><div class="lbox-label">Support Chat</div><span class="lbox-count hidden" id="chCount"></span></div>
       </div>
       <div class="ap-alert hidden" id="apAlert" onclick="goSection('apppay')"></div>
     </div>
@@ -498,6 +522,21 @@
       <div id="apArea" class="ap-list"><div class="empty">Loading…</div></div>
     </div>
 
+    <!-- ============ SUPPORT CHAT VIEW ============ -->
+    <div id="chatView" class="hidden">
+      <div class="toolbar">
+        <div class="tabs" style="margin:0">
+          <button class="tab active" id="chTabOpen" onclick="chSetFilter('open')">Open</button>
+          <button class="tab" id="chTabAll" onclick="chSetFilter('all')">All</button>
+        </div>
+        <button class="btn refresh" onclick="loadChatThreads()">↻ Refresh</button>
+      </div>
+      <div class="ch-wrap">
+        <div class="ch-list" id="chList"><div class="empty">Loading…</div></div>
+        <div class="ch-conv" id="chConv"><div class="empty">Choose a conversation</div></div>
+      </div>
+    </div>
+
     <!-- ============ APP REQUESTS VIEW ============ -->
     <div id="appReqView" class="hidden">
       <div class="toolbar"><button class="btn refresh" onclick="loadAppRequests()">↻ Refresh</button></div>
@@ -750,7 +789,8 @@ function switchView(v){
   var isReports = (v==="reports");
   var isAppPay = (v==="apppay");
   var isAppReq = (v==="appreq");
-  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq;
+  var isChat = (v==="chat");
+  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq && !isChat;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
@@ -759,6 +799,9 @@ function switchView(v){
   $("reportsView").classList.toggle("hidden", !isReports);
   $("appPayView").classList.toggle("hidden", !isAppPay);
   $("appReqView").classList.toggle("hidden", !isAppReq);
+  $("chatView").classList.toggle("hidden", !isChat);
+  if(!isChat) chStopPoll();
+  if(isChat){ $("cards").innerHTML=""; loadChatThreads(); chStartPoll(); return; }
   if(isAppPay){ $("cards").innerHTML=""; loadAppPayments(); return; }
   if(isAppReq){ $("cards").innerHTML=""; loadAppRequests(); return; }
   if(isDelivery){
@@ -2289,7 +2332,7 @@ function waButton(mobile, name, id, status){
 }
 
 function renderCards(){
-  if(view==="apppay"||view==="appreq"){ $("cards").innerHTML=""; return; }
+  if(view==="apppay"||view==="appreq"||view==="chat"){ $("cards").innerHTML=""; return; }
   var o=data.orders, s=data.subscriptions;
   var revenue=o.filter(x=>/paid|received|confirmed/i.test((x.Status||""))).reduce((a,x)=>a+(Number(x.Amount)||0),0);
   var pending=o.filter(x=>!/paid|received|confirmed/i.test((x.Status||""))).length;
@@ -2555,11 +2598,18 @@ async function refreshAppPayCount(){
     if(!r.ok) return;
     var n = r.count||0, rq = r.requests||0;
     $("arCount").textContent = rq; $("arCount").classList.toggle("hidden", rq===0);
+    var chn = r.chats||0;
+    $("chCount").textContent = chn; $("chCount").classList.toggle("hidden", chn===0);
     var badge=$("apCount"), alertBox=$("apAlert");
     badge.textContent = n; badge.classList.toggle("hidden", n===0);
-    alertBox.classList.toggle("hidden", n===0);
-    alertBox.innerHTML = '<span><b>'+n+'</b> app '+(n===1?'payment':'payments')+' waiting for your confirmation</span><span>Open →</span>';
-    document.title = (n?"("+n+") ":"")+"Admin Dashboard — RD Dairy";
+    var parts=[];
+    if(n) parts.push('<b>'+n+'</b> app '+(n===1?'payment':'payments')+' to confirm');
+    if(chn) parts.push('<b>'+chn+'</b> new '+(chn===1?'chat':'chats'));
+    alertBox.classList.toggle("hidden", parts.length===0);
+    alertBox.innerHTML = '<span>'+parts.join(' · ')+'</span><span>Open →</span>';
+    alertBox.onclick = function(){ goSection(n ? 'apppay' : 'chat'); };
+    document.title = ((n+chn)?"("+(n+chn)+") ":"")+"Admin Dashboard — RD Dairy";
+    if(!$("chatView").classList.contains("hidden") && chn) loadChatThreads(true);
     if(apLastCount!==null && n>apLastCount && !$("appPayView").classList.contains("hidden")) loadAppPayments();
     apLastCount = n;
   }catch(e){}
@@ -2773,6 +2823,77 @@ async function saveAppSettingsForm(){
     if(!r.ok){ err.textContent=r.message||"Could not save"; err.classList.remove("hidden"); return; }
     notice("App settings saved");
   }catch(e){ err.textContent=e.message; err.classList.remove("hidden"); }
+}
+
+/* ============ SUPPORT CHAT ============ */
+var chFilter="open", chPhone=null, chTimer=null, chThreads=[];
+function chStartPoll(){ chStopPoll(); chTimer=setInterval(function(){ loadChatThreads(true); if(chPhone) openChat(chPhone,true); },15000); }
+function chStopPoll(){ if(chTimer){ clearInterval(chTimer); chTimer=null; } }
+function chSetFilter(f){ chFilter=f; $("chTabOpen").classList.toggle("active",f==="open"); $("chTabAll").classList.toggle("active",f==="all"); loadChatThreads(); }
+function chTime(iso){ var d=new Date(iso); return d.toLocaleDateString("en-IN",{day:"numeric",month:"short",timeZone:"Asia/Kolkata"})+", "+d.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}); }
+
+async function loadChatThreads(quiet){
+  if(!quiet) $("chList").innerHTML='<div class="empty">Loading…</div>';
+  try{
+    var r=await aApi({action:"chatThreads", status:chFilter});
+    if(!r.ok){ $("chList").innerHTML='<div class="empty">'+esc(r.message||"Could not load")+'</div>'; return; }
+    chThreads=r.threads||[];
+    if(!chThreads.length){ $("chList").innerHTML='<div class="empty">'+(chFilter==="open"?"No open chats.":"No chats yet.")+'</div>'; return; }
+    $("chList").innerHTML=chThreads.map(function(t){
+      return '<button class="ch-item'+(t.phone===chPhone?' on':'')+'" data-phone="'+esc(t.phone)+'" onclick="openChat(this.dataset.phone)">'+
+        '<div class="ch-top"><b>'+esc(t.name||t.phone)+'</b><span>'+esc(chTime(t.last_message_at))+'</span></div>'+
+        '<div class="ch-sub">'+(t.topic?'<span class="pill submitted">'+esc(t.topic)+'</span> ':'')+(t.status==="resolved"?'<span class="pill paid">Resolved</span> ':'')+esc(t.last_message||"")+'</div>'+
+        (t.unread_admin?'<i class="ch-unread">'+t.unread_admin+'</i>':'')+
+      '</button>';
+    }).join("");
+  }catch(e){ $("chList").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+
+async function openChat(phone, quiet){
+  chPhone=phone;
+  var t=chThreads.find(function(x){return x.phone===phone;})||{phone:phone};
+  document.querySelectorAll(".ch-item").forEach(function(b){ b.classList.toggle("on", b.dataset.phone===phone); });
+  if(!quiet) $("chConv").innerHTML='<div class="empty">Loading…</div>';
+  var keep = $("chReply") ? $("chReply").value : "";
+  try{
+    var r=await aApi({action:"chatMessages", phone:phone});
+    if(!r.ok){ $("chConv").innerHTML='<div class="empty">'+esc(r.message)+'</div>'; return; }
+    $("chConv").innerHTML=
+      '<div class="ch-head"><div><b>'+esc(t.name||phone)+'</b><div class="muted">'+esc(phone)+(t.topic?' · '+esc(t.topic):'')+'</div></div>'+
+      '<div class="row" style="gap:6px">'+
+        '<a class="wa-btn" target="_blank" href="https://wa.me/91'+esc(String(phone).slice(-10))+'">WhatsApp</a>'+
+        (t.status==="resolved"
+          ? '<button class="btn sm ghost" onclick="chSetStatus(\'open\')">Reopen</button>'
+          : '<button class="btn sm ok" onclick="chSetStatus(\'resolved\')">✓ Mark resolved</button>')+
+      '</div></div>'+
+      '<div class="ch-msgs" id="chMsgs">'+(r.messages||[]).map(function(m){
+        return '<div class="ch-msg '+(m.sender==="customer"?'them':'me')+'">'+
+          (m.image_url?'<a href="#" data-src="'+esc(m.image_url)+'" onclick="showImage(this.dataset.src);return false;"><img src="'+esc(m.image_url)+'"></a>':'')+
+          (m.body?'<div>'+esc(m.body).replace(/\n/g,'<br>')+'</div>':'')+
+          '<span>'+esc(chTime(m.at))+'</span></div>';
+      }).join("")+'</div>'+
+      '<div class="ch-compose"><textarea id="chReply" rows="2" placeholder="Type your reply"></textarea><button class="btn" onclick="chSend()">Send</button></div>';
+    $("chReply").value=keep;
+    $("chReply").addEventListener("keydown",function(e){ if(e.key==="Enter" && (e.ctrlKey||e.metaKey)) chSend(); });
+    var box=$("chMsgs"); box.scrollTop=box.scrollHeight;
+    if(!quiet) refreshAppPayCount();
+  }catch(e){ $("chConv").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+
+async function chSend(){
+  var ta=$("chReply"); var text=(ta.value||"").trim(); if(!text||!chPhone) return;
+  ta.disabled=true;
+  try{
+    var r=await aApi({action:"chatReply", phone:chPhone, body:text});
+    if(!r.ok){ notice(r.message||"Could not send"); ta.disabled=false; return; }
+    ta.value=""; ta.disabled=false;
+    await openChat(chPhone,true); loadChatThreads(true);
+  }catch(e){ notice(e.message); ta.disabled=false; }
+}
+async function chSetStatus(status){
+  await aApi({action:"chatStatus", phone:chPhone, status:status});
+  await loadChatThreads(true);
+  openChat(chPhone,true);
 }
 
 /* auto-login if key stored this session */
