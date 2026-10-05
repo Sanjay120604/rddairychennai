@@ -343,6 +343,48 @@
   .kinds button.on { border-color: var(--ink); background: var(--milk); }
   .empty { background: var(--milk); border-radius: 22px; padding: 22px 18px; color: var(--soft); }
 
+
+  /* ---------- round 2: logo, colours, selection, help ---------- */
+  .brand { display: inline-flex; align-items: center; gap: 8px; }
+  .brand .logo { width: 34px; height: 34px; border-radius: 50%; background: #fff; object-fit: contain; padding: 2px; }
+  .login .brand .logo { width: 48px; height: 48px; }
+  .tabs .ico { position: relative; display: inline-flex; }
+  .tabs .dot { position: absolute; top: -2px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: #E0362C; border: 2px solid var(--milk); }
+  :root { --pause-bg: #FDE2DF; --pause-fg: #B42318; --extra-bg: #DCF5E5; --extra-fg: #18794E; --less-bg: #E2ECFC; --less-fg: #1F5BB8; }
+  .cd { border: 2px solid transparent; }
+  .cd.paused { background: var(--pause-bg); color: var(--pause-fg); border: 2px solid transparent; }
+  .cd.extra { background: var(--extra-bg); color: var(--extra-fg); }
+  .cd.less { background: var(--less-bg); color: var(--less-fg); }
+  .cd.past { opacity: 0.45; }
+  .cd.sel { background: var(--ink) !important; color: var(--milk) !important; opacity: 1; }
+  .cd.sel.paused .q, .cd.sel .q { color: var(--butter); }
+  .legend i { border-radius: 4px; }
+  .lg-usual { background: var(--milk); border: 1.5px solid var(--line); }
+  .lg-extra { background: var(--extra-bg); border: 1.5px solid var(--extra-fg); }
+  .lg-less { background: var(--less-bg); border: 1.5px solid var(--less-fg); }
+  .lg-paused { background: var(--pause-bg); border: 1.5px solid var(--pause-fg); }
+  .lg-sel { background: var(--ink); }
+  .state-paused { color: var(--pause-fg); }
+  .state-extra { color: var(--extra-fg); }
+  .state-less { color: var(--less-fg); }
+  .selbar {
+    position: fixed; left: 12px; right: 12px; bottom: calc(var(--safe-bottom) + 76px); z-index: 25;
+    max-width: 536px; margin: 0 auto; background: var(--ink); color: var(--milk); border-radius: 18px;
+    padding: 10px 10px 10px 18px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700;
+    box-shadow: 0 10px 30px rgba(30, 43, 74, 0.3);
+  }
+  .selbar div { display: flex; gap: 6px; }
+  .selbar button { color: var(--milk); font-weight: 700; padding: 0 14px; min-height: 44px; border-radius: 12px; }
+  .selbar button.go { background: var(--butter); color: var(--ink); }
+  body.has-sel main { padding-bottom: calc(var(--safe-bottom) + 170px); }
+  .loc-btn { width: 100%; min-height: 50px; border-radius: 14px; border: 1.5px dashed var(--line); font-weight: 700; background: var(--milk); color: var(--ink); }
+  .login .loc-btn { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.08); color: var(--milk); }
+  .su-loc { margin-top: 12px; }
+  .loc { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: var(--extra-bg); color: var(--extra-fg); font-weight: 700; }
+  .loc a { color: inherit; font-size: 14px; }
+  .cl-l { display: flex; gap: 12px; align-items: center; }
+  .cl-l img { width: 52px; height: 52px; border-radius: 12px; object-fit: contain; background: var(--mist); flex-shrink: 0; }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -417,6 +459,28 @@ const locale = () => (LANGS.find((l) => l.code === LANG) || LANGS[0]).locale;
 
 const T = {
   ta: {
+    "Long leave": "நீண்ட விடுப்பு",
+    "Your deliveries": "உங்கள் டெலிவரிகள்",
+    "Tap days to select them, then change them together.": "நாட்களைத் தொட்டுத் தேர்ந்தெடுத்து, ஒன்றாக மாற்றுங்கள்.",
+    "1 day selected": "1 நாள் தேர்ந்தெடுக்கப்பட்டது",
+    "{n} days selected": "{n} நாட்கள் தேர்ந்தெடுக்கப்பட்டன",
+    "Change": "மாற்று",
+    "Clear": "அழி",
+    "Change {n} days": "{n} நாட்களை மாற்று",
+    "Save {qty} for these days": "இந்த நாட்களுக்கு {qty} சேமி",
+    "Back to usual for these days": "இந்த நாட்களுக்கு வழக்கமான அளவு",
+    "Saved for {n} days": "{n} நாட்களுக்கு சேமிக்கப்பட்டது",
+    "Paused {n} days": "{n} நாட்கள் நிறுத்தப்பட்டன",
+    "Back to usual for {n} days": "{n} நாட்களுக்கு வழக்கமான அளவு",
+    "Selected": "தேர்ந்தெடுத்தவை",
+    "Share my location": "என் இருப்பிடத்தைப் பகிர்",
+    "Location shared": "இருப்பிடம் பகிரப்பட்டது",
+    "Getting your location…": "உங்கள் இருப்பிடத்தைப் பெறுகிறோம்…",
+    "View on map": "வரைபடத்தில் பார்",
+    "Allow location access in your phone settings, then try again.": "போன் அமைப்புகளில் இருப்பிட அனுமதியை வழங்கி, மீண்டும் முயற்சிக்கவும்.",
+    "Helps our delivery partner find your home.": "எங்கள் டெலிவரி நபர் உங்கள் வீட்டைக் கண்டுபிடிக்க உதவும்.",
+    "Help": "உதவி",
+    "We usually reply within a few minutes, 6 AM to 9 PM.": "காலை 6 முதல் இரவு 9 வரை சில நிமிடங்களில் பதிலளிப்போம்.",
     "Fresh A2 milk at your door every morning.": "தினமும் காலையில் உங்கள் வீட்டு வாசலுக்கு புதிய A2 பால்.",
     "Your mobile number": "உங்கள் மொபைல் எண்",
     "Send code on WhatsApp": "WhatsApp இல் குறியீடு அனுப்பு",
@@ -694,6 +758,28 @@ const T = {
   },
 
   hi: {
+    "Long leave": "लंबी छुट्टी",
+    "Your deliveries": "आपकी डिलीवरी",
+    "Tap days to select them, then change them together.": "दिनों को छूकर चुनें, फिर सबको एक साथ बदलें।",
+    "1 day selected": "1 दिन चुना गया",
+    "{n} days selected": "{n} दिन चुने गए",
+    "Change": "बदलें",
+    "Clear": "हटाएँ",
+    "Change {n} days": "{n} दिन बदलें",
+    "Save {qty} for these days": "इन दिनों के लिए {qty} सेव करें",
+    "Back to usual for these days": "इन दिनों के लिए रोज़ की मात्रा",
+    "Saved for {n} days": "{n} दिनों के लिए सेव हुआ",
+    "Paused {n} days": "{n} दिन रोके गए",
+    "Back to usual for {n} days": "{n} दिनों के लिए रोज़ की मात्रा",
+    "Selected": "चुने गए",
+    "Share my location": "मेरी लोकेशन भेजें",
+    "Location shared": "लोकेशन भेजी गई",
+    "Getting your location…": "आपकी लोकेशन ले रहे हैं…",
+    "View on map": "मैप पर देखें",
+    "Allow location access in your phone settings, then try again.": "फ़ोन की सेटिंग में लोकेशन की अनुमति दें, फिर कोशिश करें।",
+    "Helps our delivery partner find your home.": "हमारे डिलीवरी साथी को आपका घर ढूँढने में मदद करता है।",
+    "Help": "मदद",
+    "We usually reply within a few minutes, 6 AM to 9 PM.": "सुबह 6 से रात 9 बजे तक हम कुछ ही मिनटों में जवाब देते हैं।",
     "Fresh A2 milk at your door every morning.": "हर सुबह आपके दरवाज़े पर ताज़ा A2 दूध।",
     "Your mobile number": "आपका मोबाइल नंबर",
     "Send code on WhatsApp": "WhatsApp पर कोड भेजें",
@@ -999,7 +1085,35 @@ const CODE_MSG = {
 const errMsg = (r) => (LANG !== "en" && CODE_MSG[r.code] && T[LANG][CODE_MSG[r.code]]) ? t(CODE_MSG[r.code]) : r.message;
 
 /* ---------- state ---------- */
-const S = { token: null, tab: "home", home: null, calMonth: null, cal: null, phone: "", signup: null };
+const S = { token: null, tab: "home", home: null, calMonth: null, cal: null, phone: "", signup: null, sel: new Set() };
+const LOGO = "https://rddairy.com/icon-192.png";
+const brandHTML = () => `<div class="brand"><img class="logo" src="${LOGO}" alt="" onerror="this.remove()" />RD <span>Dairy</span></div>`;
+
+// Current position as a Google Maps link
+function getLocationLink() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("no geo"));
+    navigator.geolocation.getCurrentPosition(
+      (p) => resolve(`https://maps.google.com/?q=${p.coords.latitude.toFixed(6)},${p.coords.longitude.toFixed(6)}`),
+      (e) => reject(e),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
+    );
+  });
+}
+function locationBlock(container, state) {
+  const draw = () => {
+    container.innerHTML = state.map_link
+      ? `<div class="loc ok"><span>✓ ${esc(t("Location shared"))}</span><a href="${esc(state.map_link)}" target="_blank" rel="noopener">${esc(t("View on map"))}</a></div>`
+      : `<button type="button" class="loc-btn">📍 ${esc(t("Share my location"))}</button><div class="su-help">${esc(t("Helps our delivery partner find your home."))}</div>`;
+    container.querySelector(".loc-btn")?.addEventListener("click", async (e) => {
+      e.target.disabled = true; e.target.textContent = t("Getting your location…");
+      try { state.map_link = await getLocationLink(); }
+      catch { toast(t("Allow location access in your phone settings, then try again."), true); }
+      draw();
+    });
+  };
+  draw();
+}
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -1160,7 +1274,7 @@ function renderLogin(step = "phone", err = "") {
   if (step === "phone") {
     app.innerHTML = `
       <section class="login">
-        <div class="login-top"><div class="brand">RD <span>Dairy</span></div><div id="lp"></div></div>
+        <div class="login-top">${brandHTML()}<div id="lp"></div></div>
         <p class="lead">${esc(t("Fresh A2 milk at your door every morning."))}</p>
         <label for="ph">${esc(t("Your mobile number"))}</label>
         <div class="phone-row">
@@ -1188,7 +1302,7 @@ function renderLogin(step = "phone", err = "") {
   } else {
     app.innerHTML = `
       <section class="login">
-        <div class="brand">RD <span>Dairy</span></div>
+        ${brandHTML()}
         <p class="lead">${esc(t("We sent a 6 digit code to your WhatsApp on +91 {phone}.", { phone: S.phone }))}</p>
         <label for="otp">${esc(t("Code"))}</label>
         <input id="otp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
@@ -1238,7 +1352,7 @@ async function renderSignup(err = "") {
   const milk = f.options.milk.find((m) => m.id === f.milk_id);
   app.innerHTML = `
     <section class="login signup">
-      <div class="login-top"><div class="brand">RD <span>Dairy</span></div><div id="lp"></div></div>
+      <div class="login-top">${brandHTML()}<div id="lp"></div></div>
       <h1 class="su-title">${esc(t("Welcome to RD Dairy"))}</h1>
       <p class="lead">${esc(t("Tell us where to deliver. It takes a minute."))}</p>
 
@@ -1248,6 +1362,7 @@ async function renderSignup(err = "") {
       <label for="su-addr">${esc(t("Delivery address"))}</label>
       <textarea id="su-addr" class="su-input su-area" autocomplete="street-address" aria-describedby="su-addr-help">${esc(f.address || "")}</textarea>
       <div class="su-help" id="su-addr-help">${esc(t("House number, street and a landmark"))}</div>
+      <div id="su-loc" class="su-loc"></div>
 
       ${f.options.areas.length ? `
         <label for="su-area">${esc(t("Area"))}</label>
@@ -1286,6 +1401,7 @@ async function renderSignup(err = "") {
     if ($("#su-start")) f.start = $("#su-start").value;
   };
   $("#lp").appendChild(langPicker(() => { keep(); renderSignup(); }));
+  locationBlock($("#su-loc"), f);
   app.querySelectorAll("[data-milk]").forEach((b) => b.onclick = () => { keep(); f.wants_milk = b.dataset.milk === "1"; renderSignup(); });
   $("#su-milk")?.addEventListener("change", () => { keep(); const m = f.options.milk.find((x) => x.id === f.milk_id); f.milk_size = m?.sizes?.[0]?.label || ""; renderSignup(); });
   $("#su-go").onclick = async () => {
@@ -1295,7 +1411,7 @@ async function renderSignup(err = "") {
     const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your account…");
     const r = await call("app-auth", {
       action: "signup", phone: S.phone, signup_token: f.token, device: deviceType(),
-      name: f.name, address: f.address, area_id: f.area_id && f.area_id !== "other" ? f.area_id : "",
+      name: f.name, address: f.address, map_link: f.map_link || "", area_id: f.area_id && f.area_id !== "other" ? f.area_id : "",
       wants_milk: f.wants_milk && !!f.milk_id, milk_id: f.milk_id, milk_size: f.milk_size, milk_qty: f.milk_qty, start_date: f.start,
     });
     if (!r.ok) {
@@ -1326,18 +1442,19 @@ const icons = {
   calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   shop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
   bills: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>',
+  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.2M12 16.5h.01"/></svg>',
   account: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
 };
 
 function shell() {
   $("#app").innerHTML = `
-    <header class="topbar"><div class="brand">RD <span>Dairy</span></div><small id="tb-area"></small></header>
+    <header class="topbar">${brandHTML()}<small id="tb-area"></small></header>
     <main id="view"><div class="loading">${esc(t("Loading…"))}</div></main>
     <nav class="tabs" aria-label="Main">
       <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
-      <button data-tab="calendar">${icons.calendar}${esc(t("Calendar"))}</button>
       <button data-tab="shop">${icons.shop}${esc(t("Shop"))}</button>
-      <button data-tab="bills">${icons.bills}${esc(t("Bills"))}</button>
+      <button data-tab="bills"><span class="ico">${icons.bills}<i class="dot hidden" id="billdot"></i></span>${esc(t("Bills"))}</button>
+      <button data-tab="help">${icons.help}${esc(t("Help"))}</button>
       <button data-tab="account">${icons.account}${esc(t("Account"))}</button>
     </nav>`;
   $(".tabs").addEventListener("click", (e) => {
@@ -1345,6 +1462,11 @@ function shell() {
     if (b) go(b.dataset.tab);
   });
   const ta = $("#tb-area"); if (ta && S.home) ta.textContent = S.home.area || "";
+  updateDots();
+}
+function updateDots() {
+  const d = $("#billdot");
+  if (d) d.classList.toggle("hidden", !(S.home && S.home.bills_due > 0));
 }
 
 function go(tab) {
@@ -1354,11 +1476,13 @@ function go(tab) {
     b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
   });
   if (tab === "home") renderHome();
-  if (tab === "calendar") renderCalendar();
+  if (tab === "calendar") { S.tab = "home"; return go("home"); }
+  if (tab === "help") renderHelp();
   if (tab === "shop") renderShop();
   if (tab === "bills") renderBills();
   if (tab === "account") renderAccount();
   updateCartBar();
+  updateSelBar();
   window.scrollTo(0, 0);
 }
 
@@ -1367,6 +1491,7 @@ async function loadHome() {
   if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return null; }
   S.home = r;
   const ta = $("#tb-area"); if (ta) ta.textContent = r.area || "";
+  updateDots();
   return r;
 }
 
@@ -1413,41 +1538,24 @@ async function renderHome() {
         <div class="state state-${tm.status}">${esc(t(stateText))}</div>
       </div>
       ${canEditTomorrow ? `
-        <div class="tomorrow-actions"><button class="btn btn-dark btn-block" data-edit="${tm.date}">${esc(t("Change tomorrow"))}</button></div>
+        <div class="tomorrow-actions"><button class="btn btn-dark btn-block" id="chg-tmr">${esc(t("Change tomorrow"))}</button></div>
         <div class="lock-note">${esc(t("Changes for tomorrow are open until {time} tonight.", { time: cutoffLabel(h.cutoff_time) }))}</div>
       ` : `
         <div class="lock-note">${esc(t("Tomorrow's delivery is set. You can change deliveries from {date} onwards.", { date: shortDate(h.first_editable_date) }))}</div>
       `}
     </section>
 
-    <h2>${esc(t("Next 7 days"))}</h2>
-    <div class="week">
-      ${h.next7.map((d) => {
-        const locked = d.date < h.first_editable_date;
-        return `<button class="day ${d.status} ${locked ? "locked" : ""}" data-edit="${d.date}" ${locked ? 'aria-disabled="true"' : ""}
-          aria-label="${esc(longDate(d.date))}, ${esc(d.status === "paused" ? t("Paused") : fmtQty(d.qty))}">
-          <div class="dn">${esc(fmtDay(d.date, { weekday: "short" }))}</div>
-          <div class="dd">${esc(fmtDay(d.date, { day: "numeric" }))}</div>
-          <div class="dq">${d.status === "paused" ? esc(t("Paused")) : esc(shortQty(d.qty))}</div>
-        </button>`;
-      }).join("")}
-    </div>
+    <h2>${esc(t("Your deliveries"))}</h2>
+    <p class="muted" style="margin:-4px 4px 12px">${esc(t("Tap days to select them, then change them together."))}</p>
+    <div id="homecal"><div class="loading">${esc(t("Loading…"))}</div></div>
 
-    <div class="row-actions">
-      <button class="btn btn-line" id="away">${esc(t("Going away?"))}</button>
-      <button class="btn btn-line" id="tocal">${esc(t("Full calendar"))}</button>
-    </div>
-    <button class="btn btn-quiet btn-block" style="margin-top:8px" id="issue">${esc(t("Report a delivery problem"))}</button>`;
+    <div class="row-actions" style="grid-template-columns:1fr">
+      <button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button>
+    </div>`;
 
-  v.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
-    const date = b.dataset.edit;
-    if (date < h.first_editable_date) return toast(t("Changes for {date} are closed.", { date: shortDate(date) }));
-    const day = h.next7.find((d) => d.date === date);
-    openDaySheet(date, day ? day.qty : h.default_qty, day ? day.status : "normal");
-  }));
+  $("#chg-tmr")?.addEventListener("click", () => openDaySheet(tm.date, tm.qty, tm.status));
   $("#away").onclick = openAwaySheet;
-  $("#tocal").onclick = () => go("calendar");
-  $("#issue").onclick = openIssueSheet;
+  drawHomeCalendar();
 }
 
 /* ---------- sheets ---------- */
@@ -1471,10 +1579,9 @@ async function saveDays(payload, okMsg) {
   if (!r.ok) { toast(r.message, true); return false; }
   closeSheet();
   toast(okMsg);
-  S.home = null; S.cal = null;
+  S.home = null; S.cal = null; S.sel.clear(); updateSelBar();
   await loadHome();
   if (S.tab === "home") renderHome();
-  if (S.tab === "calendar") renderCalendar();
   return true;
 }
 
@@ -1511,7 +1618,7 @@ function openDaySheet(date, currentQty, status) {
 function openAwaySheet() {
   const first = S.home.first_editable_date;
   const sheet = openSheet(`
-    <h3>${esc(t("Going away?"))}</h3>
+    <h3>${esc(t("Long leave"))}</h3>
     <p class="sub">${esc(t("Choose the days you need no milk. Deliveries restart on their own after the last day."))}</p>
     <div class="field"><label for="af">${esc(t("First day without milk"))}</label><input id="af" type="date" min="${first}" value="${first}" /></div>
     <div class="field"><label for="at">${esc(t("Last day without milk"))}</label><input id="at" type="date" min="${first}" value="${first}" /></div>
@@ -1530,20 +1637,18 @@ function openAwaySheet() {
 }
 
 /* =========================================================
-   CALENDAR
+   DELIVERY CALENDAR (on Home, with multiple day selection)
    ========================================================= */
-async function renderCalendar() {
-  const v = $("#view");
-  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
-  if (!S.home.is_subscriber) { v.innerHTML = `<div class="card pad">${esc(t("Your delivery calendar appears here once your subscription starts."))}</div>`; return; }
+async function drawHomeCalendar() {
+  const box = $("#homecal");
+  if (!box) return;
   if (!S.calMonth) S.calMonth = todayIST().slice(0, 7);
   if (!S.cal || S.cal.month !== S.calMonth) {
-    loadingView();
     const r = await call("app-api", { action: "calendar", month: S.calMonth });
     if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return; }
     S.cal = r;
   }
-  if (S.tab !== "calendar") return;
+  if (!$("#homecal")) return;
 
   const h = S.home, c = S.cal, today = todayIST();
   const usual = Number(c.default_qty);
@@ -1552,7 +1657,6 @@ async function renderCalendar() {
   const lead = (first.getUTCDay() + 6) % 7; // Monday first
   const days = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
   const title = first.toLocaleDateString(locale(), { timeZone: "UTC", month: "long", year: "numeric" });
-  // weekday initials in the chosen language, Monday first (5 Jan 2026 is a Monday)
   const wds = [...Array(7)].map((_, i) => new Date(Date.UTC(2026, 0, 5 + i)).toLocaleDateString(locale(), { timeZone: "UTC", weekday: "narrow" }));
 
   let cells = wds.map((d) => `<div class="wd">${esc(d)}</div>`).join("");
@@ -1562,14 +1666,15 @@ async function renderCalendar() {
     const ch = map.get(date);
     let cls = "", q = usual;
     if (ch) { q = ch.qty; cls = ch.paused ? "paused" : q > usual ? "extra" : q < usual ? "less" : ""; }
-    if (date < today) cls += " past";
+    if (date < h.first_editable_date) cls += " past";
     if (date === today) cls += " today";
+    if (S.sel.has(date)) cls += " sel";
     const label = ch?.paused ? t("Paused") : fmtQty(q);
-    cells += `<button class="cd ${cls}" data-date="${date}" aria-label="${esc(longDate(date))}, ${esc(label)}">
-      ${n}<span class="q">${ch?.paused ? "–" : esc(+Number(q).toFixed(2))}</span></button>`;
+    cells += `<button class="cd ${cls}" data-date="${date}" aria-pressed="${S.sel.has(date)}" aria-label="${esc(longDate(date))}, ${esc(label)}">
+      ${n}<span class="q">${ch?.paused ? "✕" : esc(+Number(q).toFixed(2))}</span></button>`;
   }
 
-  v.innerHTML = `
+  box.innerHTML = `
     <div class="cal">
       <div class="cal-head">
         <button data-m="-1" aria-label="${esc(t("Previous month"))}">‹</button>
@@ -1578,26 +1683,78 @@ async function renderCalendar() {
       </div>
       <div class="cal-grid">${cells}</div>
       <div class="legend">
-        <span><i style="background:var(--milk);border:1.5px solid var(--line)"></i>${esc(t("Usual {qty}", { qty: fmtQty(usual) }))}</span>
-        <span><i style="background:var(--butter-soft)"></i>${esc(t("Extra"))}</span>
-        <span><i style="background:var(--mist)"></i>${esc(t("Less"))}</span>
-        <span><i style="border:2px dashed var(--line)"></i>${esc(t("Paused"))}</span>
+        <span><i class="lg-usual"></i>${esc(t("Usual {qty}", { qty: fmtQty(usual) }))}</span>
+        <span><i class="lg-extra"></i>${esc(t("Extra"))}</span>
+        <span><i class="lg-less"></i>${esc(t("Less"))}</span>
+        <span><i class="lg-paused"></i>${esc(t("Paused"))}</span>
+        <span><i class="lg-sel"></i>${esc(t("Selected"))}</span>
       </div>
-    </div>
-    <p class="muted" style="margin:14px 4px">${esc(t("Tap any day from {date} to change it.", { date: shortDate(h.first_editable_date) }))}</p>`;
+    </div>`;
 
-  v.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => {
+  box.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => {
     const d = d0(S.calMonth + "-01");
     d.setUTCMonth(d.getUTCMonth() + Number(b.dataset.m));
     S.calMonth = d.toISOString().slice(0, 7);
-    renderCalendar();
+    drawHomeCalendar();
   });
-  v.querySelectorAll("[data-date]").forEach((b) => b.onclick = () => {
+  box.querySelectorAll("[data-date]").forEach((b) => b.onclick = () => {
     const date = b.dataset.date;
     if (date < h.first_editable_date) return toast(t("Changes for {date} are closed.", { date: shortDate(date) }));
-    const ch = map.get(date);
-    openDaySheet(date, ch ? ch.qty : usual, ch ? (ch.paused ? "paused" : "changed") : "normal");
+    if (S.sel.has(date)) S.sel.delete(date); else S.sel.add(date);
+    drawHomeCalendar();
+    updateSelBar();
   });
+  updateSelBar();
+}
+
+function updateSelBar() {
+  document.querySelector(".selbar")?.remove();
+  document.body.classList.remove("has-sel");
+  if (!S.token || S.tab !== "home" || !S.sel.size) return;
+  document.body.classList.add("has-sel");
+  const n = S.sel.size;
+  const bar = document.createElement("div");
+  bar.className = "selbar";
+  bar.innerHTML = `<span>${esc(n === 1 ? t("1 day selected") : t("{n} days selected", { n }))}</span>
+    <div><button data-clear>${esc(t("Clear"))}</button><button data-change class="go">${esc(t("Change"))}</button></div>`;
+  bar.querySelector("[data-clear]").onclick = () => { S.sel.clear(); updateSelBar(); drawHomeCalendar(); };
+  bar.querySelector("[data-change]").onclick = () => {
+    const dates = [...S.sel].sort();
+    if (dates.length === 1) {
+      const ch = S.cal?.changes.find((x) => x.date === dates[0]);
+      return openDaySheet(dates[0], ch ? ch.qty : S.home.default_qty, ch ? (ch.paused ? "paused" : "changed") : "normal");
+    }
+    openMultiSheet(dates);
+  };
+  document.body.appendChild(bar);
+}
+
+function openMultiSheet(dates) {
+  const h = S.home;
+  const usual = Number(h.default_qty);
+  const max = usual + Number(h.max_extra_qty || 5);
+  let q = usual;
+  const n = dates.length;
+  const sheet = openSheet(`
+    <h3>${esc(t("Change {n} days", { n }))}</h3>
+    <p class="sub">${esc(dates.map((d) => fmtDay(d, { day: "numeric", month: "short" })).join(", "))}</p>
+    <div class="stepper">
+      <button data-minus aria-label="${esc(t("Less milk"))}">−</button>
+      <output aria-live="polite">${esc(fmtQty(q))}</output>
+      <button data-plus aria-label="${esc(t("More milk"))}">+</button>
+    </div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" data-save>${esc(t("Save {qty} for these days", { qty: fmtQty(q) }))}</button>
+      <button class="btn btn-line btn-block" data-pause>${esc(t("Pause these days"))}</button>
+      <button class="btn btn-quiet btn-block" data-normal>${esc(t("Back to usual for these days"))}</button>
+    </div>`);
+  const out = $("output", sheet), save = $("[data-save]", sheet);
+  const sync = () => { out.textContent = fmtQty(q); save.textContent = t("Save {qty} for these days", { qty: fmtQty(q) }); };
+  $("[data-minus]", sheet).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); sync(); };
+  $("[data-plus]", sheet).onclick = () => { q = Math.min(max, +(q + STEP).toFixed(2)); sync(); };
+  save.onclick = () => saveDays({ mode: "qty", qty: q, dates }, t("Saved for {n} days", { n }));
+  $("[data-pause]", sheet).onclick = () => saveDays({ mode: "pause", dates }, t("Paused {n} days", { n }));
+  $("[data-normal]", sheet).onclick = () => saveDays({ mode: "normal", dates }, t("Back to usual for {n} days", { n }));
 }
 
 /* =========================================================
@@ -1721,7 +1878,7 @@ function openCartSheet() {
     sheet.innerHTML = `<div class="grip"></div>
       <h3>${esc(t("Your cart"))}</h3>
       <div>${SH.cart.map((c, i) => `<div class="cline">
-        <div><div class="n">${esc(c.name)}</div><div class="z">${esc(c.size)} · ${esc(t("{price} each", { price: inr(c.price) }))}</div></div>
+        <div class="cl-l"><img src="${esc(prodImg(SH.catalog?.find((p) => p.id === c.id) || { id: c.id }))}" alt="" /><div><div class="n">${esc(c.name)}</div><div class="z">${esc(c.size)} · ${esc(t("{price} each", { price: inr(c.price) }))}</div></div></div>
         <div class="mini-step"><button data-cdec="${i}" aria-label="${esc(t("One less"))}">−</button><span>${c.qty}</span><button data-cinc="${i}" aria-label="${esc(t("One more"))}">+</button></div>
       </div>`).join("")}</div>
       <div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>
@@ -2081,7 +2238,6 @@ async function renderAccount() {
       kv("Usual quantity", t("{qty} a day", { qty: fmtQty(h.default_qty) })) + kv("Rate", t("{amt} per litre", { amt: inr(h.rate) })) +
       (h.delivery_charge ? kv("Delivery charge", t("{amt} a month", { amt: inr(h.delivery_charge) })) : "")
     : kv("Name", h.name) + kv("Mobile", "+91 " + h.phone);
-  const sp = String(h.support_phone || "").replace(/\D/g, "").slice(-10);
   const pq = h.pending_qty_change;
 
   v.innerHTML = `
@@ -2105,27 +2261,6 @@ async function renderAccount() {
     <h2>${esc(t("Language"))}</h2>
     <div class="card pad" id="acc-lang"></div>
 
-    <h2>${esc(t("Delivery problems"))}</h2>
-    <div class="card pad">
-      <button class="btn btn-line btn-block" id="acc-issue">${esc(t("Report a delivery problem"))}</button>
-      <div id="acc-issues"></div>
-    </div>
-
-    <h2>${esc(t("Help and support"))}</h2>
-    <div class="card pad">
-      <div class="help">
-        <a class="wa" href="https://wa.me/91${esc(sp)}?text=${encodeURIComponent("Hi RD Dairy, I need help with my account (" + h.phone + ")")}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .2-3.3-.7c-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
-          ${esc(t("WhatsApp RD Dairy"))}</a>
-        <a href="tel:+91${esc(sp)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>${esc(t("Call"))}</a>
-        ${h.support_email ? `<a href="mailto:${esc(h.support_email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>${esc(t("Email"))}</a>` : ""}
-      </div>
-      <div class="links">
-        <a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${esc(t("Privacy policy"))}</a>
-        <a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a>
-      </div>
-    </div>
-
     <div style="margin-top:28px">
       <button class="btn btn-line btn-block" id="logout">${esc(t("Log out"))}</button>
       <button class="danger-link" id="delacc">${esc(t("Delete my account"))}</button>
@@ -2133,10 +2268,7 @@ async function renderAccount() {
 
   $("#acc-lang").appendChild(langPicker(() => { shell(); go("account"); }));
   $("#editp").onclick = openProfileSheet;
-  $("#acc-issue").onclick = openIssueSheet;
   $("#delacc").onclick = openDeleteSheet;
-  loadMyIssues();
-
   if (h.is_subscriber) {
     let q = Number(h.default_qty);
     const out = $("output", v);
@@ -2167,17 +2299,20 @@ function openProfileSheet() {
     <h3>${esc(t("Edit your details"))}</h3>
     <div class="field"><label for="pn">${esc(t("Your name"))}</label><input id="pn" class="txt" autocomplete="name" value="${esc(h.name || "")}" /></div>
     <div class="field"><label for="pa">${esc(t("Delivery address"))}</label><textarea id="pa" autocomplete="street-address">${esc(h.address || "")}</textarea></div>
+    <div class="field" id="ploc"></div>
     <div class="stack">
       <button class="btn btn-main btn-block" data-save>${esc(t("Save changes"))}</button>
       <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
     </div>`);
+  const loc = { map_link: h.map_link || "" };
+  locationBlock($("#ploc", sheet), loc);
   $("[data-close]", sheet).onclick = closeSheet;
   $("[data-save]", sheet).onclick = async (e) => {
     const name = $("#pn", sheet).value.trim(), address = $("#pa", sheet).value.trim();
     if (name.length < 2) return toast(t("Enter your name"), true);
     if (address.length < 8) return toast(t("Enter your full delivery address"), true);
     e.target.disabled = true; e.target.textContent = t("Saving…");
-    const r = await call("app-api", { action: "update_profile", name, address });
+    const r = await call("app-api", { action: "update_profile", name, address, map_link: loc.map_link });
     if (!r.ok) { e.target.disabled = false; e.target.textContent = t("Save changes"); return toast(r.message, true); }
     closeSheet();
     toast(t("Your details are updated"));
@@ -2235,7 +2370,7 @@ function openIssueSheet() {
     if (!r.ok) { e.target.disabled = false; e.target.textContent = t("Send report"); return toast(r.message, true); }
     closeSheet();
     toast(t("Thank you. RD Dairy will look into it today."));
-    if (S.tab === "account") loadMyIssues();
+    if (S.tab === "help") loadMyIssues();
   };
 }
 
@@ -2274,6 +2409,42 @@ function openDeleteSheet() {
     await signOutLocal();
     toast(t("Your account deletion request is with RD Dairy. Thank you for being with us."));
   };
+}
+
+/* =========================================================
+   HELP
+   ========================================================= */
+async function renderHelp() {
+  const v = $("#view");
+  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
+  const h = S.home;
+  if (S.tab !== "help") return;
+  const sp = String(h.support_phone || "").replace(/\D/g, "").slice(-10);
+  v.innerHTML = `
+    <h2 style="margin-top:6px">${esc(t("Help and support"))}</h2>
+    <div class="card pad">
+      <div class="help">
+        <a class="wa" href="https://wa.me/91${esc(sp)}?text=${encodeURIComponent("Hi RD Dairy, I need help (" + h.phone + ")")}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .2-3.3-.7c-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+          ${esc(t("WhatsApp RD Dairy"))}</a>
+        <a href="tel:+91${esc(sp)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>${esc(t("Call"))}</a>
+        ${h.support_email ? `<a href="mailto:${esc(h.support_email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>${esc(t("Email"))}</a>` : ""}
+      </div>
+      <p class="muted" style="margin:12px 0 0;font-size:14px;text-align:center">${esc(t("We usually reply within a few minutes, 6 AM to 9 PM."))}</p>
+    </div>
+
+    <h2>${esc(t("Delivery problems"))}</h2>
+    <div class="card pad">
+      <button class="btn btn-main btn-block" id="help-issue">${esc(t("Report a delivery problem"))}</button>
+      <div id="acc-issues"></div>
+    </div>
+
+    <div class="links" style="margin-top:20px">
+      <a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${esc(t("Privacy policy"))}</a>
+      <a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a>
+    </div>`;
+  $("#help-issue").onclick = openIssueSheet;
+  loadMyIssues();
 }
 
 /* =========================================================
