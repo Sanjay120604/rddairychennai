@@ -75,16 +75,18 @@ foot,.foot{background:var(--ink);color:rgba(255,255,255,.55);font-size:.82rem;pa
 <div class="hero"><div class="wrap">
   <h1>Privacy Policy</h1>
   <p>How RD Dairy collects, uses and protects your personal information when you order fresh A2 milk from us.</p>
-  <div class="meta"><span>Effective 2 October 2026</span><span>Applies to rddairy.com and the RD Dairy app</span></div>
+  <div class="meta"><span>Effective 5 October 2026</span><span>Applies to rddairy.com and the RD Dairy app</span></div>
 </div></div>
 <main class="wrap body">
   <aside class="toc" aria-label="Contents"><h2>Contents</h2><ol><li><a href="#s1">Who we are</a></li>
 <li><a href="#s2">Information we collect</a></li>
 <li><a href="#s3">How we use your information</a></li>
 <li><a href="#s4">Your location</a></li>
+<li><a href="#app-permissions">App permissions</a></li>
 <li><a href="#s5">Who we share it with</a></li>
 <li><a href="#s6">How we keep it safe</a></li>
 <li><a href="#s7">How long we keep it</a></li>
+<li><a href="#delete-account">Deleting your account</a></li>
 <li><a href="#s8">Your rights</a></li>
 <li><a href="#s9">Children</a></li>
 <li><a href="#s10">Changes to this policy</a></li>
@@ -93,12 +95,14 @@ foot,.foot{background:var(--ink);color:rgba(255,255,255,.55);font-size:.82rem;pa
 <p>This policy explains what personal information we collect when you use rddairy.com, the installable RD Dairy app, our WhatsApp line and our chat assistant, why we collect it, and how we look after it. It follows the Digital Personal Data Protection Act, 2023 and the Information Technology Act, 2000.</p></section>
 <section id="s2"><h2><em>2.</em>Information we collect</h2><p>We collect only what we need to deliver fresh milk to your door and bill you correctly.</p>
 <ul>
-<li><strong>Account details:</strong> your name, mobile number and login password. Passwords are stored in encrypted (hashed) form, so our team can never read them.</li>
+<li><strong>Account details:</strong> your name and mobile number. On the website you also set a login password, which is stored in encrypted (hashed) form so our team can never read it. In the RD Dairy app you log in with a one time code sent to your WhatsApp, so the app uses no password at all.</li>
 <li><strong>Delivery details:</strong> your address, landmarks you share, and a map pin when you choose to share your location.</li>
 <li><strong>Order and subscription details:</strong> products, daily quantities, extra or reduced quantity days, pause and leave days, bills, delivery charges and payment history.</li>
-<li><strong>Payment references:</strong> the UPI transaction reference you enter after paying, or a note of cash or bank transfer received. Your UPI PIN, bank and card details stay with your bank and UPI app.</li>
+<li><strong>Payment references:</strong> the UPI transaction reference (UTR) you enter after paying, a screenshot of the payment if you choose to share one, or a note of cash or bank transfer received. Screenshots are stored in a private folder that only RD Dairy can open. Your UPI PIN, bank and card details stay with your bank and UPI app.</li>
+<li><strong>Photos you share:</strong> a photo you attach when reporting a delivery problem, used only to resolve that problem.</li>
 <li><strong>Messages:</strong> what you send us on WhatsApp, phone, email or through the chat assistant on our website.</li>
-<li><strong>Information saved on your device:</strong> your login session and last used delivery address are kept in your browser so you stay signed in and checkout is quicker. Logging out clears them.</li>
+<li><strong>Information saved on your device:</strong> your login session, cart and last used delivery address are kept in your browser or in the app’s secure storage, so you stay signed in and checkout is quicker. Logging out clears them.</li>
+<li><strong>App and device details:</strong> when you use the RD Dairy app, we record the type of phone (Android or iPhone) linked to your login, and, if you allow notifications, a notification token that lets us send alerts to your phone. We collect no contacts, call logs, messages or advertising identifiers.</li>
 </ul></section>
 <section id="s3"><h2><em>3.</em>How we use your information</h2><ul>
 <li>To create and manage your account and keep it secure.</li>
@@ -112,17 +116,29 @@ foot,.foot{background:var(--ink);color:rgba(255,255,255,.55);font-size:.82rem;pa
 </ul>
 <p>We use your information strictly for running your RD Dairy service. Any promotional message carries an easy way to opt out.</p></section>
 <section id="s4"><h2><em>4.</em>Your location</h2><p>Location is collected only when you tap the button to use your current location at checkout. We turn it into a map link so our delivery partner can find your home quickly. You can type your address instead at any time, and you can turn off location access in your browser or phone settings.</p></section>
-<section id="s5"><h2><em>5.</em>Who we share it with</h2><p>Your information stays within RD Dairy and the trusted partners who help us run the service:</p>
+<section id="app-permissions"><h2><em>5.</em>App permissions</h2><p>The RD Dairy app asks for a permission only at the moment a feature needs it, and works fully if you say no.</p>
+<ul>
+<li><strong>Camera and photos:</strong> used only when you choose to attach a payment screenshot or a delivery problem photo. The app reads only the image you pick.</li>
+<li><strong>Notifications:</strong> used for bill reminders, payment confirmations, delivery updates and RD Dairy announcements. You can turn them off any time in your phone settings.</li>
+<li><strong>Location:</strong> used only as described above, when you tap to use your current location.</li>
+</ul></section>
+<section id="s5"><h2><em>6.</em>Who we share it with</h2><p>Your information stays within RD Dairy and the trusted partners who help us run the service:</p>
 <ul>
 <li><strong>Our delivery team:</strong> your name, address, map pin, phone number and quantity for the day.</li>
-<li><strong>Technology partners:</strong> Supabase, which securely hosts our database, and Meta’s WhatsApp Business Platform, which carries our order messages. Our website host serves the pages you see.</li>
+<li><strong>Technology partners:</strong> Supabase, which securely hosts our database and payment screenshots; Meta’s WhatsApp Business Platform, which carries your login codes and order messages; Google Firebase Cloud Messaging and Apple Push Notification service, which deliver app notifications to your phone; and the Google Play Store and Apple App Store, which distribute the app. Our website host serves the pages you see.</li>
 <li><strong>Authorities:</strong> when the law, a court or a government body requires it, or to protect the safety of our customers and team.</li>
 </ul>
 <p>We keep your data away from advertisers and data brokers. We never sell or rent it.</p></section>
-<section id="s6"><h2><em>6.</em>How we keep it safe</h2><p>Your data travels over encrypted connections (HTTPS) and is stored on secure, access controlled servers. Only authorised members of our team can view customer records, and only for the work they handle. Passwords are hashed and login sessions end when you log out.</p>
+<section id="s6"><h2><em>7.</em>How we keep it safe</h2><p>Your data travels over encrypted connections (HTTPS) and is stored on secure, access controlled servers. Only authorised members of our team can view customer records, and only for the work they handle. Passwords are hashed, app login codes expire within 5 minutes, and login sessions end when you log out.</p>
 <p>No online system is perfectly secure, so please keep your password private and let us know right away if you notice anything unusual on your account.</p></section>
-<section id="s7"><h2><em>7.</em>How long we keep it</h2><p>We keep your account and order details for as long as your account is active. After you close your account, we remove or anonymise your personal details, while retaining billing and tax records for the period required under GST and income tax laws.</p></section>
-<section id="s8"><h2><em>8.</em>Your rights</h2><p>Under the Digital Personal Data Protection Act, 2023, you can:</p>
+<section id="s7"><h2><em>8.</em>How long we keep it</h2><p>We keep your account and order details for as long as your account is active. After you close your account, we remove or anonymise your personal details, while retaining billing and tax records for the period required under GST and income tax laws.</p></section>
+<section id="delete-account"><h2><em>9.</em>Deleting your account</h2><p>You can delete your RD Dairy account at any time:</p>
+<ul>
+<li><strong>In the app:</strong> open <strong>Account</strong>, tap <strong>Delete my account</strong> and confirm. Your login stops working on every phone straight away.</li>
+<li><strong>Without the app:</strong> send “Delete my account” from your registered number on WhatsApp to <a href="https://wa.me/919080502101">+91 90805 02101</a>, or email <a href="mailto:rddairy14@gmail.com">rddairy14@gmail.com</a>.</li>
+</ul>
+<p>We confirm your request, settle any pending bills with you, stop your deliveries, and remove your name, number, address, photos and app details within 30 days. Bills and payment records that GST and income tax laws require us to keep are retained for that period only and then deleted.</p></section>
+<section id="s8"><h2><em>10.</em>Your rights</h2><p>Under the Digital Personal Data Protection Act, 2023, you can:</p>
 <ul>
 <li>Ask for a summary of the personal data we hold about you.</li>
 <li>Correct or update your name, number or address.</li>
@@ -132,9 +148,9 @@ foot,.foot{background:var(--ink);color:rgba(255,255,255,.55);font-size:.82rem;pa
 <li>Raise a grievance with us, and then with the Data Protection Board of India.</li>
 </ul>
 <p>To use any of these rights, message or email us using the details below.</p></section>
-<section id="s9"><h2><em>9.</em>Children</h2><p>RD Dairy accounts are created and managed by adults for their households. If you believe a child has shared personal details with us, please contact us and we will remove them.</p></section>
-<section id="s10"><h2><em>10.</em>Changes to this policy</h2><p>We may update this policy as our service grows, for example when we launch new features in the RD Dairy app. The effective date at the top of this page shows the latest version, and we will inform you on WhatsApp about any important change.</p></section>
-<section id="s11"><h2><em>11.</em>Contact and grievances</h2><p>For privacy questions, data requests or complaints, reach our Grievance Officer. We acknowledge every request within 48 hours and aim to resolve it within 30 days.</p><div class="card">
+<section id="s9"><h2><em>11.</em>Children</h2><p>RD Dairy accounts are created and managed by adults for their households. If you believe a child has shared personal details with us, please contact us and we will remove them.</p></section>
+<section id="s10"><h2><em>12.</em>Changes to this policy</h2><p>We may update this policy as our service grows, for example when we launch new features in the RD Dairy app. The effective date at the top of this page shows the latest version, and we will inform you on WhatsApp about any important change.</p></section>
+<section id="s11"><h2><em>13.</em>Contact and grievances</h2><p>For privacy questions, data requests or complaints, reach our Grievance Officer. We acknowledge every request within 48 hours and aim to resolve it within 30 days.</p><div class="card">
 <p><strong>RD Dairy &amp; GoA2 Dairy</strong></p>
 <p>No 7, RD Dairy &amp; GoA2 Dairy Farm, Chennai, Tamil Nadu</p>
 <p>Phone and WhatsApp: <a href="tel:+919080502101">+91 90805 02101</a></p>
