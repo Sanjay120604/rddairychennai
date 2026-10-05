@@ -488,6 +488,10 @@
     <div id="appReqView" class="hidden">
       <div class="toolbar"><button class="btn refresh" onclick="loadAppRequests()">↻ Refresh</button></div>
 
+      <h3 class="dsub">Delivery problems</h3>
+      <p class="muted" style="margin:0 0 10px">Reported by customers in the app. Sort it out with the customer, then mark it resolved with a short note they can see.</p>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="arIssues"><div class="empty">Loading…</div></div></div>
+
       <h3 class="dsub">Changes from the app</h3>
       <p class="muted" style="margin:0 0 10px">Pauses and quantity changes customers made in the app, from today onwards. These are already in each customer's daily milk log.</p>
       <div class="table-wrap" style="margin-bottom:24px"><div id="arChanges"><div class="empty">Loading…</div></div></div>
@@ -495,6 +499,10 @@
       <h3 class="dsub">Usual quantity change requests</h3>
       <p class="muted" style="margin:0 0 10px">Update the customer's quantity in Billing from the date shown, then tap Done. The customer sees the request as handled.</p>
       <div class="table-wrap" style="margin-bottom:24px"><div id="arQty"><div class="empty">Loading…</div></div></div>
+
+      <h3 class="dsub">Profile updates</h3>
+      <p class="muted" style="margin:0 0 10px">Name and address changes customers made in the app. Subscribers' changes are already saved in Billing. Tap Seen once your delivery team knows.</p>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="arProfile"><div class="empty">Loading…</div></div></div>
 
       <h3 class="dsub">Account deletion requests</h3>
       <p class="muted" style="margin:0 0 10px">The customer's app login stops as soon as they ask. Settle any dues, stop their deliveries, remove their details, then tap Done. Keep bills needed for GST records.</p>
@@ -2582,7 +2590,9 @@ async function loadAppRequests(){
   $("arChanges").innerHTML='<div class="empty">Loading…</div>';
   $("arQty").innerHTML='<div class="empty">Loading…</div>';
   try{
-    var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"}), aApi({action:"deletions"})]);
+    var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"}), aApi({action:"deletions"}), aApi({action:"issues"}), aApi({action:"profileChanges"})]);
+    renderIssues(res[4].ok?res[4].issues:[], res[4].ok?null:res[4].message);
+    renderProfileChanges(res[5].ok?res[5].changes:[], res[5].ok?null:res[5].message);
     renderDeletions(res[3].ok?res[3].requests:[], res[3].ok?null:res[3].message);
     renderAppChanges(res[0].ok?res[0].changes:[], res[0].ok?null:res[0].message);
     renderQtyRequests(res[1].ok?res[1].requests:[], res[1].ok?null:res[1].message);
@@ -2624,6 +2634,44 @@ function renderQtyRequests(list, err){
       '<td>'+arQty(r.usual)+' → <b>'+arQty(r.new_qty)+'</b> a day</td><td><b>'+esc(arDay(r.effective_from))+'</b></td><td>'+st+'</td><td style="white-space:nowrap">'+act+'</td></tr>';
   });
   $("arQty").innerHTML=html+'</tbody></table>';
+}
+
+var ISSUE_LABEL={missed:"Milk not delivered",late:"Delivered late",damaged:"Damaged or leaking",wrong_qty:"Wrong quantity",quality:"Quality concern",other:"Something else"};
+function renderIssues(list, err){
+  if(err){ $("arIssues").innerHTML='<div class="empty">'+esc(err)+'</div>'; return; }
+  if(!list.length){ $("arIssues").innerHTML='<div class="empty">No delivery problems reported.</div>'; return; }
+  var html='<table><thead><tr><th>Reported</th><th>Customer</th><th>Delivery date</th><th>Problem</th><th>Photo</th><th>Status</th><th></th></tr></thead><tbody>';
+  list.forEach(function(r){
+    html+='<tr><td class="muted">'+esc(fmtDate(r.created_at))+'</td><td>'+esc(r.name||"")+'<br><span class="muted">'+esc(r.phone)+'</span></td>'+
+      '<td><b>'+esc(arDay(r.issue_date))+'</b></td><td><b>'+esc(ISSUE_LABEL[r.kind]||r.kind)+'</b>'+(r.note?'<br><span class="muted">'+esc(r.note)+'</span>':'')+'</td>'+
+      '<td>'+(r.photo_url?'<a href="'+esc(r.photo_url)+'" target="_blank"><img src="'+esc(r.photo_url)+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px"></a>':'—')+'</td>'+
+      '<td>'+(r.status==="open"?'<span class="pill pending">Open</span>':'<span class="pill paid">Resolved</span>'+(r.admin_note?'<br><span class="muted">'+esc(r.admin_note)+'</span>':''))+'</td>'+
+      '<td style="white-space:nowrap">'+(r.status==="open"?'<button class="btn sm" onclick="arIssueResolve(\''+r.id+'\',this)">Resolve</button> <a class="wa-btn" target="_blank" href="https://wa.me/91'+esc(String(r.phone).slice(-10))+'">WhatsApp</a>':'')+'</td></tr>';
+  });
+  $("arIssues").innerHTML=html+'</tbody></table>';
+}
+async function arIssueResolve(id, btn){
+  var note=prompt("What did you do? The customer sees this note.","Sorry about this. We have sorted it out.");
+  if(note===null) return;
+  btn.disabled=true;
+  try{ var r=await aApi({action:"issueResolve", id:id, note:note}); if(!r.ok){ alert(r.message); btn.disabled=false; return; } loadAppRequests(); }
+  catch(e){ alert(e.message); btn.disabled=false; }
+}
+function renderProfileChanges(list, err){
+  if(err){ $("arProfile").innerHTML='<div class="empty">'+esc(err)+'</div>'; return; }
+  if(!list.length){ $("arProfile").innerHTML='<div class="empty">No profile updates yet.</div>'; return; }
+  var html='<table><thead><tr><th>Changed</th><th>Customer</th><th>Name</th><th>Address</th><th></th></tr></thead><tbody>';
+  list.forEach(function(c){
+    var nm = c.old_name!==c.new_name ? '<s class="muted">'+esc(c.old_name||"")+'</s><br><b>'+esc(c.new_name)+'</b>' : esc(c.new_name);
+    var ad = c.old_address!==c.new_address ? '<s class="muted">'+esc(c.old_address||"")+'</s><br><b>'+esc(c.new_address)+'</b>' : '<span class="muted">Same</span>';
+    html+='<tr><td class="muted">'+esc(fmtDate(c.created_at))+'</td><td>'+esc(c.phone)+(c.customer_id?'<br><span class="muted">subscriber</span>':'')+'</td><td>'+nm+'</td><td>'+ad+'</td>'+
+      '<td>'+(c.seen?'<span class="pill paid">Seen</span>':'<button class="btn sm" onclick="arProfileSeen(\''+c.id+'\',this)">Seen</button>')+'</td></tr>';
+  });
+  $("arProfile").innerHTML=html+'</tbody></table>';
+}
+async function arProfileSeen(id, btn){
+  btn.disabled=true;
+  try{ await aApi({action:"profileSeen", id:id}); loadAppRequests(); } catch(e){ btn.disabled=false; }
 }
 
 function renderDeletions(list, err){
