@@ -496,6 +496,10 @@
       <p class="muted" style="margin:0 0 10px">Update the customer's quantity in Billing from the date shown, then tap Done. The customer sees the request as handled.</p>
       <div class="table-wrap" style="margin-bottom:24px"><div id="arQty"><div class="empty">Loading…</div></div></div>
 
+      <h3 class="dsub">Account deletion requests</h3>
+      <p class="muted" style="margin:0 0 10px">The customer's app login stops as soon as they ask. Settle any dues, stop their deliveries, remove their details, then tap Done. Keep bills needed for GST records.</p>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="arDel"><div class="empty">Loading…</div></div></div>
+
       <h3 class="dsub">App settings</h3>
       <div class="dcard">
         <div class="dform" style="grid-template-columns:1fr 1fr 1.4fr 1fr auto">
@@ -504,6 +508,10 @@
           <div><label>UPI ID for app payments</label><input id="arUpiId" /></div>
           <div><label>UPI name</label><input id="arUpiName" /></div>
           <div class="dform-actions"><button class="btn" onclick="saveAppSettingsForm()">Save</button></div>
+        </div>
+        <div class="dform" style="grid-template-columns:1fr 1.4fr;margin-top:12px">
+          <div><label>Support phone / WhatsApp</label><input id="arSupPhone" inputmode="numeric" /></div>
+          <div><label>Support email</label><input id="arSupEmail" type="email" /></div>
         </div>
         <p class="muted" style="margin-top:10px">Customers can change tomorrow's milk until the cutoff time the night before.</p>
         <div class="err-msg hidden" id="arErr"></div>
@@ -2574,7 +2582,8 @@ async function loadAppRequests(){
   $("arChanges").innerHTML='<div class="empty">Loading…</div>';
   $("arQty").innerHTML='<div class="empty">Loading…</div>';
   try{
-    var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"})]);
+    var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"}), aApi({action:"deletions"})]);
+    renderDeletions(res[3].ok?res[3].requests:[], res[3].ok?null:res[3].message);
     renderAppChanges(res[0].ok?res[0].changes:[], res[0].ok?null:res[0].message);
     renderQtyRequests(res[1].ok?res[1].requests:[], res[1].ok?null:res[1].message);
     if(res[2].ok){
@@ -2583,6 +2592,8 @@ async function loadAppRequests(){
       $("arMaxExtra").value=st.max_extra_qty||"5";
       $("arUpiId").value=(st.upi_id&&st.upi_id!=="yourbusiness@bank")?st.upi_id:"";
       $("arUpiName").value=st.upi_name||"RD Dairy";
+      $("arSupPhone").value=st.support_phone||"";
+      $("arSupEmail").value=st.support_email||"";
     }
     refreshAppPayCount();
   }catch(e){ $("arChanges").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
@@ -2615,6 +2626,24 @@ function renderQtyRequests(list, err){
   $("arQty").innerHTML=html+'</tbody></table>';
 }
 
+function renderDeletions(list, err){
+  if(err){ $("arDel").innerHTML='<div class="empty">'+esc(err)+'</div>'; return; }
+  if(!list.length){ $("arDel").innerHTML='<div class="empty">No deletion requests.</div>'; return; }
+  var html='<table><thead><tr><th>Requested</th><th>Customer</th><th>Reason</th><th>Status</th><th></th></tr></thead><tbody>';
+  list.forEach(function(d){
+    html+='<tr><td class="muted">'+esc(fmtDate(d.created_at))+'</td><td>'+esc(d.name||"")+'<br><span class="muted">'+esc(d.phone)+(d.customer_id?' · subscriber':'')+'</span></td>'+
+      '<td class="muted">'+esc(d.reason||"—")+'</td><td>'+(d.status==="pending"?'<span class="pill pending">To do</span>':'<span class="pill paid">Done</span>')+'</td>'+
+      '<td>'+(d.status==="pending"?'<button class="btn sm" onclick="arDelDone(\''+d.id+'\',this)">Done</button>':'')+'</td></tr>';
+  });
+  $("arDel").innerHTML=html+'</tbody></table>';
+}
+async function arDelDone(id, btn){
+  if(!confirm("Mark this account as deleted? Do this after removing the customer's details.")) return;
+  btn.disabled=true;
+  try{ var r=await aApi({action:"deletionDone", id:id}); if(!r.ok){ alert(r.message); btn.disabled=false; return; } loadAppRequests(); }
+  catch(e){ alert(e.message); btn.disabled=false; }
+}
+
 async function arQtyUpdate(id, status, btn){
   var note = status==="declined" ? prompt("Reason (optional):","") : "";
   if(note===null) return;
@@ -2628,7 +2657,8 @@ async function arQtyUpdate(id, status, btn){
 
 async function saveAppSettingsForm(){
   var err=$("arErr"); err.classList.add("hidden");
-  var settings={ change_cutoff_time:$("arCutoff").value.trim(), max_extra_qty:$("arMaxExtra").value.trim(), upi_name:$("arUpiName").value.trim() };
+  var settings={ change_cutoff_time:$("arCutoff").value.trim(), max_extra_qty:$("arMaxExtra").value.trim(), upi_name:$("arUpiName").value.trim(),
+                 support_phone:$("arSupPhone").value.trim(), support_email:$("arSupEmail").value.trim() };
   if($("arUpiId").value.trim()) settings.upi_id=$("arUpiId").value.trim();
   try{
     var r=await aApi({action:"saveAppSettings", settings:settings});
