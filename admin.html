@@ -103,6 +103,20 @@
   .lbox-label{font-weight:800;font-size:.92rem;color:var(--navy)}
   .back-btn{margin-bottom:16px}
 
+
+  /* in-page notices, questions and image viewer */
+  .rd-notice{position:fixed;left:50%;top:18px;transform:translate(-50%,-140%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:transform .25s;max-width:90vw}
+  .rd-notice.show{transform:translate(-50%,0)}
+  .rd-ask{display:block;margin-top:8px;background:#fff;border:1.5px solid var(--amber);border-radius:12px;padding:12px;min-width:220px;max-width:340px;box-shadow:0 6px 18px rgba(27,42,90,.12);text-align:left;white-space:normal}
+  .rd-ask.floating{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:9998}
+  .rd-ask-msg{font-weight:700;color:var(--navy);font-size:.88rem;margin-bottom:8px}
+  .rd-ask-in{width:100% !important;padding:8px 10px;border:1.5px solid var(--amber-light);border-radius:9px;font-family:inherit;margin-bottom:8px}
+  .rd-ask-btns{display:flex;gap:8px;justify-content:flex-end}
+  .rd-viewer{position:fixed;inset:0;background:rgba(15,26,56,.85);display:none;align-items:center;justify-content:center;z-index:9997;padding:24px}
+  .rd-viewer.show{display:flex}
+  .rd-viewer img{max-width:100%;max-height:100%;border-radius:12px;background:#fff}
+  .rd-viewer-x{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
+
   /* app payments */
   .lbox{position:relative}
   .lbox-count{position:absolute;top:10px;right:10px;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:var(--err);color:#fff;font-weight:800;font-size:.78rem;display:grid;place-items:center}
@@ -858,7 +872,7 @@ async function saveDriver(){
 }
 
 async function deleteDriver(name){
-  if(!confirm("Remove "+name+" from the delivery list?\n\nTheir saved area records are kept.")) return;
+  if(!await askInline("Remove "+name+" from the delivery list?\n\nTheir saved area records are kept.")) return;
   try{
     var r = await dapi({action:"deleteDriver", name:name});
     if(r.ok) loadDrivers();
@@ -1321,7 +1335,7 @@ async function saveExpenseEntry(){
 }
 
 async function deleteExpenseEntry(id){
-  if(!confirm("Delete this expense entry?")) return;
+  if(!await askInline("Delete this expense entry?")) return;
   try{
     var r = await api({action:"deleteExpenseEntry", adminKey:adminKey, id:id});
     if(r.success) loadExpenses();
@@ -1479,7 +1493,7 @@ async function saveSalaryPerson(){
 }
 
 async function deleteSalaryPerson(id){
-  if(!confirm("Delete this person? Their payment history will also be removed.")) return;
+  if(!await askInline("Delete this person? Their payment history will also be removed.")) return;
   try{
     var r = await api({action:"deleteSalaryPerson", adminKey:adminKey, id:id});
     if(r.success){ loadSalaryPersons(); renderExpenseCards(); }
@@ -1551,7 +1565,7 @@ function renderPaymentHistoryTable(rows){
 }
 
 async function deleteSalaryPayment(id){
-  if(!confirm("Delete this payment?")) return;
+  if(!await askInline("Delete this payment?")) return;
   try{
     var r = await api({action:"deleteSalaryPayment", adminKey:adminKey, id:id});
     if(r.success){
@@ -1692,7 +1706,7 @@ function renderSupplierHistoryTable(rows){
 }
 
 async function deleteSupplierPaymentRow(id){
-  if(!confirm("Delete this payment?")) return;
+  if(!await askInline("Delete this payment?")) return;
   try{
     var r = await api({action:"deleteSupplierPayment", adminKey:adminKey, id:id});
     if(r.success){
@@ -2427,6 +2441,53 @@ function render(){
   $("tableArea").innerHTML=html;
 }
 
+
+/* ============ In-page notices, questions and image viewer (no pop-up boxes) ============ */
+function notice(msg, bad){
+  var el=document.getElementById("rdNotice");
+  if(!el){ el=document.createElement("div"); el.id="rdNotice"; document.body.appendChild(el); }
+  el.textContent=String(msg==null?"":msg);
+  el.className="rd-notice show"+(bad===false?" ok":"");
+  clearTimeout(el._t); el._t=setTimeout(function(){ el.className="rd-notice"; },3500);
+}
+window.alert=function(m){ notice(m); };
+
+function askInline(message, opts){
+  opts=opts||{};
+  document.querySelectorAll(".rd-ask").forEach(function(x){ x.remove(); });
+  var anchor=document.activeElement && document.activeElement!==document.body ? document.activeElement : null;
+  return new Promise(function(resolve){
+    var box=document.createElement("div");
+    box.className="rd-ask";
+    box.innerHTML='<div class="rd-ask-msg"></div>'+(opts.input!=null?'<input class="rd-ask-in" />':'')+
+      '<div class="rd-ask-btns"><button type="button" class="btn sm ghost" data-no>Cancel</button><button type="button" class="btn sm" data-yes></button></div>';
+    box.querySelector(".rd-ask-msg").textContent=message;
+    box.querySelector("[data-yes]").textContent=opts.yes||"Yes";
+    var inp=box.querySelector(".rd-ask-in"); if(inp) inp.value=opts.input;
+    function done(v){ box.remove(); resolve(v); }
+    box.querySelector("[data-yes]").onclick=function(){ done(inp?inp.value:true); };
+    box.querySelector("[data-no]").onclick=function(){ done(inp?null:false); };
+    if(inp) inp.addEventListener("keydown",function(e){ if(e.key==="Enter") done(inp.value); if(e.key==="Escape") done(null); });
+    if(anchor && anchor.parentNode){ anchor.insertAdjacentElement("afterend", box); }
+    else { box.classList.add("floating"); document.body.appendChild(box); }
+    (inp||box.querySelector("[data-yes]")).focus();
+    box.scrollIntoView({block:"nearest",behavior:"smooth"});
+  });
+}
+
+function showImage(url){
+  var v=document.getElementById("rdViewer");
+  if(!v){
+    v=document.createElement("div"); v.id="rdViewer"; v.className="rd-viewer";
+    v.innerHTML='<button type="button" class="rd-viewer-x" aria-label="Close">✕</button><img alt="Screenshot" />';
+    v.addEventListener("click",function(e){ if(e.target===v||e.target.classList.contains("rd-viewer-x")) v.classList.remove("show"); });
+    document.addEventListener("keydown",function(e){ if(e.key==="Escape") v.classList.remove("show"); });
+    document.body.appendChild(v);
+  }
+  v.querySelector("img").src=url;
+  v.classList.add("show");
+}
+
 /* Pay Ref: shows the UTR and a button for website payment screenshots */
 function payRefCell(ref){
   if(!ref) return "—";
@@ -2436,11 +2497,10 @@ function payRefCell(ref){
   return (rest?esc(rest)+'<br>':'')+'<button class="btn sm ghost" style="margin-top:4px" onclick="viewOrderProof(\''+esc(m[1])+'\')">View screenshot</button>';
 }
 async function viewOrderProof(path){
-  var w=window.open("","_blank");
   try{
     var r=await aApi({action:"proofUrl",path:path});
-    if(r.ok && w){ w.location.href=r.url; } else { if(w) w.close(); alert(r.message||"Screenshot unavailable"); }
-  }catch(e){ if(w) w.close(); alert(e.message); }
+    if(r.ok) showImage(r.url); else notice(r.message||"Screenshot unavailable");
+  }catch(e){ notice(e.message); }
 }
 
 function statusSelect(type,id,current,opts){
@@ -2551,7 +2611,7 @@ function renderAppPayments(list){
           'Sent '+esc(apWhen(c.created_at))+(bills?' · Bill '+esc(bills):'')+'<br>'+
           (c.utr?'UTR <span class="ap-utr">'+esc(c.utr)+'</span>':'Screenshot only')+
         '</div>'+
-        (c.proof_url?'<a class="ap-proof" href="'+esc(c.proof_url)+'" target="_blank"><img src="'+esc(c.proof_url)+'" alt="Payment screenshot"></a>':'')+
+        (c.proof_url?'<a class="ap-proof" href="#" data-src="'+esc(c.proof_url)+'" onclick="showImage(this.dataset.src);return false;"><img src="'+esc(c.proof_url)+'" alt="Payment screenshot"></a>':'')+
       '</div>'+
       '<div class="ap-amt">'+apMoney(c.amount)+'</div>'+
       actions+
@@ -2562,7 +2622,7 @@ function renderAppPayments(list){
 async function apConfirm(id, btn){
   var amt = parseFloat($("apAmt_"+id).value);
   if(!(amt>0)){ alert("Enter the amount received"); return; }
-  if(!confirm("Confirm "+apMoney(amt)+" received? This records the payment in Billing.")) return;
+  if(!await askInline("Confirm "+apMoney(amt)+" received? This records the payment in Billing.", {yes:"Confirm"})) return;
   btn.disabled=true; btn.textContent="Saving…";
   try{
     var r = await aApi({action:"confirmClaim", id:id, amount:amt});
@@ -2572,7 +2632,7 @@ async function apConfirm(id, btn){
 }
 
 async function apReject(id, btn){
-  var note = prompt("Reason for rejecting (the customer can pay again):", "Payment not received");
+  var note = await askInline("Reason for rejecting (the customer can pay again):", {input:"Payment not received", yes:"Reject"});
   if(note===null) return;
   btn.disabled=true;
   try{
@@ -2644,14 +2704,14 @@ function renderIssues(list, err){
   list.forEach(function(r){
     html+='<tr><td class="muted">'+esc(fmtDate(r.created_at))+'</td><td>'+esc(r.name||"")+'<br><span class="muted">'+esc(r.phone)+'</span></td>'+
       '<td><b>'+esc(arDay(r.issue_date))+'</b></td><td><b>'+esc(ISSUE_LABEL[r.kind]||r.kind)+'</b>'+(r.note?'<br><span class="muted">'+esc(r.note)+'</span>':'')+'</td>'+
-      '<td>'+(r.photo_url?'<a href="'+esc(r.photo_url)+'" target="_blank"><img src="'+esc(r.photo_url)+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px"></a>':'—')+'</td>'+
+      '<td>'+(r.photo_url?'<a href="#" data-src="'+esc(r.photo_url)+'" onclick="showImage(this.dataset.src);return false;"><img src="'+esc(r.photo_url)+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px"></a>':'—')+'</td>'+
       '<td>'+(r.status==="open"?'<span class="pill pending">Open</span>':'<span class="pill paid">Resolved</span>'+(r.admin_note?'<br><span class="muted">'+esc(r.admin_note)+'</span>':''))+'</td>'+
       '<td style="white-space:nowrap">'+(r.status==="open"?'<button class="btn sm" onclick="arIssueResolve(\''+r.id+'\',this)">Resolve</button> <a class="wa-btn" target="_blank" href="https://wa.me/91'+esc(String(r.phone).slice(-10))+'">WhatsApp</a>':'')+'</td></tr>';
   });
   $("arIssues").innerHTML=html+'</tbody></table>';
 }
 async function arIssueResolve(id, btn){
-  var note=prompt("What did you do? The customer sees this note.","Sorry about this. We have sorted it out.");
+  var note=await askInline("What did you do? The customer sees this note.", {input:"Sorry about this. We have sorted it out.", yes:"Resolve"});
   if(note===null) return;
   btn.disabled=true;
   try{ var r=await aApi({action:"issueResolve", id:id, note:note}); if(!r.ok){ alert(r.message); btn.disabled=false; return; } loadAppRequests(); }
@@ -2686,14 +2746,14 @@ function renderDeletions(list, err){
   $("arDel").innerHTML=html+'</tbody></table>';
 }
 async function arDelDone(id, btn){
-  if(!confirm("Mark this account as deleted? Do this after removing the customer's details.")) return;
+  if(!await askInline("Mark this account as deleted? Do this after removing the customer's details.")) return;
   btn.disabled=true;
   try{ var r=await aApi({action:"deletionDone", id:id}); if(!r.ok){ alert(r.message); btn.disabled=false; return; } loadAppRequests(); }
   catch(e){ alert(e.message); btn.disabled=false; }
 }
 
 async function arQtyUpdate(id, status, btn){
-  var note = status==="declined" ? prompt("Reason (optional):","") : "";
+  var note = status==="declined" ? await askInline("Reason for declining (optional):", {input:"", yes:"Decline"}) : "";
   if(note===null) return;
   btn.disabled=true;
   try{
@@ -2711,7 +2771,7 @@ async function saveAppSettingsForm(){
   try{
     var r=await aApi({action:"saveAppSettings", settings:settings});
     if(!r.ok){ err.textContent=r.message||"Could not save"; err.classList.remove("hidden"); return; }
-    alert("App settings saved");
+    notice("App settings saved");
   }catch(e){ err.textContent=e.message; err.classList.remove("hidden"); }
 }
 
