@@ -658,6 +658,7 @@ async function enter(){
   $("gate").classList.add("hidden");
   refreshAppPayCount();
   if(!window.__apTimer) window.__apTimer = setInterval(refreshAppPayCount, 60000);
+  if(location.hash==="#apppay"){ goSection("apppay"); history.replaceState(null,"",location.pathname); }
   $("dash").classList.remove("hidden");
   loadData(); // fetch orders/subscriptions in the background; unlock doesn't wait on it
 }
@@ -2228,6 +2229,7 @@ function waButton(mobile, name, id, status){
 }
 
 function renderCards(){
+  if(view==="apppay"){ $("cards").innerHTML=""; return; }
   var o=data.orders, s=data.subscriptions;
   var revenue=o.filter(x=>/paid|received|confirmed/i.test((x.Status||""))).reduce((a,x)=>a+(Number(x.Amount)||0),0);
   var pending=o.filter(x=>!/paid|received|confirmed/i.test((x.Status||""))).length;
