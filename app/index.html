@@ -22,7 +22,7 @@
     --leaf: #2F8F5B;
     --danger: #B4442E;
     --display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
-    --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --body: "Figtree", "Noto Sans Tamil", "Noto Sans Devanagari", "Nirmala UI", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -306,6 +306,43 @@
   .reasons label { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 14px; background: var(--mist); font-weight: 600; }
   .reasons input { accent-color: #1E2B4A; width: 18px; height: 18px; }
 
+
+  /* ---------- languages, sign up, profile, problems ---------- */
+  .login-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .langs { display: inline-flex; background: rgba(255,255,255,0.12); border-radius: 12px; padding: 3px; gap: 2px; }
+  .langs button { padding: 7px 11px; border-radius: 9px; font-weight: 700; font-size: 14px; color: inherit; opacity: 0.8; min-height: 36px; }
+  .langs button.on { background: var(--butter); color: var(--ink); opacity: 1; }
+  .card .langs { background: var(--mist); display: flex; }
+  .card .langs button { flex: 1; color: var(--ink); }
+  .signup { padding-bottom: calc(var(--safe-bottom) + 40px); }
+  .su-title { font-family: var(--display); font-size: 30px; margin: 30px 0 4px; letter-spacing: -0.01em; }
+  .signup .lead { margin-bottom: 22px; }
+  .signup label { margin-top: 14px; }
+  .su-input {
+    width: 100%; min-height: 52px; border-radius: 14px; border: 2px solid transparent; background: var(--milk);
+    color: var(--ink); padding: 0 14px; font-size: 17px; font-weight: 600;
+  }
+  .su-input:focus { outline: none; border-color: var(--butter); }
+  .su-area { min-height: 84px; padding: 12px 14px; resize: vertical; font: inherit; font-weight: 600; }
+  select.su-input { appearance: auto; }
+  .su-help { font-size: 14px; opacity: 0.75; margin-top: 6px; }
+  .su-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .su-grid > div { min-width: 0; }
+  .su-grid .su-input { min-width: 0; max-width: 100%; }
+  .su-grid input[type=date] { font-size: 15px; padding: 0 10px; }
+  .seg.dark { background: rgba(255,255,255,0.12); }
+  .seg.dark button { color: rgba(255,255,255,0.8); }
+  .seg.dark button.on { background: var(--butter); color: var(--ink); }
+  #su-go { margin-top: 26px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; margin: 6px 4px 12px; }
+  .sec-head h2 { margin: 0; }
+  .sec-head button { font-weight: 700; color: var(--ink); background: var(--milk); border-radius: 12px; padding: 10px 16px; min-height: 44px; }
+  .sheet input.txt { width: 100%; min-height: 50px; border-radius: 14px; border: 1.5px solid var(--line); padding: 0 14px; background: var(--milk); font: inherit; }
+  .kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kinds button { min-height: 52px; border-radius: 14px; background: var(--mist); font-weight: 700; padding: 8px 10px; border: 2px solid transparent; text-align: left; }
+  .kinds button.on { border-color: var(--ink); background: var(--milk); }
+  .empty { background: var(--milk); border-radius: 22px; padding: 22px 18px; color: var(--soft); }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -339,7 +376,7 @@
 
 <script>
 /* =========================================================
-   SETTINGS: paste your Supabase Project URL here (one time)
+   RD Dairy customer app
    ========================================================= */
 const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
@@ -366,15 +403,610 @@ const store = {
   },
 };
 
+/* =========================================================
+   LANGUAGES: English, Tamil, Hindi
+   Keys are the English text. Missing entries fall back to English.
+   ========================================================= */
+const LANGS = [
+  { code: "en", label: "English", locale: "en-IN" },
+  { code: "ta", label: "தமிழ்", locale: "ta-IN" },
+  { code: "hi", label: "हिंदी", locale: "hi-IN" },
+];
+let LANG = "en";
+const locale = () => (LANGS.find((l) => l.code === LANG) || LANGS[0]).locale;
+
+const T = {
+  ta: {
+    "Fresh A2 milk at your door every morning.": "தினமும் காலையில் உங்கள் வீட்டு வாசலுக்கு புதிய A2 பால்.",
+    "Your mobile number": "உங்கள் மொபைல் எண்",
+    "Send code on WhatsApp": "WhatsApp இல் குறியீடு அனுப்பு",
+    "Sending…": "அனுப்புகிறோம்…",
+    "Serving Chennai for over 20 years": "20 ஆண்டுகளுக்கும் மேலாக சென்னைக்கு சேவை",
+    "Enter your 10 digit mobile number.": "உங்கள் 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்.",
+    "We sent a 6 digit code to your WhatsApp on +91 {phone}.": "+91 {phone} WhatsApp க்கு 6 இலக்க குறியீடு அனுப்பியுள்ளோம்.",
+    "Code": "குறியீடு",
+    "Log in": "உள்நுழை",
+    "Checking…": "சரிபார்க்கிறோம்…",
+    "Enter the 6 digit code.": "6 இலக்க குறியீட்டை உள்ளிடவும்.",
+    "Send a new code": "புதிய குறியீடு அனுப்பு",
+    "New code sent on WhatsApp": "புதிய குறியீடு WhatsApp இல் அனுப்பப்பட்டது",
+    "Use a different number": "வேறு எண்ணைப் பயன்படுத்து",
+    "Welcome to RD Dairy": "RD Dairy க்கு வரவேற்கிறோம்",
+    "Tell us where to deliver. It takes a minute.": "எங்கே டெலிவரி செய்ய வேண்டும் என்று சொல்லுங்கள். ஒரு நிமிடம் போதும்.",
+    "Your name": "உங்கள் பெயர்",
+    "Delivery address": "டெலிவரி முகவரி",
+    "House number, street and a landmark": "வீட்டு எண், தெரு மற்றும் அடையாளம்",
+    "Area": "பகுதி",
+    "Choose your area": "உங்கள் பகுதியைத் தேர்ந்தெடுக்கவும்",
+    "Other area": "மற்ற பகுதி",
+    "Would you like daily milk delivery?": "தினசரி பால் டெலிவரி வேண்டுமா?",
+    "Yes, daily milk": "ஆம், தினசரி பால்",
+    "Just shopping": "பொருட்கள் மட்டும்",
+    "Milk": "பால்",
+    "Size": "அளவு",
+    "Packs a day": "ஒரு நாளைக்கு பாக்கெட்டுகள்",
+    "Start from": "தொடங்கும் நாள்",
+    "Create my account": "என் கணக்கை உருவாக்கு",
+    "Creating your account…": "உங்கள் கணக்கை உருவாக்குகிறோம்…",
+    "Enter your name": "உங்கள் பெயரை உள்ளிடவும்",
+    "Enter your full delivery address": "முழு டெலிவரி முகவரியை உள்ளிடவும்",
+    "RD Dairy will call you to confirm your milk start date.": "பால் தொடங்கும் நாளை உறுதிசெய்ய RD Dairy உங்களை அழைக்கும்.",
+    "Welcome, {name}": "வரவேற்கிறோம், {name}",
+    "Language": "மொழி",
+
+    "Home": "முகப்பு",
+    "Calendar": "நாட்காட்டி",
+    "Shop": "கடை",
+    "Bills": "பில்கள்",
+    "Account": "கணக்கு",
+    "Loading…": "ஏற்றுகிறது…",
+    "Close": "மூடு",
+    "Stay": "இருக்கட்டும்",
+    "Done": "முடிந்தது",
+
+    "Hello": "வணக்கம்",
+    "Your number is registered with RD Dairy.": "உங்கள் எண் RD Dairy இல் பதிவு செய்யப்பட்டுள்ளது.",
+    "Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here.": "உங்கள் தினசரி பால் சந்தா தொடங்கியதும், டெலிவரி, நிறுத்தம், கூடுதல் பால் விவரங்கள் இங்கே தெரியும்.",
+    "Your daily milk request ({item}) is with RD Dairy. We will call you to confirm the start date.": "உங்கள் தினசரி பால் கோரிக்கை ({item}) RD Dairy இடம் உள்ளது. தொடங்கும் நாளை உறுதிசெய்ய அழைப்போம்.",
+    "Browse the shop": "கடையைப் பாருங்கள்",
+    "Tomorrow, {date}": "நாளை, {date}",
+    "Your usual delivery": "உங்கள் வழக்கமான டெலிவரி",
+    "Paused for this day": "இந்த நாள் நிறுத்தப்பட்டது",
+    "Extra milk added": "கூடுதல் பால் சேர்க்கப்பட்டது",
+    "Less than usual": "வழக்கத்தை விட குறைவு",
+    "Change tomorrow": "நாளைய அளவை மாற்று",
+    "Changes for tomorrow are open until {time} tonight.": "நாளைக்கான மாற்றங்களை இன்று இரவு {time} வரை செய்யலாம்.",
+    "Tomorrow's delivery is set. You can change deliveries from {date} onwards.": "நாளைய டெலிவரி உறுதியாகிவிட்டது. {date} முதல் மாற்றலாம்.",
+    "Next 7 days": "அடுத்த 7 நாட்கள்",
+    "Paused": "நிறுத்தம்",
+    "Going away?": "வெளியூர் செல்கிறீர்களா?",
+    "Full calendar": "முழு நாட்காட்டி",
+    "Report a delivery problem": "டெலிவரி பிரச்சனையைத் தெரிவி",
+    "Changes for {date} are closed.": "{date} க்கான மாற்றங்கள் முடிந்துவிட்டன.",
+    "None": "இல்லை",
+
+    "Your usual is {qty} a day.": "உங்கள் வழக்கமான அளவு நாளொன்றுக்கு {qty}.",
+    "Less milk": "குறைவான பால்",
+    "More milk": "அதிக பால்",
+    "Save {qty} for this day": "இந்த நாளுக்கு {qty} சேமி",
+    "Resume my usual {qty}": "வழக்கமான {qty} மீண்டும் தொடங்கு",
+    "Pause this day": "இந்த நாள் நிறுத்து",
+    "{qty} saved for {date}": "{date} க்கு {qty} சேமிக்கப்பட்டது",
+    "Paused for {date}": "{date} நிறுத்தப்பட்டது",
+    "Back to your usual for {date}": "{date} க்கு வழக்கமான அளவு",
+    "Choose the days you need no milk. Deliveries restart on their own after the last day.": "பால் தேவையில்லாத நாட்களைத் தேர்ந்தெடுக்கவும். கடைசி நாளுக்குப் பிறகு டெலிவரி தானாக மீண்டும் தொடங்கும்.",
+    "First day without milk": "பால் இல்லாத முதல் நாள்",
+    "Last day without milk": "பால் இல்லாத கடைசி நாள்",
+    "Pause these days": "இந்த நாட்களை நிறுத்து",
+    "Back early? Resume these days": "முன்பே திரும்புகிறீர்களா? இந்த நாட்களை மீண்டும் தொடங்கு",
+    "Choose both dates": "இரண்டு தேதிகளையும் தேர்ந்தெடுக்கவும்",
+    "Paused from {from} to {to}": "{from} முதல் {to} வரை நிறுத்தப்பட்டது",
+    "Deliveries resume from {from}": "{from} முதல் டெலிவரி மீண்டும் தொடங்கும்",
+
+    "Your delivery calendar appears here once your subscription starts.": "சந்தா தொடங்கியதும் உங்கள் டெலிவரி நாட்காட்டி இங்கே தெரியும்.",
+    "Usual {qty}": "வழக்கம் {qty}",
+    "Extra": "கூடுதல்",
+    "Less": "குறைவு",
+    "Tap any day from {date} to change it.": "{date} முதல் எந்த நாளையும் தொட்டு மாற்றலாம்.",
+    "Previous month": "முந்தைய மாதம்",
+    "Next month": "அடுத்த மாதம்",
+
+    "My orders": "என் ஆர்டர்கள்",
+    "All": "அனைத்தும்",
+    "Ghee & Butter": "நெய் & வெண்ணெய்",
+    "Fresh": "புதியவை",
+    "Add": "சேர்",
+    "One less": "ஒன்று குறை",
+    "One more": "ஒன்று கூட்டு",
+    "1 item": "1 பொருள்",
+    "{n} items": "{n} பொருட்கள்",
+    "View cart": "கார்ட்டைப் பார்",
+    "Your cart": "உங்கள் கார்ட்",
+    "{price} each": "ஒன்றுக்கு {price}",
+    "Total": "மொத்தம்",
+    "How often?": "எத்தனை முறை?",
+    "Just once": "ஒரு முறை மட்டும்",
+    "Repeat": "தொடர்ந்து",
+    "Deliver": "டெலிவரி",
+    "Every day": "தினமும்",
+    "Alternate days": "ஒரு நாள் விட்டு ஒரு நாள்",
+    "Once a week": "வாரம் ஒரு முறை",
+    "Once a month": "மாதம் ஒரு முறை",
+    "On": "எந்த நாள்",
+    "Starting from": "தொடங்கும் நாள்",
+    "Repeat items are added to your monthly bill.": "தொடர் பொருட்கள் உங்கள் மாத பில்லில் சேர்க்கப்படும்.",
+    "Pay for repeat items on delivery.": "தொடர் பொருட்களுக்கு டெலிவரியின்போது பணம் செலுத்துங்கள்.",
+    "RD Dairy confirms the start date with you.": "தொடங்கும் நாளை RD Dairy உங்களுடன் உறுதிசெய்யும்.",
+    "Deliver to": "டெலிவரி முகவரி",
+    "Payment": "பணம் செலுத்துதல்",
+    "Cash on delivery": "டெலிவரியின்போது பணம்",
+    "Pay when your order arrives": "ஆர்டர் வந்ததும் பணம் செலுத்துங்கள்",
+    "Pay now with UPI": "இப்போதே UPI மூலம் செலுத்து",
+    "GPay, PhonePe or Paytm": "GPay, PhonePe அல்லது Paytm",
+    "Add to my monthly bill": "என் மாத பில்லில் சேர்",
+    "Delivered with your milk": "உங்கள் பாலுடன் டெலிவரி",
+    "Start repeat order": "தொடர் ஆர்டரைத் தொடங்கு",
+    "Place order · {amt}": "ஆர்டர் செய் · {amt}",
+    "Keep shopping": "மேலும் வாங்கு",
+    "Getting payment details…": "பணம் செலுத்தும் விவரங்களைப் பெறுகிறோம்…",
+    "Pay {amt} with UPI app": "UPI ஆப்பில் {amt} செலுத்து",
+    "UPI ID": "UPI ID",
+    "Copy": "நகலெடு",
+    "After paying, add the UPI reference number or a screenshot.": "பணம் செலுத்திய பின், UPI குறிப்பு எண் அல்லது ஸ்கிரீன்ஷாட்டைச் சேர்க்கவும்.",
+    "Paste": "ஒட்டு",
+    "or": "அல்லது",
+    "Attach screenshot": "ஸ்கிரீன்ஷாட் இணை",
+    "Screenshot added": "ஸ்கிரீன்ஷாட் சேர்க்கப்பட்டது",
+    "Remove": "நீக்கு",
+    "Placing order…": "ஆர்டர் செய்கிறோம்…",
+    "Repeat order sent": "தொடர் ஆர்டர் அனுப்பப்பட்டது",
+    "Order placed": "ஆர்டர் செய்யப்பட்டது",
+    "RD Dairy will confirm your start date on WhatsApp.": "தொடங்கும் நாளை RD Dairy WhatsApp இல் உறுதிசெய்யும்.",
+    "Order {id} · {amt}. We deliver within 2 days.": "ஆர்டர் {id} · {amt}. 2 நாட்களுக்குள் டெலிவரி செய்வோம்.",
+    "See my orders": "என் ஆர்டர்களைப் பார்",
+    "Add your delivery address": "டெலிவரி முகவரியைச் சேர்க்கவும்",
+    "UPI ID copied": "UPI ID நகலெடுக்கப்பட்டது",
+    "Copy the 12 digit reference in your UPI app first": "முதலில் உங்கள் UPI ஆப்பில் 12 இலக்க குறிப்பு எண்ணை நகலெடுக்கவும்",
+    "Tap and hold the box to paste": "ஒட்ட பெட்டியை அழுத்திப் பிடிக்கவும்",
+    "That image could not be opened": "அந்தப் படத்தைத் திறக்க முடியவில்லை",
+    "The UPI reference number has 12 digits": "UPI குறிப்பு எண்ணில் 12 இலக்கங்கள் இருக்கும்",
+    "Add the UPI reference number or a screenshot": "UPI குறிப்பு எண் அல்லது ஸ்கிரீன்ஷாட்டைச் சேர்க்கவும்",
+    "Repeat orders": "தொடர் ஆர்டர்கள்",
+    "Orders": "ஆர்டர்கள்",
+    "{amt} each time": "ஒவ்வொரு முறையும் {amt}",
+    "Orders you place show up here.": "நீங்கள் செய்யும் ஆர்டர்கள் இங்கே தெரியும்.",
+
+    "Your monthly bills appear here once your milk subscription starts.": "பால் சந்தா தொடங்கியதும் உங்கள் மாத பில்கள் இங்கே தெரியும்.",
+    "Amount due": "செலுத்த வேண்டிய தொகை",
+    "All bills paid": "அனைத்து பில்களும் செலுத்தப்பட்டன",
+    "Across 1 bill. Tap a bill below to see the details.": "1 பில். விவரங்களுக்கு கீழே உள்ள பில்லைத் தொடவும்.",
+    "Across {n} bills. Tap a bill below to see the details.": "{n} பில்கள். விவரங்களுக்கு கீழே உள்ள பில்லைத் தொடவும்.",
+    "Thank you. Your account is up to date.": "நன்றி. உங்கள் கணக்கு முழுமையாகச் செலுத்தப்பட்டுள்ளது.",
+    "{amt} sent. RD Dairy is confirming it.": "{amt} அனுப்பப்பட்டது. RD Dairy உறுதிசெய்கிறது.",
+    "Pay {amt}": "{amt} செலுத்து",
+    "{qty} of milk": "{qty} பால்",
+    "Bill {no}": "பில் {no}",
+    "Paid": "செலுத்தப்பட்டது",
+    "Being confirmed": "உறுதிசெய்யப்படுகிறது",
+    "{amt} due": "{amt} நிலுவை",
+    "Your first bill appears here at the end of the month.": "உங்கள் முதல் பில் மாத இறுதியில் இங்கே தெரியும்.",
+    "Payments": "பணம் செலுத்தியவை",
+    "for {month}": "{month} க்கு",
+    "Payments you make show up here.": "நீங்கள் செலுத்தும் தொகைகள் இங்கே தெரியும்.",
+    "dated {date}": "தேதி {date}",
+    "Other products": "மற்ற பொருட்கள்",
+    "Delivery charge": "டெலிவரி கட்டணம்",
+    "Discount": "தள்ளுபடி",
+    "Payments for this bill show up here": "இந்த பில்லுக்கான கட்டணங்கள் இங்கே தெரியும்",
+    "Balance due": "நிலுவைத் தொகை",
+    "Fully paid": "முழுமையாகச் செலுத்தப்பட்டது",
+    "Your payment for this bill is being confirmed by RD Dairy.": "இந்த பில்லுக்கான உங்கள் கட்டணத்தை RD Dairy உறுதிசெய்கிறது.",
+    "Pay {amt} for this bill": "இந்த பில்லுக்கு {amt} செலுத்து",
+    "Download PDF": "PDF பதிவிறக்கு",
+    "Preparing PDF…": "PDF தயாராகிறது…",
+    "To {name}. The amount and bill number fill in on their own.": "{name} க்கு. தொகையும் பில் எண்ணும் தானாக நிரப்பப்படும்.",
+    "Pay with GPay, PhonePe or Paytm": "GPay, PhonePe அல்லது Paytm மூலம் செலுத்து",
+    "After paying": "பணம் செலுத்திய பின்",
+    "Share the UPI reference number or a screenshot of the payment.": "UPI குறிப்பு எண் அல்லது பணம் செலுத்திய ஸ்கிரீன்ஷாட்டைப் பகிரவும்.",
+    "UPI reference number (12 digits)": "UPI குறிப்பு எண் (12 இலக்கம்)",
+    "Send payment details": "பணம் செலுத்திய விவரங்களை அனுப்பு",
+    "Payment details sent. RD Dairy will confirm shortly.": "விவரங்கள் அனுப்பப்பட்டன. RD Dairy விரைவில் உறுதிசெய்யும்.",
+
+    "Your details": "உங்கள் விவரங்கள்",
+    "Name": "பெயர்",
+    "Mobile": "மொபைல்",
+    "Address": "முகவரி",
+    "Usual quantity": "வழக்கமான அளவு",
+    "{qty} a day": "நாளொன்றுக்கு {qty}",
+    "Rate": "விலை",
+    "{amt} per litre": "லிட்டருக்கு {amt}",
+    "{amt} a month": "மாதம் {amt}",
+    "Edit": "திருத்து",
+    "Change your usual quantity": "வழக்கமான அளவை மாற்று",
+    "Your request for {qty} a day from {date} is with RD Dairy.": "{date} முதல் நாளொன்றுக்கு {qty} என்ற உங்கள் கோரிக்கை RD Dairy இடம் உள்ளது.",
+    "Send request": "கோரிக்கை அனுப்பு",
+    "RD Dairy confirms the new quantity before it starts.": "புதிய அளவு தொடங்கும் முன் RD Dairy உறுதிசெய்யும்.",
+    "{qty} is already your usual quantity": "{qty} ஏற்கனவே உங்கள் வழக்கமான அளவு",
+    "Request sent to RD Dairy": "கோரிக்கை RD Dairy க்கு அனுப்பப்பட்டது",
+    "Help and support": "உதவி",
+    "WhatsApp RD Dairy": "RD Dairy க்கு WhatsApp",
+    "Call": "அழை",
+    "Email": "மின்னஞ்சல்",
+    "Privacy policy": "தனியுரிமைக் கொள்கை",
+    "Terms of service": "சேவை விதிமுறைகள்",
+    "Log out": "வெளியேறு",
+    "Delete my account": "என் கணக்கை நீக்கு",
+    "Log out of RD Dairy on this phone? You will need a WhatsApp code to log in again.": "இந்த போனில் RD Dairy இலிருந்து வெளியேறவா? மீண்டும் உள்நுழைய WhatsApp குறியீடு தேவைப்படும்.",
+    "Delete your account?": "உங்கள் கணக்கை நீக்கவா?",
+    "Your login stops working on every phone straight away. RD Dairy settles any pending bills with you, then removes your details within 30 days. Bills that tax law requires us to keep are retained.": "உங்கள் உள்நுழைவு எல்லா போன்களிலும் உடனே நின்றுவிடும். நிலுவை பில்களை RD Dairy உங்களுடன் தீர்த்து, 30 நாட்களுக்குள் உங்கள் விவரங்களை நீக்கும். வரிச் சட்டப்படி வைத்திருக்க வேண்டிய பில்கள் மட்டும் வைக்கப்படும்.",
+    "Moving out of the delivery area": "டெலிவரி பகுதியை விட்டு செல்கிறேன்",
+    "Stopping milk delivery": "பால் டெலிவரியை நிறுத்துகிறேன்",
+    "I have another account": "எனக்கு வேறு கணக்கு உள்ளது",
+    "Something else": "வேறு காரணம்",
+    "Keep my account": "என் கணக்கு இருக்கட்டும்",
+    "Deleting…": "நீக்குகிறோம்…",
+    "Your account deletion request is with RD Dairy. Thank you for being with us.": "கணக்கு நீக்கும் உங்கள் கோரிக்கை RD Dairy இடம் உள்ளது. எங்களுடன் இருந்ததற்கு நன்றி.",
+
+    "Edit your details": "உங்கள் விவரங்களைத் திருத்து",
+    "Save changes": "மாற்றங்களைச் சேமி",
+    "Saving…": "சேமிக்கிறோம்…",
+    "Your details are updated": "உங்கள் விவரங்கள் புதுப்பிக்கப்பட்டன",
+    "Which delivery?": "எந்த நாள் டெலிவரி?",
+    "What went wrong?": "என்ன பிரச்சனை?",
+    "Milk not delivered": "பால் வரவில்லை",
+    "Delivered late": "தாமதமாக வந்தது",
+    "Damaged or leaking": "சேதம் அல்லது கசிவு",
+    "Wrong quantity": "தவறான அளவு",
+    "Quality concern": "தரத்தில் சந்தேகம்",
+    "Tell us more (optional)": "மேலும் சொல்லுங்கள் (விருப்பம்)",
+    "Add a photo (optional)": "புகைப்படம் சேர் (விருப்பம்)",
+    "Photo added": "புகைப்படம் சேர்க்கப்பட்டது",
+    "Send report": "புகாரை அனுப்பு",
+    "Thank you. RD Dairy will look into it today.": "நன்றி. RD Dairy இன்றே இதைப் பார்க்கும்.",
+    "Your reports": "உங்கள் புகார்கள்",
+    "Open": "நிலுவையில்",
+    "Resolved": "தீர்க்கப்பட்டது",
+    "Delivery problems": "டெலிவரி பிரச்சனைகள்",
+    "Choose what went wrong": "என்ன பிரச்சனை என்று தேர்ந்தெடுக்கவும்",
+
+    "Pending Payment": "பணம் நிலுவை",
+    "Payment Submitted": "பணம் அனுப்பப்பட்டது",
+    "Out for Delivery": "டெலிவரிக்கு புறப்பட்டது",
+    "Delivered": "டெலிவரி ஆனது",
+    "Cancelled": "ரத்து",
+    "Pending Confirmation": "உறுதிசெய்ய காத்திருக்கிறது",
+    "Active": "செயலில்",
+    "COD": "டெலிவரியின்போது பணம்",
+    "Monthly bill": "மாத பில்",
+
+    "Check your internet connection and try again.": "இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+    "Please log in again.": "மீண்டும் உள்நுழையவும்.",
+    "RD Dairy server error. Please try again shortly.": "RD Dairy சர்வர் பிழை. சிறிது நேரம் கழித்து முயற்சிக்கவும்.",
+    "That code is incorrect": "குறியீடு தவறு",
+    "This code has expired. Ask for a new one.": "குறியீட்டின் நேரம் முடிந்தது. புதியதைக் கேளுங்கள்.",
+    "Too many tries. Ask for a new code.": "பல முறை முயற்சித்துவிட்டீர்கள். புதிய குறியீட்டைக் கேளுங்கள்.",
+    "Please wait a minute before asking for a new code": "புதிய குறியீடு கேட்கும் முன் ஒரு நிமிடம் காத்திருக்கவும்",
+    "Too many codes today. Please try again tomorrow.": "இன்று பல குறியீடுகள் கேட்கப்பட்டன. நாளை முயற்சிக்கவும்.",
+    "Changes for this date are closed.": "இந்தத் தேதிக்கான மாற்றங்கள் முடிந்துவிட்டன.",
+    "This reference number was already sent to RD Dairy": "இந்தக் குறிப்பு எண் ஏற்கனவே RD Dairy க்கு அனுப்பப்பட்டது",
+    "There is nothing to pay right now.": "இப்போது செலுத்த எதுவும் இல்லை.",
+    "Your sign up took too long. Please log in again.": "பதிவு செய்ய அதிக நேரம் ஆனது. மீண்டும் உள்நுழையவும்.",
+  },
+
+  hi: {
+    "Fresh A2 milk at your door every morning.": "हर सुबह आपके दरवाज़े पर ताज़ा A2 दूध।",
+    "Your mobile number": "आपका मोबाइल नंबर",
+    "Send code on WhatsApp": "WhatsApp पर कोड भेजें",
+    "Sending…": "भेज रहे हैं…",
+    "Serving Chennai for over 20 years": "20 साल से ज़्यादा समय से चेन्नई की सेवा में",
+    "Enter your 10 digit mobile number.": "अपना 10 अंकों का मोबाइल नंबर डालें।",
+    "We sent a 6 digit code to your WhatsApp on +91 {phone}.": "हमने +91 {phone} पर WhatsApp में 6 अंकों का कोड भेजा है।",
+    "Code": "कोड",
+    "Log in": "लॉग इन करें",
+    "Checking…": "जाँच रहे हैं…",
+    "Enter the 6 digit code.": "6 अंकों का कोड डालें।",
+    "Send a new code": "नया कोड भेजें",
+    "New code sent on WhatsApp": "नया कोड WhatsApp पर भेजा गया",
+    "Use a different number": "दूसरा नंबर इस्तेमाल करें",
+    "Welcome to RD Dairy": "RD Dairy में आपका स्वागत है",
+    "Tell us where to deliver. It takes a minute.": "बताइए कहाँ डिलीवरी करनी है। बस एक मिनट लगेगा।",
+    "Your name": "आपका नाम",
+    "Delivery address": "डिलीवरी पता",
+    "House number, street and a landmark": "मकान नंबर, गली और कोई पहचान चिह्न",
+    "Area": "इलाका",
+    "Choose your area": "अपना इलाका चुनें",
+    "Other area": "दूसरा इलाका",
+    "Would you like daily milk delivery?": "क्या आप रोज़ दूध की डिलीवरी चाहते हैं?",
+    "Yes, daily milk": "हाँ, रोज़ दूध",
+    "Just shopping": "सिर्फ़ खरीदारी",
+    "Milk": "दूध",
+    "Size": "साइज़",
+    "Packs a day": "रोज़ के पैकेट",
+    "Start from": "शुरुआत की तारीख",
+    "Create my account": "मेरा खाता बनाएँ",
+    "Creating your account…": "आपका खाता बना रहे हैं…",
+    "Enter your name": "अपना नाम डालें",
+    "Enter your full delivery address": "पूरा डिलीवरी पता डालें",
+    "RD Dairy will call you to confirm your milk start date.": "दूध शुरू करने की तारीख पक्की करने के लिए RD Dairy आपको कॉल करेगा।",
+    "Welcome, {name}": "स्वागत है, {name}",
+    "Language": "भाषा",
+
+    "Home": "होम",
+    "Calendar": "कैलेंडर",
+    "Shop": "दुकान",
+    "Bills": "बिल",
+    "Account": "खाता",
+    "Loading…": "लोड हो रहा है…",
+    "Close": "बंद करें",
+    "Stay": "रहने दें",
+    "Done": "हो गया",
+
+    "Hello": "नमस्ते",
+    "Your number is registered with RD Dairy.": "आपका नंबर RD Dairy में पंजीकृत है।",
+    "Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here.": "रोज़ के दूध की सदस्यता शुरू होने पर आपकी डिलीवरी, रोक और अतिरिक्त दूध यहाँ दिखेंगे।",
+    "Your daily milk request ({item}) is with RD Dairy. We will call you to confirm the start date.": "आपका रोज़ के दूध का अनुरोध ({item}) RD Dairy के पास है। शुरुआत की तारीख पक्की करने के लिए हम कॉल करेंगे।",
+    "Browse the shop": "दुकान देखें",
+    "Tomorrow, {date}": "कल, {date}",
+    "Your usual delivery": "आपकी रोज़ की डिलीवरी",
+    "Paused for this day": "इस दिन रोका गया",
+    "Extra milk added": "अतिरिक्त दूध जोड़ा गया",
+    "Less than usual": "रोज़ से कम",
+    "Change tomorrow": "कल का बदलें",
+    "Changes for tomorrow are open until {time} tonight.": "कल के लिए बदलाव आज रात {time} तक कर सकते हैं।",
+    "Tomorrow's delivery is set. You can change deliveries from {date} onwards.": "कल की डिलीवरी तय हो चुकी है। {date} से आगे बदल सकते हैं।",
+    "Next 7 days": "अगले 7 दिन",
+    "Paused": "रोका गया",
+    "Going away?": "बाहर जा रहे हैं?",
+    "Full calendar": "पूरा कैलेंडर",
+    "Report a delivery problem": "डिलीवरी की समस्या बताएँ",
+    "Changes for {date} are closed.": "{date} के बदलाव बंद हो चुके हैं।",
+    "None": "कुछ नहीं",
+
+    "Your usual is {qty} a day.": "आपका रोज़ का {qty} है।",
+    "Less milk": "कम दूध",
+    "More milk": "ज़्यादा दूध",
+    "Save {qty} for this day": "इस दिन के लिए {qty} सेव करें",
+    "Resume my usual {qty}": "रोज़ का {qty} फिर शुरू करें",
+    "Pause this day": "इस दिन रोकें",
+    "{qty} saved for {date}": "{date} के लिए {qty} सेव हुआ",
+    "Paused for {date}": "{date} रोका गया",
+    "Back to your usual for {date}": "{date} के लिए रोज़ की मात्रा",
+    "Choose the days you need no milk. Deliveries restart on their own after the last day.": "जिन दिनों दूध नहीं चाहिए वे चुनें। आखिरी दिन के बाद डिलीवरी अपने आप फिर शुरू होगी।",
+    "First day without milk": "बिना दूध का पहला दिन",
+    "Last day without milk": "बिना दूध का आखिरी दिन",
+    "Pause these days": "ये दिन रोकें",
+    "Back early? Resume these days": "जल्दी लौटे? ये दिन फिर शुरू करें",
+    "Choose both dates": "दोनों तारीखें चुनें",
+    "Paused from {from} to {to}": "{from} से {to} तक रोका गया",
+    "Deliveries resume from {from}": "{from} से डिलीवरी फिर शुरू",
+
+    "Your delivery calendar appears here once your subscription starts.": "सदस्यता शुरू होने पर आपका डिलीवरी कैलेंडर यहाँ दिखेगा।",
+    "Usual {qty}": "रोज़ {qty}",
+    "Extra": "अतिरिक्त",
+    "Less": "कम",
+    "Tap any day from {date} to change it.": "{date} से किसी भी दिन को छूकर बदलें।",
+    "Previous month": "पिछला महीना",
+    "Next month": "अगला महीना",
+
+    "My orders": "मेरे ऑर्डर",
+    "All": "सभी",
+    "Ghee & Butter": "घी और मक्खन",
+    "Fresh": "ताज़ा",
+    "Add": "जोड़ें",
+    "One less": "एक कम",
+    "One more": "एक और",
+    "1 item": "1 सामान",
+    "{n} items": "{n} सामान",
+    "View cart": "कार्ट देखें",
+    "Your cart": "आपका कार्ट",
+    "{price} each": "{price} प्रति",
+    "Total": "कुल",
+    "How often?": "कितनी बार?",
+    "Just once": "सिर्फ़ एक बार",
+    "Repeat": "बार बार",
+    "Deliver": "डिलीवरी",
+    "Every day": "हर दिन",
+    "Alternate days": "एक दिन छोड़कर",
+    "Once a week": "हफ़्ते में एक बार",
+    "Once a month": "महीने में एक बार",
+    "On": "किस दिन",
+    "Starting from": "शुरुआत",
+    "Repeat items are added to your monthly bill.": "बार बार वाले सामान आपके मासिक बिल में जुड़ेंगे।",
+    "Pay for repeat items on delivery.": "बार बार वाले सामान का भुगतान डिलीवरी पर करें।",
+    "RD Dairy confirms the start date with you.": "RD Dairy आपसे शुरुआत की तारीख पक्की करेगा।",
+    "Deliver to": "डिलीवरी पता",
+    "Payment": "भुगतान",
+    "Cash on delivery": "डिलीवरी पर नकद",
+    "Pay when your order arrives": "ऑर्डर आने पर भुगतान करें",
+    "Pay now with UPI": "अभी UPI से भुगतान करें",
+    "GPay, PhonePe or Paytm": "GPay, PhonePe या Paytm",
+    "Add to my monthly bill": "मेरे मासिक बिल में जोड़ें",
+    "Delivered with your milk": "आपके दूध के साथ डिलीवरी",
+    "Start repeat order": "बार बार वाला ऑर्डर शुरू करें",
+    "Place order · {amt}": "ऑर्डर करें · {amt}",
+    "Keep shopping": "और खरीदें",
+    "Getting payment details…": "भुगतान की जानकारी ला रहे हैं…",
+    "Pay {amt} with UPI app": "UPI ऐप से {amt} भुगतान करें",
+    "UPI ID": "UPI ID",
+    "Copy": "कॉपी करें",
+    "After paying, add the UPI reference number or a screenshot.": "भुगतान के बाद UPI रेफ़रेंस नंबर या स्क्रीनशॉट जोड़ें।",
+    "Paste": "पेस्ट करें",
+    "or": "या",
+    "Attach screenshot": "स्क्रीनशॉट जोड़ें",
+    "Screenshot added": "स्क्रीनशॉट जुड़ गया",
+    "Remove": "हटाएँ",
+    "Placing order…": "ऑर्डर कर रहे हैं…",
+    "Repeat order sent": "बार बार वाला ऑर्डर भेजा गया",
+    "Order placed": "ऑर्डर हो गया",
+    "RD Dairy will confirm your start date on WhatsApp.": "RD Dairy WhatsApp पर शुरुआत की तारीख पक्की करेगा।",
+    "Order {id} · {amt}. We deliver within 2 days.": "ऑर्डर {id} · {amt}। 2 दिनों में डिलीवरी करेंगे।",
+    "See my orders": "मेरे ऑर्डर देखें",
+    "Add your delivery address": "डिलीवरी पता जोड़ें",
+    "UPI ID copied": "UPI ID कॉपी हो गई",
+    "Copy the 12 digit reference in your UPI app first": "पहले अपने UPI ऐप में 12 अंकों का रेफ़रेंस कॉपी करें",
+    "Tap and hold the box to paste": "पेस्ट करने के लिए बॉक्स को दबाकर रखें",
+    "That image could not be opened": "वह तस्वीर खुल नहीं पाई",
+    "The UPI reference number has 12 digits": "UPI रेफ़रेंस नंबर 12 अंकों का होता है",
+    "Add the UPI reference number or a screenshot": "UPI रेफ़रेंस नंबर या स्क्रीनशॉट जोड़ें",
+    "Repeat orders": "बार बार वाले ऑर्डर",
+    "Orders": "ऑर्डर",
+    "{amt} each time": "हर बार {amt}",
+    "Orders you place show up here.": "आपके ऑर्डर यहाँ दिखेंगे।",
+
+    "Your monthly bills appear here once your milk subscription starts.": "दूध की सदस्यता शुरू होने पर मासिक बिल यहाँ दिखेंगे।",
+    "Amount due": "बकाया राशि",
+    "All bills paid": "सभी बिल चुका दिए गए",
+    "Across 1 bill. Tap a bill below to see the details.": "1 बिल। जानकारी के लिए नीचे बिल को छुएँ।",
+    "Across {n} bills. Tap a bill below to see the details.": "{n} बिल। जानकारी के लिए नीचे बिल को छुएँ।",
+    "Thank you. Your account is up to date.": "धन्यवाद। आपका खाता पूरी तरह चुकता है।",
+    "{amt} sent. RD Dairy is confirming it.": "{amt} भेजे गए। RD Dairy पक्का कर रहा है।",
+    "Pay {amt}": "{amt} भुगतान करें",
+    "{qty} of milk": "{qty} दूध",
+    "Bill {no}": "बिल {no}",
+    "Paid": "चुकाया गया",
+    "Being confirmed": "पक्का किया जा रहा है",
+    "{amt} due": "{amt} बकाया",
+    "Your first bill appears here at the end of the month.": "आपका पहला बिल महीने के आखिर में यहाँ दिखेगा।",
+    "Payments": "भुगतान",
+    "for {month}": "{month} के लिए",
+    "Payments you make show up here.": "आपके भुगतान यहाँ दिखेंगे।",
+    "dated {date}": "तारीख {date}",
+    "Other products": "दूसरे सामान",
+    "Delivery charge": "डिलीवरी शुल्क",
+    "Discount": "छूट",
+    "Payments for this bill show up here": "इस बिल के भुगतान यहाँ दिखेंगे",
+    "Balance due": "बकाया",
+    "Fully paid": "पूरा चुकाया गया",
+    "Your payment for this bill is being confirmed by RD Dairy.": "इस बिल का आपका भुगतान RD Dairy पक्का कर रहा है।",
+    "Pay {amt} for this bill": "इस बिल के {amt} भुगतान करें",
+    "Download PDF": "PDF डाउनलोड करें",
+    "Preparing PDF…": "PDF तैयार हो रहा है…",
+    "To {name}. The amount and bill number fill in on their own.": "{name} को। राशि और बिल नंबर अपने आप भर जाएँगे।",
+    "Pay with GPay, PhonePe or Paytm": "GPay, PhonePe या Paytm से भुगतान करें",
+    "After paying": "भुगतान के बाद",
+    "Share the UPI reference number or a screenshot of the payment.": "UPI रेफ़रेंस नंबर या भुगतान का स्क्रीनशॉट भेजें।",
+    "UPI reference number (12 digits)": "UPI रेफ़रेंस नंबर (12 अंक)",
+    "Send payment details": "भुगतान की जानकारी भेजें",
+    "Payment details sent. RD Dairy will confirm shortly.": "जानकारी भेज दी गई। RD Dairy जल्द पक्का करेगा।",
+
+    "Your details": "आपकी जानकारी",
+    "Name": "नाम",
+    "Mobile": "मोबाइल",
+    "Address": "पता",
+    "Usual quantity": "रोज़ की मात्रा",
+    "{qty} a day": "रोज़ {qty}",
+    "Rate": "दर",
+    "{amt} per litre": "{amt} प्रति लीटर",
+    "{amt} a month": "{amt} प्रति माह",
+    "Edit": "बदलें",
+    "Change your usual quantity": "रोज़ की मात्रा बदलें",
+    "Your request for {qty} a day from {date} is with RD Dairy.": "{date} से रोज़ {qty} का आपका अनुरोध RD Dairy के पास है।",
+    "Send request": "अनुरोध भेजें",
+    "RD Dairy confirms the new quantity before it starts.": "नई मात्रा शुरू होने से पहले RD Dairy पक्का करेगा।",
+    "{qty} is already your usual quantity": "{qty} पहले से आपकी रोज़ की मात्रा है",
+    "Request sent to RD Dairy": "अनुरोध RD Dairy को भेजा गया",
+    "Help and support": "मदद",
+    "WhatsApp RD Dairy": "RD Dairy को WhatsApp करें",
+    "Call": "कॉल करें",
+    "Email": "ईमेल",
+    "Privacy policy": "गोपनीयता नीति",
+    "Terms of service": "सेवा की शर्तें",
+    "Log out": "लॉग आउट",
+    "Delete my account": "मेरा खाता हटाएँ",
+    "Log out of RD Dairy on this phone? You will need a WhatsApp code to log in again.": "इस फ़ोन पर RD Dairy से लॉग आउट करें? दोबारा लॉग इन के लिए WhatsApp कोड चाहिए होगा।",
+    "Delete your account?": "अपना खाता हटाएँ?",
+    "Your login stops working on every phone straight away. RD Dairy settles any pending bills with you, then removes your details within 30 days. Bills that tax law requires us to keep are retained.": "आपका लॉग इन हर फ़ोन पर तुरंत बंद हो जाएगा। RD Dairy बकाया बिल आपके साथ निपटाकर 30 दिनों में आपकी जानकारी हटा देगा। कर कानून के तहत ज़रूरी बिल रखे जाएँगे।",
+    "Moving out of the delivery area": "डिलीवरी इलाके से बाहर जा रहा हूँ",
+    "Stopping milk delivery": "दूध की डिलीवरी बंद कर रहा हूँ",
+    "I have another account": "मेरा दूसरा खाता है",
+    "Something else": "कोई और वजह",
+    "Keep my account": "मेरा खाता रहने दें",
+    "Deleting…": "हटा रहे हैं…",
+    "Your account deletion request is with RD Dairy. Thank you for being with us.": "खाता हटाने का आपका अनुरोध RD Dairy के पास है। हमारे साथ रहने के लिए धन्यवाद।",
+
+    "Edit your details": "अपनी जानकारी बदलें",
+    "Save changes": "बदलाव सेव करें",
+    "Saving…": "सेव कर रहे हैं…",
+    "Your details are updated": "आपकी जानकारी अपडेट हो गई",
+    "Which delivery?": "किस दिन की डिलीवरी?",
+    "What went wrong?": "क्या समस्या हुई?",
+    "Milk not delivered": "दूध नहीं आया",
+    "Delivered late": "देर से आया",
+    "Damaged or leaking": "टूटा या रिसता हुआ",
+    "Wrong quantity": "गलत मात्रा",
+    "Quality concern": "गुणवत्ता की शिकायत",
+    "Tell us more (optional)": "और बताएँ (वैकल्पिक)",
+    "Add a photo (optional)": "फ़ोटो जोड़ें (वैकल्पिक)",
+    "Photo added": "फ़ोटो जुड़ गई",
+    "Send report": "शिकायत भेजें",
+    "Thank you. RD Dairy will look into it today.": "धन्यवाद। RD Dairy आज ही इसे देखेगा।",
+    "Your reports": "आपकी शिकायतें",
+    "Open": "खुली",
+    "Resolved": "हल हुई",
+    "Delivery problems": "डिलीवरी की समस्याएँ",
+    "Choose what went wrong": "समस्या चुनें",
+
+    "Pending Payment": "भुगतान बाकी",
+    "Payment Submitted": "भुगतान भेजा गया",
+    "Out for Delivery": "डिलीवरी के लिए निकला",
+    "Delivered": "डिलीवर हुआ",
+    "Cancelled": "रद्द",
+    "Pending Confirmation": "पुष्टि बाकी",
+    "Active": "चालू",
+    "COD": "डिलीवरी पर नकद",
+    "Monthly bill": "मासिक बिल",
+
+    "Check your internet connection and try again.": "इंटरनेट कनेक्शन जाँचें और फिर कोशिश करें।",
+    "Please log in again.": "कृपया फिर से लॉग इन करें।",
+    "RD Dairy server error. Please try again shortly.": "RD Dairy सर्वर में गड़बड़ी। थोड़ी देर बाद कोशिश करें।",
+    "That code is incorrect": "कोड गलत है",
+    "This code has expired. Ask for a new one.": "कोड की समय सीमा खत्म। नया कोड मँगाएँ।",
+    "Too many tries. Ask for a new code.": "बहुत बार कोशिश हुई। नया कोड मँगाएँ।",
+    "Please wait a minute before asking for a new code": "नया कोड मँगाने से पहले एक मिनट रुकें",
+    "Too many codes today. Please try again tomorrow.": "आज बहुत कोड मँगाए गए। कल कोशिश करें।",
+    "Changes for this date are closed.": "इस तारीख के बदलाव बंद हो चुके हैं।",
+    "This reference number was already sent to RD Dairy": "यह रेफ़रेंस नंबर पहले ही RD Dairy को भेजा जा चुका है",
+    "There is nothing to pay right now.": "अभी कुछ भुगतान बाकी नहीं है।",
+    "Your sign up took too long. Please log in again.": "साइन अप में ज़्यादा समय लगा। फिर से लॉग इन करें।",
+  },
+};
+
+function t(key, vars) {
+  let s = (T[LANG] && T[LANG][key]) || key;
+  if (vars) for (const k in vars) s = s.split("{" + k + "}").join(vars[k]);
+  return s;
+}
+
+// Server messages shown in the chosen language, matched by error code
+const CODE_MSG = {
+  network: "Check your internet connection and try again.",
+  logged_out: "Please log in again.",
+  wrong_code: "That code is incorrect",
+  expired: "This code has expired. Ask for a new one.",
+  too_many: "Too many tries. Ask for a new code.",
+  wait: "Please wait a minute before asking for a new code",
+  limit: "Too many codes today. Please try again tomorrow.",
+  bad_phone: "Enter your 10 digit mobile number.",
+  past_cutoff: "Changes for this date are closed.",
+  utr_used: "This reference number was already sent to RD Dairy",
+  nothing_due: "There is nothing to pay right now.",
+  bad_utr: "The UPI reference number has 12 digits",
+  need_proof: "Add the UPI reference number or a screenshot",
+  address: "Enter your full delivery address",
+  name: "Enter your name",
+  kind: "Choose what went wrong",
+};
+const errMsg = (r) => (LANG !== "en" && CODE_MSG[r.code] && T[LANG][CODE_MSG[r.code]]) ? t(CODE_MSG[r.code]) : r.message;
+
 /* ---------- state ---------- */
-const S = { token: null, tab: "home", home: null, calMonth: null, cal: null, phone: "" };
+const S = { token: null, tab: "home", home: null, calMonth: null, cal: null, phone: "", signup: null };
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
-const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const esc = (x) => String(x ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtQty = (q) => {
   q = Number(q || 0);
-  if (q === 0) return "None";
+  if (q === 0) return t("None");
   if (q < 1) return `${Math.round(q * 1000)} ml`;
   return `${+q.toFixed(2)} L`;
 };
@@ -392,21 +1024,22 @@ const modeLabel = (m) => {
   return known[m.toLowerCase()] || (m ? m.charAt(0).toUpperCase() + m.slice(1) : "Payment");
 };
 const d0 = (s) => new Date(s + "T00:00:00Z");
-const fmtDay = (s, opts) => d0(s).toLocaleDateString("en-IN", { timeZone: "UTC", ...opts });
+const fmtDay = (s, opts) => d0(s).toLocaleDateString(locale(), { timeZone: "UTC", ...opts });
 const longDate = (s) => fmtDay(s, { weekday: "long", day: "numeric", month: "long" });
 const shortDate = (s) => fmtDay(s, { weekday: "short", day: "numeric", month: "short" });
 const addDays = (s, n) => { const d = d0(s); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 const periodLabel = (a, b) => {
-  if (!a) return "Bill";
+  if (!a) return t("Bills");
   if (b && a.slice(0, 7) === b.slice(0, 7) && a.endsWith("-01")) return fmtDay(a, { month: "long", year: "numeric" });
-  return `${fmtDay(a, { day: "numeric", month: "short" })} to ${fmtDay(b || a, { day: "numeric", month: "short", year: "numeric" })}`;
+  return `${fmtDay(a, { day: "numeric", month: "short" })} – ${fmtDay(b || a, { day: "numeric", month: "short", year: "numeric" })}`;
 };
 const todayIST = () => new Date(Date.now() + 5.5 * 3600 * 1000).toISOString().slice(0, 10);
-const cutoffLabel = (t) => {
-  const [h, m] = String(t || "21:00").split(":").map(Number);
+const cutoffLabel = (tm) => {
+  const [h, m] = String(tm || "21:00").split(":").map(Number);
   const hh = ((h + 11) % 12) + 1;
   return `${hh}${m ? ":" + String(m).padStart(2, "0") : ""} ${h < 12 ? "AM" : "PM"}`;
 };
+const deviceType = () => /iPhone|iPad/i.test(navigator.userAgent) ? "ios" : /Android/i.test(navigator.userAgent) ? "android" : "web";
 
 async function call(fn, body) {
   let res, data, text = "";
@@ -417,18 +1050,19 @@ async function call(fn, body) {
       body: JSON.stringify({ ...body, token: S.token || undefined }),
     });
   } catch {
-    return { ok: false, code: "network", message: "Check your internet connection and try again." };
+    return { ok: false, code: "network", message: t("Check your internet connection and try again.") };
   }
   try { text = await res.text(); data = JSON.parse(text); }
   catch {
     console.error(fn, res.status, text);
-    return { ok: false, code: "server", message: `RD Dairy server error (${res.status}). Please try again shortly.` };
+    return { ok: false, code: "server", message: `${t("RD Dairy server error. Please try again shortly.")} (${res.status})` };
   }
-  if (!data || typeof data !== "object") return { ok: false, code: "server", message: "RD Dairy server error. Please try again shortly." };
+  if (!data || typeof data !== "object") return { ok: false, code: "server", message: t("RD Dairy server error. Please try again shortly.") };
   if (data.ok === undefined && (data.message || data.msg || data.error)) {
     return { ok: false, code: "server", message: `${res.status}: ${data.message || data.msg || data.error}` };
   }
-  if (res.status === 401 && fn === "app-api") { await signOutLocal(); return { ok: false, code: "logged_out", message: "Please log in again." }; }
+  if (res.status === 401 && fn === "app-api") { await signOutLocal(); return { ok: false, code: "logged_out", message: t("Please log in again.") }; }
+  if (data.ok === false) data.message = errMsg(data);
   return data;
 }
 
@@ -449,7 +1083,7 @@ function confirmBox(message, yesLabel) {
     const box = document.createElement("div");
     box.className = "confirm-box";
     box.innerHTML = `<div class="inner"><p>${esc(message)}</p>
-      <div class="row-actions"><button class="btn btn-line" data-no>Stay</button>
+      <div class="row-actions"><button class="btn btn-line" data-no>${esc(t("Stay"))}</button>
       <button class="btn btn-dark" data-yes>${esc(yesLabel)}</button></div></div>`;
     document.body.appendChild(box);
     box.addEventListener("click", (e) => {
@@ -459,11 +1093,50 @@ function confirmBox(message, yesLabel) {
   });
 }
 
+function compressImage(file, maxSide = 1400, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(img.width * scale);
+      cv.height = Math.round(img.height * scale);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      resolve(cv.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.src = url;
+  });
+}
+
+async function setLang(code) {
+  LANG = LANGS.some((l) => l.code === code) ? code : "en";
+  document.documentElement.lang = LANG;
+  await store.set("rd_lang", LANG);
+}
+
+function langPicker(onChange) {
+  const wrap = document.createElement("div");
+  wrap.className = "langs";
+  wrap.setAttribute("role", "group");
+  wrap.setAttribute("aria-label", "Language");
+  wrap.innerHTML = LANGS.map((l) => `<button data-lang="${l.code}" class="${l.code === LANG ? "on" : ""}" lang="${l.code}">${l.label}</button>`).join("");
+  wrap.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-lang]");
+    if (!b || b.dataset.lang === LANG) return;
+    await setLang(b.dataset.lang);
+    onChange();
+  });
+  return wrap;
+}
+
 /* ---------- bottle ---------- */
 function bottleSVG(qty, usual) {
   const scale = Math.max(usual * 2, 2);
   const ratio = Math.max(0, Math.min(1, qty / scale));
-  const bodyTop = 58, bodyBottom = 190, h = (bodyBottom - bodyTop) * ratio;
+  const bodyBottom = 190, h = (bodyBottom - 58) * ratio;
   return `
   <svg class="bottle" viewBox="0 0 120 200" aria-hidden="true">
     <defs><clipPath id="bclip"><path d="M44 8h32v26c0 8 22 14 22 34v112a12 12 0 0 1-12 12H34a12 12 0 0 1-12-12V68c0-20 22-26 22-34z"/></clipPath></defs>
@@ -487,26 +1160,27 @@ function renderLogin(step = "phone", err = "") {
   if (step === "phone") {
     app.innerHTML = `
       <section class="login">
-        <div class="brand">RD <span>Dairy</span></div>
-        <p class="lead">Fresh A2 milk at your door every morning.</p>
-        <label for="ph">Your mobile number</label>
+        <div class="login-top"><div class="brand">RD <span>Dairy</span></div><div id="lp"></div></div>
+        <p class="lead">${esc(t("Fresh A2 milk at your door every morning."))}</p>
+        <label for="ph">${esc(t("Your mobile number"))}</label>
         <div class="phone-row">
           <div class="cc">+91</div>
           <input id="ph" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" value="${esc(S.phone)}" />
         </div>
-        <button class="btn btn-main btn-block" id="send">Send code on WhatsApp</button>
+        <button class="btn btn-main btn-block" id="send">${esc(t("Send code on WhatsApp"))}</button>
         <div class="err" role="alert">${esc(err)}</div>
-        <div class="milkline">Serving Chennai for over 20 years</div>
+        <div class="milkline">${esc(t("Serving Chennai for over 20 years"))}</div>
       </section>`;
+    $("#lp").appendChild(langPicker(() => renderLogin("phone")));
     const ph = $("#ph");
     ph.focus();
-    ph.addEventListener("input", () => { ph.value = ph.value.replace(/\D/g, "").slice(0, 10); });
+    ph.addEventListener("input", () => { ph.value = ph.value.replace(/\D/g, "").slice(0, 10); S.phone = ph.value; });
     ph.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#send").click(); });
     $("#send").onclick = async () => {
       const phone = ph.value.replace(/\D/g, "");
-      if (phone.length !== 10) return renderLogin("phone", "Enter your 10 digit mobile number.");
+      if (phone.length !== 10) return renderLogin("phone", t("Enter your 10 digit mobile number."));
       S.phone = phone;
-      $("#send").disabled = true; $("#send").textContent = "Sending…";
+      $("#send").disabled = true; $("#send").textContent = t("Sending…");
       const r = await call("app-auth", { action: "send_otp", phone });
       if (!r.ok) return renderLogin("phone", r.message);
       renderLogin("otp");
@@ -515,13 +1189,13 @@ function renderLogin(step = "phone", err = "") {
     app.innerHTML = `
       <section class="login">
         <div class="brand">RD <span>Dairy</span></div>
-        <p class="lead">We sent a 6 digit code to your WhatsApp on +91 ${esc(S.phone)}.</p>
-        <label for="otp">Code</label>
+        <p class="lead">${esc(t("We sent a 6 digit code to your WhatsApp on +91 {phone}.", { phone: S.phone }))}</p>
+        <label for="otp">${esc(t("Code"))}</label>
         <input id="otp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
-        <button class="btn btn-main btn-block" id="verify">Log in</button>
+        <button class="btn btn-main btn-block" id="verify">${esc(t("Log in"))}</button>
         <div class="err" role="alert">${esc(err)}</div>
-        <button class="back" id="resend">Send a new code</button>
-        <button class="back" id="change">Use a different number</button>
+        <button class="back" id="resend">${esc(t("Send a new code"))}</button>
+        <button class="back" id="change">${esc(t("Use a different number"))}</button>
       </section>`;
     const otp = $("#otp");
     otp.focus();
@@ -530,26 +1204,116 @@ function renderLogin(step = "phone", err = "") {
       if (otp.value.length === 6) $("#verify").click();
     });
     $("#verify").onclick = async () => {
-      if (otp.value.length !== 6) return renderLogin("otp", "Enter the 6 digit code.");
-      $("#verify").disabled = true; $("#verify").textContent = "Checking…";
-      const device = /iPhone|iPad/i.test(navigator.userAgent) ? "ios" : /Android/i.test(navigator.userAgent) ? "android" : "web";
-      const r = await call("app-auth", { action: "verify_otp", phone: S.phone, code: otp.value, device });
+      if (otp.value.length !== 6) return renderLogin("otp", t("Enter the 6 digit code."));
+      $("#verify").disabled = true; $("#verify").textContent = t("Checking…");
+      const r = await call("app-auth", { action: "verify_otp", phone: S.phone, code: otp.value, device: deviceType() });
       if (!r.ok) return renderLogin("otp", r.message);
+      if (r.new_user) { S.signup = { token: r.signup_token }; return renderSignup(); }
       S.token = r.token;
       await store.set("rd_token", r.token);
       startApp();
     };
     $("#resend").onclick = async () => {
       const r = await call("app-auth", { action: "send_otp", phone: S.phone });
-      if (r.ok) toast("New code sent on WhatsApp"); else toast(r.message, true);
+      if (r.ok) toast(t("New code sent on WhatsApp")); else toast(r.message, true);
     };
     $("#change").onclick = () => renderLogin("phone");
   }
 }
 
+/* ---------- sign up for new customers ---------- */
+async function renderSignup(err = "") {
+  const app = $("#app");
+  const f = S.signup;
+  if (!f.options) {
+    app.innerHTML = `<section class="login"><div class="brand">RD <span>Dairy</span></div><p class="lead">${esc(t("Loading…"))}</p></section>`;
+    const r = await call("app-auth", { action: "signup_options" });
+    f.options = r.ok ? r : { areas: [], milk: [] };
+    f.wants_milk = true;
+    f.milk_id = f.options.milk[0]?.id || "";
+    f.milk_size = f.options.milk[0]?.sizes?.[0]?.label || "";
+    f.milk_qty = 1;
+    f.start = addDays(todayIST(), 2);
+  }
+  const milk = f.options.milk.find((m) => m.id === f.milk_id);
+  app.innerHTML = `
+    <section class="login signup">
+      <div class="login-top"><div class="brand">RD <span>Dairy</span></div><div id="lp"></div></div>
+      <h1 class="su-title">${esc(t("Welcome to RD Dairy"))}</h1>
+      <p class="lead">${esc(t("Tell us where to deliver. It takes a minute."))}</p>
+
+      <label for="su-name">${esc(t("Your name"))}</label>
+      <input id="su-name" class="su-input" autocomplete="name" value="${esc(f.name || "")}" />
+
+      <label for="su-addr">${esc(t("Delivery address"))}</label>
+      <textarea id="su-addr" class="su-input su-area" autocomplete="street-address" aria-describedby="su-addr-help">${esc(f.address || "")}</textarea>
+      <div class="su-help" id="su-addr-help">${esc(t("House number, street and a landmark"))}</div>
+
+      ${f.options.areas.length ? `
+        <label for="su-area">${esc(t("Area"))}</label>
+        <select id="su-area" class="su-input">
+          <option value="">${esc(t("Choose your area"))}</option>
+          ${f.options.areas.map((a) => `<option value="${esc(a.id)}" ${a.id === f.area_id ? "selected" : ""}>${esc(a.name)}</option>`).join("")}
+          <option value="other" ${f.area_id === "other" ? "selected" : ""}>${esc(t("Other area"))}</option>
+        </select>` : ""}
+
+      ${f.options.milk.length ? `
+        <label>${esc(t("Would you like daily milk delivery?"))}</label>
+        <div class="seg dark"><button data-milk="1" class="${f.wants_milk ? "on" : ""}">${esc(t("Yes, daily milk"))}</button><button data-milk="0" class="${f.wants_milk ? "" : "on"}">${esc(t("Just shopping"))}</button></div>
+        ${f.wants_milk ? `
+          <div class="su-grid">
+            <div><label for="su-milk">${esc(t("Milk"))}</label>
+              <select id="su-milk" class="su-input">${f.options.milk.map((m) => `<option value="${esc(m.id)}" ${m.id === f.milk_id ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select></div>
+            <div><label for="su-size">${esc(t("Size"))}</label>
+              <select id="su-size" class="su-input">${(milk?.sizes || []).map((z) => `<option value="${esc(z.label)}" ${z.label === f.milk_size ? "selected" : ""}>${esc(z.label)} · ${esc(inr(z.price))}</option>`).join("")}</select></div>
+            <div><label for="su-qty">${esc(t("Packs a day"))}</label>
+              <select id="su-qty" class="su-input">${[1, 2, 3, 4, 5].map((n) => `<option ${n === f.milk_qty ? "selected" : ""}>${n}</option>`).join("")}</select></div>
+            <div><label for="su-start">${esc(t("Start from"))}</label>
+              <input id="su-start" type="date" class="su-input" min="${addDays(todayIST(), 1)}" value="${esc(f.start)}" /></div>
+          </div>
+          <div class="su-help">${esc(t("RD Dairy will call you to confirm your milk start date."))}</div>` : ""}` : ""}
+
+      <button class="btn btn-main btn-block" id="su-go">${esc(t("Create my account"))}</button>
+      <div class="err" role="alert">${esc(err)}</div>
+    </section>`;
+
+  const keep = () => {
+    f.name = $("#su-name").value; f.address = $("#su-addr").value;
+    if ($("#su-area")) f.area_id = $("#su-area").value;
+    if ($("#su-milk")) f.milk_id = $("#su-milk").value;
+    if ($("#su-size")) f.milk_size = $("#su-size").value;
+    if ($("#su-qty")) f.milk_qty = Number($("#su-qty").value);
+    if ($("#su-start")) f.start = $("#su-start").value;
+  };
+  $("#lp").appendChild(langPicker(() => { keep(); renderSignup(); }));
+  app.querySelectorAll("[data-milk]").forEach((b) => b.onclick = () => { keep(); f.wants_milk = b.dataset.milk === "1"; renderSignup(); });
+  $("#su-milk")?.addEventListener("change", () => { keep(); const m = f.options.milk.find((x) => x.id === f.milk_id); f.milk_size = m?.sizes?.[0]?.label || ""; renderSignup(); });
+  $("#su-go").onclick = async () => {
+    keep();
+    if ((f.name || "").trim().length < 2) return renderSignup(t("Enter your name"));
+    if ((f.address || "").trim().length < 8) return renderSignup(t("Enter your full delivery address"));
+    const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your account…");
+    const r = await call("app-auth", {
+      action: "signup", phone: S.phone, signup_token: f.token, device: deviceType(),
+      name: f.name, address: f.address, area_id: f.area_id && f.area_id !== "other" ? f.area_id : "",
+      wants_milk: f.wants_milk && !!f.milk_id, milk_id: f.milk_id, milk_size: f.milk_size, milk_qty: f.milk_qty, start_date: f.start,
+    });
+    if (!r.ok) {
+      if (r.code === "expired" || r.code === "exists") { S.signup = null; return renderLogin("phone", r.message); }
+      return renderSignup(r.message);
+    }
+    S.signup = null;
+    S.token = r.token;
+    await store.set("rd_token", r.token);
+    await startApp();
+    toast(t("Welcome, {name}", { name: r.name || "" }));
+  };
+}
+
 async function signOutLocal() {
   S.token = null; S.home = null; S.cal = null;
-  SH.catalog = null; SH.cart = []; store.remove("rd_cart"); document.querySelector(".cartbar")?.remove();
+  SH.catalog = null; SH.cart = []; store.remove("rd_cart");
+  document.querySelector(".cartbar")?.remove(); document.body.classList.remove("has-cart");
   await store.remove("rd_token");
   renderLogin("phone");
 }
@@ -568,18 +1332,19 @@ const icons = {
 function shell() {
   $("#app").innerHTML = `
     <header class="topbar"><div class="brand">RD <span>Dairy</span></div><small id="tb-area"></small></header>
-    <main id="view"><div class="loading">Loading…</div></main>
+    <main id="view"><div class="loading">${esc(t("Loading…"))}</div></main>
     <nav class="tabs" aria-label="Main">
-      <button data-tab="home">${icons.home}Home</button>
-      <button data-tab="calendar">${icons.calendar}Calendar</button>
-      <button data-tab="shop">${icons.shop}Shop</button>
-      <button data-tab="bills">${icons.bills}Bills</button>
-      <button data-tab="account">${icons.account}Account</button>
+      <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
+      <button data-tab="calendar">${icons.calendar}${esc(t("Calendar"))}</button>
+      <button data-tab="shop">${icons.shop}${esc(t("Shop"))}</button>
+      <button data-tab="bills">${icons.bills}${esc(t("Bills"))}</button>
+      <button data-tab="account">${icons.account}${esc(t("Account"))}</button>
     </nav>`;
   $(".tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-tab]");
     if (b) go(b.dataset.tab);
   });
+  const ta = $("#tb-area"); if (ta && S.home) ta.textContent = S.home.area || "";
 }
 
 function go(tab) {
@@ -605,75 +1370,84 @@ async function loadHome() {
   return r;
 }
 
+const loadingView = () => { $("#view").innerHTML = `<div class="loading">${esc(t("Loading…"))}</div>`; };
+
 /* =========================================================
    HOME
    ========================================================= */
 async function renderHome() {
   const v = $("#view");
-  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
+  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
   const h = S.home;
   if (S.tab !== "home") return;
 
   if (!h.is_subscriber) {
+    const mr = h.milk_request;
     v.innerHTML = `
-      <p class="hello">Hello <b>${esc(h.name || "")}</b></p>
+      <p class="hello">${esc(t("Hello"))} <b>${esc(h.name || "")}</b></p>
       <div class="card pad">
-        <p style="margin:0 0 6px;font-weight:700;font-size:18px">Your number is registered with RD Dairy.</p>
-        <p class="muted" style="margin:0">Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here.</p>
+        ${mr && /pending/i.test(mr.status || "")
+          ? `<p style="margin:0;font-weight:700;font-size:17px">${esc(t("Your daily milk request ({item}) is with RD Dairy. We will call you to confirm the start date.", { item: `${mr.product} × ${mr.qty}` }))}</p>`
+          : `<p style="margin:0 0 6px;font-weight:700;font-size:18px">${esc(t("Your number is registered with RD Dairy."))}</p>
+             <p class="muted" style="margin:0">${esc(t("Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here."))}</p>`}
+      </div>
+      <div class="row-actions" style="grid-template-columns:1fr">
+        <button class="btn btn-main" id="toshop">${esc(t("Browse the shop"))}</button>
       </div>`;
+    $("#toshop").onclick = () => go("shop");
     return;
   }
 
-  const t = h.tomorrow;
-  const canEditTomorrow = t.date >= h.first_editable_date;
-  const p = qtyParts(t.qty);
-  const stateText = { normal: "Your usual delivery", paused: "Paused for this day", extra: "Extra milk added", less: "Less than usual" }[t.status];
+  const tm = h.tomorrow;
+  const canEditTomorrow = tm.date >= h.first_editable_date;
+  const p = qtyParts(tm.qty);
+  const stateText = { normal: "Your usual delivery", paused: "Paused for this day", extra: "Extra milk added", less: "Less than usual" }[tm.status];
 
   v.innerHTML = `
-    <p class="hello">Hello <b>${esc(h.name)}</b></p>
-    <section class="tomorrow" aria-label="Tomorrow's delivery">
-      <div>${bottleSVG(t.qty, h.default_qty)}</div>
+    <p class="hello">${esc(t("Hello"))} <b>${esc(h.name)}</b></p>
+    <section class="tomorrow" aria-label="${esc(t("Tomorrow, {date}", { date: shortDate(tm.date) }))}">
+      <div>${bottleSVG(tm.qty, h.default_qty)}</div>
       <div>
-        <div class="when">Tomorrow, ${esc(shortDate(t.date))}</div>
+        <div class="when">${esc(t("Tomorrow, {date}", { date: shortDate(tm.date) }))}</div>
         <div class="qty">${p.n}<small>${p.u}</small></div>
-        <div class="state state-${t.status}">${stateText}</div>
+        <div class="state state-${tm.status}">${esc(t(stateText))}</div>
       </div>
       ${canEditTomorrow ? `
-        <div class="tomorrow-actions">
-          <button class="btn btn-dark btn-block" data-edit="${t.date}">Change tomorrow</button>
-        </div>
-        <div class="lock-note">Changes for tomorrow are open until ${cutoffLabel(h.cutoff_time)} tonight.</div>
+        <div class="tomorrow-actions"><button class="btn btn-dark btn-block" data-edit="${tm.date}">${esc(t("Change tomorrow"))}</button></div>
+        <div class="lock-note">${esc(t("Changes for tomorrow are open until {time} tonight.", { time: cutoffLabel(h.cutoff_time) }))}</div>
       ` : `
-        <div class="lock-note">Tomorrow's delivery is set. You can change deliveries from ${esc(shortDate(h.first_editable_date))} onwards.</div>
+        <div class="lock-note">${esc(t("Tomorrow's delivery is set. You can change deliveries from {date} onwards.", { date: shortDate(h.first_editable_date) }))}</div>
       `}
     </section>
 
-    <h2>Next 7 days</h2>
+    <h2>${esc(t("Next 7 days"))}</h2>
     <div class="week">
       ${h.next7.map((d) => {
         const locked = d.date < h.first_editable_date;
         return `<button class="day ${d.status} ${locked ? "locked" : ""}" data-edit="${d.date}" ${locked ? 'aria-disabled="true"' : ""}
-          aria-label="${esc(longDate(d.date))}, ${esc(fmtQty(d.qty))}">
+          aria-label="${esc(longDate(d.date))}, ${esc(d.status === "paused" ? t("Paused") : fmtQty(d.qty))}">
           <div class="dn">${esc(fmtDay(d.date, { weekday: "short" }))}</div>
           <div class="dd">${esc(fmtDay(d.date, { day: "numeric" }))}</div>
-          <div class="dq">${d.status === "paused" ? "Paused" : esc(shortQty(d.qty))}</div>
+          <div class="dq">${d.status === "paused" ? esc(t("Paused")) : esc(shortQty(d.qty))}</div>
         </button>`;
       }).join("")}
     </div>
 
     <div class="row-actions">
-      <button class="btn btn-line" id="away">Going away?</button>
-      <button class="btn btn-line" id="tocal">Full calendar</button>
-    </div>`;
+      <button class="btn btn-line" id="away">${esc(t("Going away?"))}</button>
+      <button class="btn btn-line" id="tocal">${esc(t("Full calendar"))}</button>
+    </div>
+    <button class="btn btn-quiet btn-block" style="margin-top:8px" id="issue">${esc(t("Report a delivery problem"))}</button>`;
 
   v.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => {
     const date = b.dataset.edit;
-    if (date < h.first_editable_date) return toast(`Changes for ${shortDate(date)} are closed.`);
+    if (date < h.first_editable_date) return toast(t("Changes for {date} are closed.", { date: shortDate(date) }));
     const day = h.next7.find((d) => d.date === date);
     openDaySheet(date, day ? day.qty : h.default_qty, day ? day.status : "normal");
   }));
   $("#away").onclick = openAwaySheet;
   $("#tocal").onclick = () => go("calendar");
+  $("#issue").onclick = openIssueSheet;
 }
 
 /* ---------- sheets ---------- */
@@ -712,48 +1486,47 @@ function openDaySheet(date, currentQty, status) {
 
   const sheet = openSheet(`
     <h3>${esc(longDate(date))}</h3>
-    <p class="sub">Your usual is ${esc(fmtQty(usual))} a day.</p>
+    <p class="sub">${esc(t("Your usual is {qty} a day.", { qty: fmtQty(usual) }))}</p>
     <div class="stepper">
-      <button data-minus aria-label="Less milk">−</button>
+      <button data-minus aria-label="${esc(t("Less milk"))}">−</button>
       <output aria-live="polite">${esc(fmtQty(q))}</output>
-      <button data-plus aria-label="More milk">+</button>
+      <button data-plus aria-label="${esc(t("More milk"))}">+</button>
     </div>
     <div class="stack">
-      <button class="btn btn-main btn-block" data-save>Save ${esc(fmtQty(q))} for this day</button>
+      <button class="btn btn-main btn-block" data-save>${esc(t("Save {qty} for this day", { qty: fmtQty(q) }))}</button>
       ${status === "paused"
-        ? `<button class="btn btn-line btn-block" data-normal>Resume my usual ${esc(fmtQty(usual))}</button>`
-        : `<button class="btn btn-line btn-block" data-pause>Pause this day</button>`}
+        ? `<button class="btn btn-line btn-block" data-normal>${esc(t("Resume my usual {qty}", { qty: fmtQty(usual) }))}</button>`
+        : `<button class="btn btn-line btn-block" data-pause>${esc(t("Pause this day"))}</button>`}
     </div>`);
 
   const out = $("output", sheet), save = $("[data-save]", sheet);
-  const sync = () => { out.textContent = fmtQty(q); save.textContent = `Save ${fmtQty(q)} for this day`; };
+  const sync = () => { out.textContent = fmtQty(q); save.textContent = t("Save {qty} for this day", { qty: fmtQty(q) }); };
   $("[data-minus]", sheet).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); sync(); };
   $("[data-plus]", sheet).onclick = () => { q = Math.min(max, +(q + STEP).toFixed(2)); sync(); };
-  save.onclick = () => saveDays({ mode: "qty", qty: q, from: date }, `${fmtQty(q)} saved for ${shortDate(date)}`);
-  $("[data-pause]", sheet)?.addEventListener("click", () => saveDays({ mode: "pause", from: date }, `Paused for ${shortDate(date)}`));
-  $("[data-normal]", sheet)?.addEventListener("click", () => saveDays({ mode: "normal", from: date }, `Back to your usual for ${shortDate(date)}`));
+  save.onclick = () => saveDays({ mode: "qty", qty: q, from: date }, t("{qty} saved for {date}", { qty: fmtQty(q), date: shortDate(date) }));
+  $("[data-pause]", sheet)?.addEventListener("click", () => saveDays({ mode: "pause", from: date }, t("Paused for {date}", { date: shortDate(date) })));
+  $("[data-normal]", sheet)?.addEventListener("click", () => saveDays({ mode: "normal", from: date }, t("Back to your usual for {date}", { date: shortDate(date) })));
 }
 
 function openAwaySheet() {
-  const h = S.home;
-  const first = h.first_editable_date;
+  const first = S.home.first_editable_date;
   const sheet = openSheet(`
-    <h3>Going away?</h3>
-    <p class="sub">Choose the days you need no milk. Deliveries restart on their own after the last day.</p>
-    <div class="field"><label for="af">First day without milk</label><input id="af" type="date" min="${first}" value="${first}" /></div>
-    <div class="field"><label for="at">Last day without milk</label><input id="at" type="date" min="${first}" value="${first}" /></div>
+    <h3>${esc(t("Going away?"))}</h3>
+    <p class="sub">${esc(t("Choose the days you need no milk. Deliveries restart on their own after the last day."))}</p>
+    <div class="field"><label for="af">${esc(t("First day without milk"))}</label><input id="af" type="date" min="${first}" value="${first}" /></div>
+    <div class="field"><label for="at">${esc(t("Last day without milk"))}</label><input id="at" type="date" min="${first}" value="${first}" /></div>
     <div class="stack">
-      <button class="btn btn-main btn-block" data-go>Pause these days</button>
-      <button class="btn btn-quiet btn-block" data-resume>Back early? Resume these days</button>
+      <button class="btn btn-main btn-block" data-go>${esc(t("Pause these days"))}</button>
+      <button class="btn btn-quiet btn-block" data-resume>${esc(t("Back early? Resume these days"))}</button>
     </div>`);
   const af = $("#af", sheet), at = $("#at", sheet);
   af.onchange = () => { at.min = af.value; if (at.value < af.value) at.value = af.value; };
   const range = () => {
-    if (!af.value || !at.value) { toast("Choose both dates", true); return null; }
+    if (!af.value || !at.value) { toast(t("Choose both dates"), true); return null; }
     return { from: af.value, to: at.value };
   };
-  $("[data-go]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "pause", ...r }, `Paused from ${shortDate(r.from)} to ${shortDate(r.to)}`); };
-  $("[data-resume]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "normal", ...r }, `Deliveries resume from ${shortDate(r.from)}`); };
+  $("[data-go]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "pause", ...r }, t("Paused from {from} to {to}", { from: shortDate(r.from), to: shortDate(r.to) })); };
+  $("[data-resume]", sheet).onclick = () => { const r = range(); if (r) saveDays({ mode: "normal", ...r }, t("Deliveries resume from {from}", { from: shortDate(r.from) })); };
 }
 
 /* =========================================================
@@ -761,11 +1534,11 @@ function openAwaySheet() {
    ========================================================= */
 async function renderCalendar() {
   const v = $("#view");
-  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
-  if (!S.home.is_subscriber) { v.innerHTML = `<div class="card pad">Your delivery calendar appears here once your subscription starts.</div>`; return; }
+  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
+  if (!S.home.is_subscriber) { v.innerHTML = `<div class="card pad">${esc(t("Your delivery calendar appears here once your subscription starts."))}</div>`; return; }
   if (!S.calMonth) S.calMonth = todayIST().slice(0, 7);
   if (!S.cal || S.cal.month !== S.calMonth) {
-    v.innerHTML = `<div class="loading">Loading…</div>`;
+    loadingView();
     const r = await call("app-api", { action: "calendar", month: S.calMonth });
     if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return; }
     S.cal = r;
@@ -778,9 +1551,11 @@ async function renderCalendar() {
   const first = d0(S.calMonth + "-01");
   const lead = (first.getUTCDay() + 6) % 7; // Monday first
   const days = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
-  const title = first.toLocaleDateString("en-IN", { timeZone: "UTC", month: "long", year: "numeric" });
+  const title = first.toLocaleDateString(locale(), { timeZone: "UTC", month: "long", year: "numeric" });
+  // weekday initials in the chosen language, Monday first (5 Jan 2026 is a Monday)
+  const wds = [...Array(7)].map((_, i) => new Date(Date.UTC(2026, 0, 5 + i)).toLocaleDateString(locale(), { timeZone: "UTC", weekday: "narrow" }));
 
-  let cells = ["M", "T", "W", "T", "F", "S", "S"].map((d) => `<div class="wd">${d}</div>`).join("");
+  let cells = wds.map((d) => `<div class="wd">${esc(d)}</div>`).join("");
   for (let i = 0; i < lead; i++) cells += "<div></div>";
   for (let n = 1; n <= days; n++) {
     const date = `${S.calMonth}-${String(n).padStart(2, "0")}`;
@@ -789,7 +1564,7 @@ async function renderCalendar() {
     if (ch) { q = ch.qty; cls = ch.paused ? "paused" : q > usual ? "extra" : q < usual ? "less" : ""; }
     if (date < today) cls += " past";
     if (date === today) cls += " today";
-    const label = ch?.paused ? "Paused" : fmtQty(q);
+    const label = ch?.paused ? t("Paused") : fmtQty(q);
     cells += `<button class="cd ${cls}" data-date="${date}" aria-label="${esc(longDate(date))}, ${esc(label)}">
       ${n}<span class="q">${ch?.paused ? "–" : esc(+Number(q).toFixed(2))}</span></button>`;
   }
@@ -797,19 +1572,19 @@ async function renderCalendar() {
   v.innerHTML = `
     <div class="cal">
       <div class="cal-head">
-        <button data-m="-1" aria-label="Previous month">‹</button>
+        <button data-m="-1" aria-label="${esc(t("Previous month"))}">‹</button>
         <b>${esc(title)}</b>
-        <button data-m="1" aria-label="Next month">›</button>
+        <button data-m="1" aria-label="${esc(t("Next month"))}">›</button>
       </div>
       <div class="cal-grid">${cells}</div>
       <div class="legend">
-        <span><i style="background:var(--milk);border:1.5px solid var(--line)"></i>Usual ${esc(fmtQty(usual))}</span>
-        <span><i style="background:var(--butter-soft)"></i>Extra</span>
-        <span><i style="background:var(--mist)"></i>Less</span>
-        <span><i style="border:2px dashed var(--line)"></i>Paused</span>
+        <span><i style="background:var(--milk);border:1.5px solid var(--line)"></i>${esc(t("Usual {qty}", { qty: fmtQty(usual) }))}</span>
+        <span><i style="background:var(--butter-soft)"></i>${esc(t("Extra"))}</span>
+        <span><i style="background:var(--mist)"></i>${esc(t("Less"))}</span>
+        <span><i style="border:2px dashed var(--line)"></i>${esc(t("Paused"))}</span>
       </div>
     </div>
-    <p class="muted" style="margin:14px 4px">Tap any day from ${esc(shortDate(h.first_editable_date))} to change it.</p>`;
+    <p class="muted" style="margin:14px 4px">${esc(t("Tap any day from {date} to change it.", { date: shortDate(h.first_editable_date) }))}</p>`;
 
   v.querySelectorAll("[data-m]").forEach((b) => b.onclick = () => {
     const d = d0(S.calMonth + "-01");
@@ -819,95 +1594,10 @@ async function renderCalendar() {
   });
   v.querySelectorAll("[data-date]").forEach((b) => b.onclick = () => {
     const date = b.dataset.date;
-    if (date < h.first_editable_date) return toast(`Changes for ${shortDate(date)} are closed.`);
+    if (date < h.first_editable_date) return toast(t("Changes for {date} are closed.", { date: shortDate(date) }));
     const ch = map.get(date);
     openDaySheet(date, ch ? ch.qty : usual, ch ? (ch.paused ? "paused" : "changed") : "normal");
   });
-}
-
-/* =========================================================
-   ACCOUNT
-   ========================================================= */
-async function renderAccount() {
-  const v = $("#view");
-  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
-  const h = S.home;
-  if (S.tab !== "account") return;
-
-  const details = h.is_subscriber ? `
-      <div class="kv"><span>Name</span><b>${esc(h.name)}</b></div>
-      <div class="kv"><span>Mobile</span><b>+91 ${esc(h.phone)}</b></div>
-      <div class="kv"><span>Address</span><b>${esc(h.address)}</b></div>
-      <div class="kv"><span>Area</span><b>${esc(h.area)}</b></div>
-      <div class="kv"><span>Milk</span><b>${esc(h.milk_type)}</b></div>
-      <div class="kv"><span>Usual quantity</span><b>${esc(fmtQty(h.default_qty))} a day</b></div>
-      <div class="kv"><span>Rate</span><b>₹${esc(h.rate)} per litre</b></div>
-      ${h.delivery_charge ? `<div class="kv"><span>Delivery charge</span><b>₹${esc(h.delivery_charge)} a month</b></div>` : ""}`
-    : `
-      <div class="kv"><span>Name</span><b>${esc(h.name)}</b></div>
-      <div class="kv"><span>Mobile</span><b>+91 ${esc(h.phone)}</b></div>`;
-
-  const pq = h.pending_qty_change;
-  v.innerHTML = `
-    <h2 style="margin-top:6px">Your details</h2>
-    <div class="card">${details}</div>
-
-    ${h.is_subscriber ? `
-      <h2>Change your usual quantity</h2>
-      <div class="card pad">
-        ${pq ? `<div class="pending">Your request for ${esc(fmtQty(pq.new_qty))} a day from ${esc(shortDate(pq.effective_from))} is with RD Dairy.</div>` : ""}
-        <div class="stepper">
-          <button data-minus aria-label="Less milk">−</button>
-          <output aria-live="polite">${esc(fmtQty(h.default_qty))}</output>
-          <button data-plus aria-label="More milk">+</button>
-        </div>
-        <div class="field"><label for="qf">Starting from</label><input id="qf" type="date" min="${h.first_editable_date}" value="${h.first_editable_date}" /></div>
-        <button class="btn btn-dark btn-block" style="margin-top:14px" data-req>Send request</button>
-        <p class="muted" style="margin:10px 0 0;font-size:14px">RD Dairy confirms the new quantity before it starts.</p>
-      </div>` : ""}
-
-    <h2>Help and support</h2>
-    <div class="card pad">
-      <div class="help">
-        <a class="wa" href="https://wa.me/91${esc(String(h.support_phone || "").replace(/\D/g, "").slice(-10))}?text=${encodeURIComponent("Hi RD Dairy, I need help with my account (" + h.phone + ")")}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .2-3.3-.7c-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
-          WhatsApp RD Dairy</a>
-        <a href="tel:+91${esc(String(h.support_phone || "").replace(/\D/g, "").slice(-10))}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
-        ${h.support_email ? `<a href="mailto:${esc(h.support_email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>` : ""}
-      </div>
-      <div class="links">
-        <a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">Privacy policy</a>
-        <a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">Terms of service</a>
-      </div>
-    </div>
-
-    <div style="margin-top:28px">
-      <button class="btn btn-line btn-block" id="logout">Log out</button>
-      <button class="danger-link" id="delacc">Delete my account</button>
-    </div>`;
-  $("#delacc").onclick = openDeleteSheet;
-
-  if (h.is_subscriber) {
-    let q = Number(h.default_qty);
-    const out = $("output", v);
-    $("[data-minus]", v).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); out.textContent = fmtQty(q); };
-    $("[data-plus]", v).onclick = () => { q = Math.min(20, +(q + STEP).toFixed(2)); out.textContent = fmtQty(q); };
-    $("[data-req]", v).onclick = async (e) => {
-      if (q === Number(h.default_qty) && !pq) return toast(`${fmtQty(q)} is already your usual quantity`);
-      e.target.disabled = true;
-      const r = await call("app-api", { action: "request_qty_change", new_qty: q, effective_from: $("#qf").value });
-      e.target.disabled = false;
-      if (!r.ok) return toast(r.message, true);
-      toast("Request sent to RD Dairy");
-      S.home = null; await loadHome(); renderAccount();
-    };
-  }
-
-  $("#logout").onclick = async () => {
-    if (!(await confirmBox("Log out of RD Dairy on this phone? You will need a WhatsApp code to log in again.", "Log out"))) return;
-    await call("app-auth", { action: "logout" });
-    await signOutLocal();
-  };
 }
 
 /* =========================================================
@@ -919,6 +1609,7 @@ const prodImg = (p) => PRODUCT_IMAGES[p.id] || p.image || "";
 const cartKey = (id, size) => id + "|" + size;
 const cartCount = () => SH.cart.reduce((a, c) => a + c.qty, 0);
 const cartTotal = () => SH.cart.reduce((a, c) => a + c.price * c.qty, 0);
+const itemsLabel = (n) => n === 1 ? t("1 item") : t("{n} items", { n });
 
 async function loadCart() {
   try { SH.cart = JSON.parse((await store.get("rd_cart")) || "[]"); } catch { SH.cart = []; }
@@ -938,7 +1629,7 @@ function updateCartBar() {
   document.body.classList.add("has-cart");
   const bar = document.createElement("button");
   bar.className = "cartbar";
-  bar.innerHTML = `<span>${cartCount()} ${cartCount() === 1 ? "item" : "items"} · <b>${esc(inr(cartTotal()))}</b></span><span>View cart →</span>`;
+  bar.innerHTML = `<span>${esc(itemsLabel(cartCount()))} · <b>${esc(inr(cartTotal()))}</b></span><span>${esc(t("View cart"))} →</span>`;
   bar.onclick = openCartSheet;
   document.body.appendChild(bar);
 }
@@ -946,11 +1637,10 @@ function updateCartBar() {
 async function renderShop() {
   const v = $("#view");
   if (!SH.catalog) {
-    v.innerHTML = `<div class="loading">Loading…</div>`;
+    loadingView();
     const r = await call("app-api", { action: "shop_catalog" });
     if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return; }
     SH.catalog = r.catalog; SH.meta = r;
-    // keep cart prices in line with the latest catalog
     SH.cart = SH.cart.filter((c) => {
       const z = SH.catalog.find((p) => p.id === c.id)?.sizes.find((x) => x.label === c.size);
       if (z) c.price = Number(z.price);
@@ -963,8 +1653,8 @@ async function renderShop() {
   const cats = ["All", ...new Set(SH.catalog.map((p) => p.category))];
   const list = SH.catalog.filter((p) => SH.cat === "All" || p.category === SH.cat);
   v.innerHTML = `
-    <div class="shop-head"><h2>Shop</h2><button id="myord">My orders</button></div>
-    <div class="cats">${cats.map((c) => `<button class="${c === SH.cat ? "on" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+    <div class="shop-head"><h2>${esc(t("Shop"))}</h2><button id="myord">${esc(t("My orders"))}</button></div>
+    <div class="cats">${cats.map((c) => `<button class="${c === SH.cat ? "on" : ""}" data-cat="${esc(c)}">${esc(t(c))}</button>`).join("")}</div>
     <div class="prods">${list.map((p) => {
       const size = p.sizes.find((z) => z.label === SH.sel[p.id]) || p.sizes[0];
       const inCart = SH.cart.find((c) => cartKey(c.id, c.size) === cartKey(p.id, size.label));
@@ -976,8 +1666,8 @@ async function renderShop() {
           ${p.sizes.length > 1 ? `<div class="sizes">${p.sizes.map((z) => `<button class="${z.label === size.label ? "on" : ""}" data-size="${esc(p.id)}" data-label="${esc(z.label)}">${esc(z.label)}</button>`).join("")}</div>` : `<div class="sizes"><button class="on" disabled>${esc(size.label)}</button></div>`}
           <div class="addrow"><b>${esc(inr(size.price))}</b>
             ${inCart
-              ? `<div class="mini-step"><button data-dec="${esc(p.id)}" aria-label="One less">−</button><span>${inCart.qty}</span><button data-inc="${esc(p.id)}" aria-label="One more">+</button></div>`
-              : `<button class="addbtn" data-inc="${esc(p.id)}">Add</button>`}
+              ? `<div class="mini-step"><button data-dec="${esc(p.id)}" aria-label="${esc(t("One less"))}">−</button><span>${inCart.qty}</span><button data-inc="${esc(p.id)}" aria-label="${esc(t("One more"))}">+</button></div>`
+              : `<button class="addbtn" data-inc="${esc(p.id)}">${esc(t("Add"))}</button>`}
           </div>
         </div>
       </article>`;
@@ -992,116 +1682,132 @@ async function renderShop() {
   updateCartBar();
 }
 
+// shared UTR / screenshot block, used by the shop and bill payments
+function proofBlock(area, state, onChange) {
+  area.querySelector("[data-proofwrap]").innerHTML = state.proof
+    ? `<div class="proof"><img src="${state.proof}" alt="" /><span>${esc(t("Screenshot added"))}</span><button data-remove>${esc(t("Remove"))}</button></div>`
+    : `<label class="attach">${esc(t("Attach screenshot"))}<input type="file" accept="image/*" data-file /></label>`;
+  area.querySelector("[data-file]")?.addEventListener("change", async (e) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    try { state.proof = await compressImage(f); } catch { return toast(t("That image could not be opened"), true); }
+    proofBlock(area, state, onChange); onChange();
+  });
+  area.querySelector("[data-remove]")?.addEventListener("click", () => { state.proof = ""; proofBlock(area, state, onChange); onChange(); });
+}
+async function pasteUtrInto(input, after) {
+  try {
+    const m = String(await navigator.clipboard.readText()).match(/\d{12}/);
+    if (m) { input.value = m[0]; after && after(); } else toast(t("Copy the 12 digit reference in your UPI app first"), true);
+  } catch { toast(t("Tap and hold the box to paste"), true); }
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); toast(t("UPI ID copied")); } catch { toast(text); }
+}
+
 function openCartSheet() {
   const meta = SH.meta || {};
-  const st = { repeat: false, plan: "daily", weekday: "0", start: addDays(todayIST(), 1), pay: "cod", proof: "" };
+  const st = { repeat: false, plan: "daily", weekday: "0", start: addDays(todayIST(), 1), pay: "cod", proof: "", utr: "" };
   const sheet = openSheet("");
   sheet.classList.add("tall");
+  const weekdays = [...Array(7)].map((_, i) => new Date(Date.UTC(2026, 0, 4 + i)).toLocaleDateString(locale(), { timeZone: "UTC", weekday: "long" }));
 
+  const keep = () => {
+    const a = $("#addr", sheet); if (a) st.addr = a.value;
+    const u = $("#sutr", sheet); if (u) st.utr = u.value;
+  };
   const draw = () => {
     if (!SH.cart.length) { closeSheet(); renderShop(); return; }
     const total = cartTotal();
     sheet.innerHTML = `<div class="grip"></div>
-      <h3>Your cart</h3>
+      <h3>${esc(t("Your cart"))}</h3>
       <div>${SH.cart.map((c, i) => `<div class="cline">
-        <div><div class="n">${esc(c.name)}</div><div class="z">${esc(c.size)} · ${esc(inr(c.price))} each</div></div>
-        <div class="mini-step"><button data-cdec="${i}" aria-label="One less">−</button><span>${c.qty}</span><button data-cinc="${i}" aria-label="One more">+</button></div>
+        <div><div class="n">${esc(c.name)}</div><div class="z">${esc(c.size)} · ${esc(t("{price} each", { price: inr(c.price) }))}</div></div>
+        <div class="mini-step"><button data-cdec="${i}" aria-label="${esc(t("One less"))}">−</button><span>${c.qty}</span><button data-cinc="${i}" aria-label="${esc(t("One more"))}">+</button></div>
       </div>`).join("")}</div>
-      <div class="line total" style="display:flex;justify-content:space-between;padding:14px 0 4px"><span>Total</span><span>${esc(inr(total))}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>
 
-      <h4>How often?</h4>
-      <div class="seg"><button data-rep="0" class="${st.repeat ? "" : "on"}">Just once</button><button data-rep="1" class="${st.repeat ? "on" : ""}">Repeat</button></div>
+      <h4>${esc(t("How often?"))}</h4>
+      <div class="seg"><button data-rep="0" class="${st.repeat ? "" : "on"}">${esc(t("Just once"))}</button><button data-rep="1" class="${st.repeat ? "on" : ""}">${esc(t("Repeat"))}</button></div>
       ${st.repeat ? `
-        <div class="field"><label for="plan">Deliver</label>
+        <div class="field"><label for="plan">${esc(t("Deliver"))}</label>
           <select id="plan">
-            <option value="daily" ${st.plan === "daily" ? "selected" : ""}>Every day</option>
-            <option value="alternate" ${st.plan === "alternate" ? "selected" : ""}>Alternate days</option>
-            <option value="weekly" ${st.plan === "weekly" ? "selected" : ""}>Once a week</option>
-            <option value="monthly" ${st.plan === "monthly" ? "selected" : ""}>Once a month</option>
+            ${[["daily", "Every day"], ["alternate", "Alternate days"], ["weekly", "Once a week"], ["monthly", "Once a month"]]
+              .map(([v, l]) => `<option value="${v}" ${st.plan === v ? "selected" : ""}>${esc(t(l))}</option>`).join("")}
           </select></div>
-        ${st.plan === "weekly" ? `<div class="field"><label for="wd">On</label><select id="wd">${["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"].map((d, i) => `<option value="${i}" ${String(i) === st.weekday ? "selected" : ""}>${d}</option>`).join("")}</select></div>` : ""}
-        <div class="field"><label for="sd">Starting from</label><input id="sd" type="date" min="${addDays(todayIST(), 1)}" value="${st.start}" /></div>
-        <p class="muted" style="font-size:14px;margin:10px 0 0">${meta.is_subscriber ? "Repeat items are added to your monthly bill." : "Pay for repeat items on delivery."} RD Dairy confirms the start date with you.</p>
+        ${st.plan === "weekly" ? `<div class="field"><label for="wd">${esc(t("On"))}</label><select id="wd">${weekdays.map((d, i) => `<option value="${i}" ${String(i) === st.weekday ? "selected" : ""}>${esc(d)}</option>`).join("")}</select></div>` : ""}
+        <div class="field"><label for="sd">${esc(t("Starting from"))}</label><input id="sd" type="date" min="${addDays(todayIST(), 1)}" value="${st.start}" /></div>
+        <p class="muted" style="font-size:14px;margin:10px 0 0">${esc(meta.is_subscriber ? t("Repeat items are added to your monthly bill.") : t("Pay for repeat items on delivery."))} ${esc(t("RD Dairy confirms the start date with you."))}</p>
       ` : ""}
 
-      <h4>Deliver to</h4>
-      <textarea id="addr" aria-label="Delivery address">${esc(st.addr ?? meta.address ?? "")}</textarea>
+      <h4>${esc(t("Deliver to"))}</h4>
+      <textarea id="addr" aria-label="${esc(t("Deliver to"))}">${esc(st.addr ?? meta.address ?? "")}</textarea>
 
       ${st.repeat ? "" : `
-        <h4>Payment</h4>
-        <label class="opt ${st.pay === "cod" ? "on" : ""}"><input type="radio" name="pay" value="cod" ${st.pay === "cod" ? "checked" : ""}/><div><b>Cash on delivery</b><span>Pay when your order arrives</span></div></label>
-        ${meta.upi_ready ? `<label class="opt ${st.pay === "upi" ? "on" : ""}"><input type="radio" name="pay" value="upi" ${st.pay === "upi" ? "checked" : ""}/><div><b>Pay now with UPI</b><span>GPay, PhonePe or Paytm</span></div></label>` : ""}
-        ${meta.is_subscriber ? `<label class="opt ${st.pay === "bill" ? "on" : ""}"><input type="radio" name="pay" value="bill" ${st.pay === "bill" ? "checked" : ""}/><div><b>Add to my monthly bill</b><span>Delivered with your milk</span></div></label>` : ""}
+        <h4>${esc(t("Payment"))}</h4>
+        <label class="opt ${st.pay === "cod" ? "on" : ""}"><input type="radio" name="pay" value="cod" ${st.pay === "cod" ? "checked" : ""}/><div><b>${esc(t("Cash on delivery"))}</b><span>${esc(t("Pay when your order arrives"))}</span></div></label>
+        ${meta.upi_ready ? `<label class="opt ${st.pay === "upi" ? "on" : ""}"><input type="radio" name="pay" value="upi" ${st.pay === "upi" ? "checked" : ""}/><div><b>${esc(t("Pay now with UPI"))}</b><span>${esc(t("GPay, PhonePe or Paytm"))}</span></div></label>` : ""}
+        ${meta.is_subscriber ? `<label class="opt ${st.pay === "bill" ? "on" : ""}"><input type="radio" name="pay" value="bill" ${st.pay === "bill" ? "checked" : ""}/><div><b>${esc(t("Add to my monthly bill"))}</b><span>${esc(t("Delivered with your milk"))}</span></div></label>` : ""}
         <div id="upiArea"></div>
       `}
       <div class="stack">
-        <button class="btn btn-main btn-block" id="place">${st.repeat ? "Start repeat order" : `Place order · ${esc(inr(total))}`}</button>
-        <button class="btn btn-quiet btn-block" data-close>Keep shopping</button>
+        <button class="btn btn-main btn-block" id="place">${esc(st.repeat ? t("Start repeat order") : t("Place order · {amt}", { amt: inr(total) }))}</button>
+        <button class="btn btn-quiet btn-block" data-close>${esc(t("Keep shopping"))}</button>
       </div>`;
 
-    sheet.querySelectorAll("[data-cinc]").forEach((b) => b.onclick = () => { SH.cart[+b.dataset.cinc].qty = Math.min(50, SH.cart[+b.dataset.cinc].qty + 1); saveCart(); keep(); draw(); });
-    sheet.querySelectorAll("[data-cdec]").forEach((b) => b.onclick = () => { const c = SH.cart[+b.dataset.cdec]; c.qty -= 1; if (!c.qty) SH.cart.splice(+b.dataset.cdec, 1); saveCart(); keep(); draw(); });
+    sheet.querySelectorAll("[data-cinc]").forEach((b) => b.onclick = () => { keep(); SH.cart[+b.dataset.cinc].qty = Math.min(50, SH.cart[+b.dataset.cinc].qty + 1); saveCart(); draw(); });
+    sheet.querySelectorAll("[data-cdec]").forEach((b) => b.onclick = () => { keep(); const c = SH.cart[+b.dataset.cdec]; c.qty -= 1; if (!c.qty) SH.cart.splice(+b.dataset.cdec, 1); saveCart(); draw(); });
     sheet.querySelectorAll("[data-rep]").forEach((b) => b.onclick = () => { keep(); st.repeat = b.dataset.rep === "1"; draw(); });
     $("#plan", sheet)?.addEventListener("change", (e) => { keep(); st.plan = e.target.value; draw(); });
     $("#wd", sheet)?.addEventListener("change", (e) => { st.weekday = e.target.value; });
     $("#sd", sheet)?.addEventListener("change", (e) => { st.start = e.target.value; });
-    sheet.querySelectorAll("input[name=pay]").forEach((r) => r.onchange = () => { keep(); st.pay = r.value; st.proof = ""; draw(); });
+    sheet.querySelectorAll("input[name=pay]").forEach((r) => r.onchange = () => { keep(); st.pay = r.value; draw(); });
     $("[data-close]", sheet).onclick = () => { closeSheet(); renderShop(); };
     if (!st.repeat && st.pay === "upi") drawUpi();
     $("#place", sheet).onclick = place;
   };
-  const keep = () => { const a = $("#addr", sheet); if (a) st.addr = a.value; };
 
   const drawUpi = async () => {
     const area = $("#upiArea", sheet);
-    area.innerHTML = `<div class="loading" style="padding:16px 0">Getting payment details…</div>`;
+    area.innerHTML = `<div class="loading" style="padding:16px 0">${esc(t("Getting payment details…"))}</div>`;
     const r = await call("app-api", { action: "shop_upi", items: SH.cart });
     if (!r.ok) { area.innerHTML = ""; return toast(r.message, true); }
     area.innerHTML = `
-      <a class="btn btn-main btn-block" style="margin-top:12px" href="${esc(r.upi_link)}">Pay ${esc(inr(r.amount))} with UPI app</a>
-      <div class="upi-box" style="margin-top:10px"><div><span class="muted" style="font-size:14px">UPI ID</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>Copy</button></div>
-      <p class="sub" style="margin:4px 0 10px">After paying, add the UPI reference number or a screenshot.</p>
-      <div class="utr-row"><input id="sutr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" aria-label="UPI reference number" /><button data-paste>Paste</button></div>
-      <div class="or">or</div>
-      <div data-proofwrap>${st.proof ? `<div class="proof"><img src="${st.proof}" alt="Payment screenshot" /><span>Screenshot added</span><button data-remove>Remove</button></div>` : `<label class="attach">Attach screenshot<input type="file" accept="image/*" data-file /></label>`}</div>`;
-    $("[data-copy]", area).onclick = async () => { try { await navigator.clipboard.writeText(r.upi_id); toast("UPI ID copied"); } catch { toast(r.upi_id); } };
-    $("[data-paste]", area).onclick = async () => {
-      try { const m = String(await navigator.clipboard.readText()).match(/\d{12}/); if (m) $("#sutr", area).value = m[0]; else toast("Copy the 12 digit reference in your UPI app first", true); }
-      catch { toast("Tap and hold the box to paste", true); }
-    };
-    $("[data-file]", area)?.addEventListener("change", async (e) => {
-      const f = e.target.files?.[0]; if (!f) return;
-      try { st.proof = await compressImage(f); } catch { return toast("That image could not be opened", true); }
-      keep(); draw();
-    });
-    $("[data-remove]", area)?.addEventListener("click", () => { st.proof = ""; keep(); draw(); });
+      <a class="btn btn-main btn-block" style="margin-top:12px" href="${esc(r.upi_link)}">${esc(t("Pay {amt} with UPI app", { amt: inr(r.amount) }))}</a>
+      <div class="upi-box" style="margin-top:10px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
+      <p class="sub" style="margin:4px 0 10px">${esc(t("After paying, add the UPI reference number or a screenshot."))}</p>
+      <div class="utr-row"><input id="sutr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" aria-label="${esc(t("UPI reference number (12 digits)"))}" value="${esc(st.utr)}" /><button data-paste>${esc(t("Paste"))}</button></div>
+      <div class="or">${esc(t("or"))}</div>
+      <div data-proofwrap></div>`;
+    $("[data-copy]", area).onclick = () => copyText(r.upi_id);
+    $("[data-paste]", area).onclick = () => pasteUtrInto($("#sutr", area));
+    proofBlock(area, st, () => {});
   };
 
   const place = async () => {
     keep();
     const btn = $("#place", sheet);
-    const payload = { action: "shop_order", items: SH.cart, address: (st.addr || "").trim(), frequency: st.repeat ? st.plan : "once" };
-    if (payload.address.length < 6) return toast("Add your delivery address", true);
+    const payload = { action: "shop_order", items: SH.cart, address: (st.addr ?? meta.address ?? "").trim(), frequency: st.repeat ? st.plan : "once" };
+    if (payload.address.length < 6) return toast(t("Add your delivery address"), true);
     if (st.repeat) { payload.weekday = st.weekday; payload.start_date = st.start; }
     else {
       payload.pay = st.pay;
       if (st.pay === "upi") {
-        const utr = ($("#sutr", sheet)?.value || "").replace(/\D/g, "");
-        if (utr && utr.length !== 12) return toast("The UPI reference number has 12 digits", true);
-        if (!utr && !st.proof) return toast("Add the UPI reference number or a screenshot", true);
+        const utr = (st.utr || "").replace(/\D/g, "");
+        if (utr && utr.length !== 12) return toast(t("The UPI reference number has 12 digits"), true);
+        if (!utr && !st.proof) return toast(t("Add the UPI reference number or a screenshot"), true);
         payload.utr = utr; payload.image_base64 = st.proof || undefined;
       }
     }
-    btn.disabled = true; btn.textContent = "Placing order…";
+    btn.disabled = true; btn.textContent = t("Placing order…");
     const r = await call("app-api", payload);
-    if (!r.ok) { btn.disabled = false; draw(); return toast(r.message, true); }
+    if (!r.ok) { draw(); return toast(r.message, true); }
     SH.cart = []; saveCart();
     sheet.innerHTML = `<div class="grip"></div><div class="done-box">
       <div class="tick">✓</div>
-      <h3>${r.kind === "repeat" ? "Repeat order sent" : "Order placed"}</h3>
-      <p class="sub">${r.kind === "repeat" ? "RD Dairy will confirm your start date on WhatsApp." : `Order ${esc(r.order_id)} · ${esc(inr(r.total))}. We deliver within 2 days.`}</p>
+      <h3>${esc(r.kind === "repeat" ? t("Repeat order sent") : t("Order placed"))}</h3>
+      <p class="sub">${esc(r.kind === "repeat" ? t("RD Dairy will confirm your start date on WhatsApp.") : t("Order {id} · {amt}. We deliver within 2 days.", { id: r.order_id, amt: inr(r.total) }))}</p>
     </div>
-    <div class="stack"><button class="btn btn-dark btn-block" data-orders>See my orders</button><button class="btn btn-quiet btn-block" data-close>Done</button></div>`;
+    <div class="stack"><button class="btn btn-dark btn-block" data-orders>${esc(t("See my orders"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Done"))}</button></div>`;
     $("[data-orders]", sheet).onclick = openMyOrders;
     $("[data-close]", sheet).onclick = () => { closeSheet(); renderShop(); };
   };
@@ -1110,24 +1816,24 @@ function openCartSheet() {
 }
 
 async function openMyOrders() {
-  const sheet = openSheet(`<div class="loading">Loading…</div>`);
+  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "my_orders" });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
   const pillFor = (s) => /deliver|paid|active/i.test(s) ? "paid" : /cancel/i.test(s) ? "wait" : "due-p";
-  const when = (iso) => new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
+  const when = (iso) => new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
   sheet.innerHTML = `<div class="grip"></div>
-    <h3>My orders</h3>
-    ${r.repeats.length ? `<h4>Repeat orders</h4><div>${r.repeats.map((x) => `<div class="orow">
-      <div class="top"><span>${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(x.status)}</span></div>
-      <div class="it">${esc(String(x.plan || "").replace(" · from app", ""))} · ${esc(inr(x.amount))} each time</div></div>`).join("")}</div>` : ""}
-    <h4>Orders</h4>
+    <h3>${esc(t("My orders"))}</h3>
+    ${r.repeats.length ? `<h4>${esc(t("Repeat orders"))}</h4><div>${r.repeats.map((x) => `<div class="orow">
+      <div class="top"><span>${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(t(x.status))}</span></div>
+      <div class="it">${esc(String(x.plan || "").replace(/ · .*$/, ""))} · ${esc(t("{amt} each time", { amt: inr(x.amount) }))}</div></div>`).join("")}</div>` : ""}
+    <h4>${esc(t("Orders"))}</h4>
     ${r.orders.length ? `<div>${r.orders.map((o) => `<div class="orow">
       <div class="top"><span>${esc(when(o.created_at))}</span><span>${esc(inr(o.amount))}</span></div>
       <div class="it">${esc(o.items)}</div>
-      <div class="it">${esc(o.order_id)} · ${esc(o.pay_method)} <span class="pill ${pillFor(o.status)}" style="margin-left:6px">${esc(o.status)}</span></div></div>`).join("")}</div>`
-      : `<p class="sub">Orders you place show up here.</p>`}
-    <div class="stack"><button class="btn btn-line btn-block" data-close>Close</button></div>`;
+      <div class="it">${esc(o.order_id)} · ${esc(t(o.pay_method))} <span class="pill ${pillFor(o.status)}" style="margin-left:6px">${esc(t(o.status))}</span></div></div>`).join("")}</div>`
+      : `<p class="sub">${esc(t("Orders you place show up here."))}</p>`}
+    <div class="stack"><button class="btn btn-line btn-block" data-close>${esc(t("Close"))}</button></div>`;
   $("[data-close]", sheet).onclick = closeSheet;
 }
 
@@ -1136,9 +1842,9 @@ async function openMyOrders() {
    ========================================================= */
 async function renderBills() {
   const v = $("#view");
-  if (!S.home) { v.innerHTML = `<div class="loading">Loading…</div>`; if (!(await loadHome())) return; }
-  if (!S.home.is_subscriber) { v.innerHTML = `<div class="empty">Your monthly bills appear here once your milk subscription starts.</div>`; return; }
-  v.innerHTML = `<div class="loading">Loading…</div>`;
+  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
+  if (!S.home.is_subscriber) { v.innerHTML = `<div class="empty">${esc(t("Your monthly bills appear here once your milk subscription starts."))}</div>`; return; }
+  loadingView();
 
   const [b, p] = await Promise.all([call("app-api", { action: "bills" }), call("app-api", { action: "payments" })]);
   if (!b.ok || !p.ok) { const r = !b.ok ? b : p; if (r.code !== "logged_out") toast(r.message, true); return; }
@@ -1151,189 +1857,422 @@ async function renderBills() {
   const payableAmt = payable.reduce((a, x) => a + x.due, 0);
 
   v.innerHTML = `
-    <section class="due" aria-label="Amount due">
-      <div class="lbl">${due > 0 ? "Amount due" : "All bills paid"}</div>
+    <section class="due" aria-label="${esc(t("Amount due"))}">
+      <div class="lbl">${esc(due > 0 ? t("Amount due") : t("All bills paid"))}</div>
       <div class="amt ${due > 0 ? "" : "zero"}">${esc(inr(due))}</div>
-      <p>${due > 0 ? `Across ${unpaid} ${unpaid === 1 ? "bill" : "bills"}. Tap a bill below to see the details.` : "Thank you. Your account is up to date."}</p>
-      ${b.pending_amount > 0 ? `<div class="wait-note">${esc(inr(b.pending_amount))} sent. RD Dairy is confirming it.</div>` : ""}
-      ${payableAmt > 0 ? `<button class="btn btn-main btn-block" style="margin-top:16px" id="payall">Pay ${esc(inr(payableAmt))}</button>` : ""}
+      <p>${esc(due > 0 ? (unpaid === 1 ? t("Across 1 bill. Tap a bill below to see the details.") : t("Across {n} bills. Tap a bill below to see the details.", { n: unpaid })) : t("Thank you. Your account is up to date."))}</p>
+      ${b.pending_amount > 0 ? `<div class="wait-note">${esc(t("{amt} sent. RD Dairy is confirming it.", { amt: inr(b.pending_amount) }))}</div>` : ""}
+      ${payableAmt > 0 ? `<button class="btn btn-main btn-block" style="margin-top:16px" id="payall">${esc(t("Pay {amt}", { amt: inr(payableAmt) }))}</button>` : ""}
     </section>
 
-    <h2>Bills</h2>
-    ${b.bills.length ? `<div class="list">${b.bills.map((x) => `
-      <button class="li" data-bill="${esc(x.id)}">
-        <div><div class="t">${esc(periodLabel(x.period_start, x.period_end))}</div>
-          <div class="s">${x.milk_qty ? esc(fmtQty(x.milk_qty)) + " of milk" : ""}${x.number ? (x.milk_qty ? ", " : "") + "Bill " + esc(x.number) : ""}</div></div>
+    <h2>${esc(t("Bills"))}</h2>
+    ${b.bills.length ? `<div class="list">${b.bills.map((x) => {
+      const sub = [x.milk_qty ? t("{qty} of milk", { qty: fmtQty(x.milk_qty) }) : "", x.number ? t("Bill {no}", { no: x.number }) : ""].filter(Boolean).join(", ");
+      return `<button class="li" data-bill="${esc(x.id)}">
+        <div><div class="t">${esc(periodLabel(x.period_start, x.period_end))}</div><div class="s">${esc(sub)}</div></div>
         <div class="r"><b>${esc(inr(x.total))}</b><br>
-          ${x.due <= 0 ? `<span class="pill paid">Paid</span>` : x.pending ? `<span class="pill wait">Being confirmed</span>` : `<span class="pill due-p">${esc(inr(x.due))} due</span>`}</div>
-      </button>`).join("")}</div>`
-    : `<div class="empty">Your first bill appears here at the end of the month.</div>`}
+          ${x.due <= 0 ? `<span class="pill paid">${esc(t("Paid"))}</span>` : x.pending ? `<span class="pill wait">${esc(t("Being confirmed"))}</span>` : `<span class="pill due-p">${esc(t("{amt} due", { amt: inr(x.due) }))}</span>`}</div>
+      </button>`;
+    }).join("")}</div>`
+    : `<div class="empty">${esc(t("Your first bill appears here at the end of the month."))}</div>`}
 
-    <h2>Payments</h2>
+    <h2>${esc(t("Payments"))}</h2>
     ${p.payments.length ? `<div class="list">${p.payments.map((x) => `
       <div class="li">
         <div><div class="t">${esc(x.date ? fmtDay(x.date, { day: "numeric", month: "short", year: "numeric" }) : "")}</div>
-          <div class="s">${esc(modeLabel(x.mode))}${x.bill_period ? " for " + esc(fmtDay(x.bill_period, { month: "long" })) : ""}</div></div>
+          <div class="s">${esc(modeLabel(x.mode))}${x.bill_period ? " · " + esc(t("for {month}", { month: fmtDay(x.bill_period, { month: "long" }) })) : ""}</div></div>
         <div class="r"><b>${esc(inr(x.amount))}</b></div>
       </div>`).join("")}</div>`
-    : `<div class="empty">Payments you make show up here.</div>`}`;
+    : `<div class="empty">${esc(t("Payments you make show up here."))}</div>`}`;
 
   v.querySelectorAll("[data-bill]").forEach((el) => el.onclick = () => openBillSheet(el.dataset.bill));
   $("#payall")?.addEventListener("click", () => openUpiSheet(payable.map((x) => x.id)));
 }
 
-/* ---------- UPI payment with proof ---------- */
-function compressImage(file, maxSide = 1400, quality = 0.75) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-      const cv = document.createElement("canvas");
-      cv.width = Math.round(img.width * scale);
-      cv.height = Math.round(img.height * scale);
-      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
-      URL.revokeObjectURL(url);
-      resolve(cv.toDataURL("image/jpeg", quality));
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
-    img.src = url;
-  });
-}
-
-async function openUpiSheet(invoiceIds) {
-  const sheet = openSheet(`<div class="loading">Loading…</div>`);
-  sheet.classList.add("tall");
-  const r = await call("app-api", { action: "upi_start", invoice_ids: invoiceIds });
-  if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
-
-  sheet.innerHTML = `<div class="grip"></div>
-    <h3>Pay ${esc(inr(r.amount))}</h3>
-    <p class="sub">To ${esc(r.upi_name)}. The amount and bill number fill in on their own.</p>
-    <a class="btn btn-main btn-block" href="${esc(r.upi_link)}" data-open>Pay with GPay, PhonePe or Paytm</a>
-    <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">UPI ID</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>Copy</button></div>
-
-    <h4>After paying</h4>
-    <p class="sub" style="margin-bottom:12px">Share the UPI reference number or a screenshot of the payment.</p>
-    <label for="utr" style="display:block;font-weight:600;margin-bottom:6px">UPI reference number (12 digits)</label>
-    <div class="utr-row">
-      <input id="utr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" />
-      <button data-paste>Paste</button>
-    </div>
-    <div class="or">or</div>
-    <div data-proofwrap>
-      <label class="attach">Attach screenshot<input type="file" accept="image/*" data-file /></label>
-    </div>
-    <div class="stack">
-      <button class="btn btn-dark btn-block" data-send disabled>Send payment details</button>
-      <button class="btn btn-quiet btn-block" data-close>Close</button>
-    </div>`;
-
-  let imageData = "";
-  const utr = $("#utr", sheet), send = $("[data-send]", sheet), wrap = $("[data-proofwrap]", sheet);
-  const digits = () => utr.value.replace(/\D/g, "");
-  const refresh = () => { send.disabled = !(digits().length === 12 || imageData); };
-
-  utr.addEventListener("input", () => { utr.value = utr.value.replace(/[^\d ]/g, ""); refresh(); });
-  $("[data-close]", sheet).onclick = closeSheet;
-  $("[data-copy]", sheet).onclick = async () => {
-    try { await navigator.clipboard.writeText(r.upi_id); toast("UPI ID copied"); } catch { toast(r.upi_id); }
-  };
-  $("[data-paste]", sheet).onclick = async () => {
-    try {
-      const t = await navigator.clipboard.readText();
-      const m = String(t).match(/\d{12}/);
-      if (m) { utr.value = m[0]; refresh(); } else toast("Copy the 12 digit reference in your UPI app first", true);
-    } catch { toast("Tap and hold the box to paste", true); }
-  };
-
-  const bindFile = () => {
-    $("[data-file]", wrap).onchange = async (e) => {
-      const f = e.target.files?.[0];
-      if (!f) return;
-      try { imageData = await compressImage(f); } catch { return toast("That image could not be opened", true); }
-      wrap.innerHTML = `<div class="proof"><img src="${imageData}" alt="Payment screenshot" /><span>Screenshot added</span><button data-remove>Remove</button></div>`;
-      $("[data-remove]", wrap).onclick = () => {
-        imageData = "";
-        wrap.innerHTML = `<label class="attach">Attach screenshot<input type="file" accept="image/*" data-file /></label>`;
-        bindFile(); refresh();
-      };
-      refresh();
-    };
-  };
-  bindFile();
-
-  send.onclick = async () => {
-    if (utr.value.trim() && digits().length !== 12) return toast("The UPI reference number has 12 digits", true);
-    send.disabled = true; send.textContent = "Sending…";
-    const res = await call("app-api", {
-      action: "payment_claim",
-      invoice_ids: r.invoice_ids,
-      utr: digits().length === 12 ? digits() : "",
-      image_base64: imageData || undefined,
-    });
-    if (!res.ok) { send.textContent = "Send payment details"; refresh(); return toast(res.message, true); }
-    closeSheet();
-    toast("Payment details sent. RD Dairy will confirm shortly.");
-    if (S.tab === "bills") renderBills();
-  };
-}
-
 async function openBillSheet(id) {
-  const sheet = openSheet(`<div class="loading">Loading…</div>`);
+  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "bill_detail", invoice_id: id });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
   const b = r.bill;
   const lines = r.items.length
     ? r.items.map((i) => `<div class="line"><span>${esc(i.description || i.type)}${i.quantity && i.rate ? ` (${esc(+i.quantity.toFixed(2))} × ${esc(inr(i.rate))})` : ""}</span><span>${esc(inr(i.amount))}</span></div>`).join("")
-    : `${b.milk_amount ? `<div class="line"><span>Milk${b.milk_qty ? ` (${esc(fmtQty(b.milk_qty))})` : ""}</span><span>${esc(inr(b.milk_amount))}</span></div>` : ""}
-       ${b.other_items_amount ? `<div class="line"><span>Other products</span><span>${esc(inr(b.other_items_amount))}</span></div>` : ""}
-       ${b.delivery_charge ? `<div class="line"><span>Delivery charge</span><span>${esc(inr(b.delivery_charge))}</span></div>` : ""}
-       ${b.discount ? `<div class="line"><span>Discount</span><span>−${esc(inr(b.discount))}</span></div>` : ""}`;
+    : `${b.milk_amount ? `<div class="line"><span>${esc(t("Milk"))}${b.milk_qty ? ` (${esc(fmtQty(b.milk_qty))})` : ""}</span><span>${esc(inr(b.milk_amount))}</span></div>` : ""}
+       ${b.other_items_amount ? `<div class="line"><span>${esc(t("Other products"))}</span><span>${esc(inr(b.other_items_amount))}</span></div>` : ""}
+       ${b.delivery_charge ? `<div class="line"><span>${esc(t("Delivery charge"))}</span><span>${esc(inr(b.delivery_charge))}</span></div>` : ""}
+       ${b.discount ? `<div class="line"><span>${esc(t("Discount"))}</span><span>−${esc(inr(b.discount))}</span></div>` : ""}`;
+  const pending = (S.bills || []).find((x) => x.id === b.id)?.pending;
 
   sheet.innerHTML = `<div class="grip"></div>
     <h3>${esc(periodLabel(b.period_start, b.period_end))}</h3>
-    <p class="sub">${b.number ? "Bill " + esc(b.number) : ""}${b.bill_date ? (b.number ? ", " : "") + "dated " + esc(fmtDay(b.bill_date, { day: "numeric", month: "short", year: "numeric" })) : ""}</p>
-    <div class="lines">
-      ${lines}
-      <div class="line total"><span>Total</span><span>${esc(inr(b.total))}</span></div>
-    </div>
-    <h4>Payments</h4>
+    <p class="sub">${[b.number ? esc(t("Bill {no}", { no: b.number })) : "", b.bill_date ? esc(t("dated {date}", { date: fmtDay(b.bill_date, { day: "numeric", month: "short", year: "numeric" }) })) : ""].filter(Boolean).join(", ")}</p>
+    <div class="lines">${lines}<div class="line total"><span>${esc(t("Total"))}</span><span>${esc(inr(b.total))}</span></div></div>
+    <h4>${esc(t("Payments"))}</h4>
     <div class="lines">
       ${r.payments.length ? r.payments.map((p) => `<div class="line"><span>${esc(p.date ? fmtDay(p.date, { day: "numeric", month: "short" }) : "")}, ${esc(modeLabel(p.mode))}</span><span>${esc(inr(p.amount))}</span></div>`).join("")
-        : `<div class="line"><span>Payments for this bill show up here</span><span></span></div>`}
-      <div class="line total"><span>${b.due > 0 ? "Balance due" : "Fully paid"}</span><span>${esc(inr(b.due))}</span></div>
+        : `<div class="line"><span>${esc(t("Payments for this bill show up here"))}</span><span></span></div>`}
+      <div class="line total"><span>${esc(b.due > 0 ? t("Balance due") : t("Fully paid"))}</span><span>${esc(inr(b.due))}</span></div>
     </div>
     <div class="stack">
-      ${b.due > 0 && (S.bills || []).find((x) => x.id === b.id)?.pending
-        ? `<div class="pending" style="margin:0">Your payment for this bill is being confirmed by RD Dairy.</div>`
-        : b.due > 0 ? `<button class="btn btn-main btn-block" data-pay>Pay ${esc(inr(b.due))} for this bill</button>` : ""}
-      <button class="btn btn-line btn-block" data-close>Close</button>
+      ${b.due > 0 && pending ? `<div class="pending" style="margin:0">${esc(t("Your payment for this bill is being confirmed by RD Dairy."))}</div>`
+        : b.due > 0 ? `<button class="btn btn-main btn-block" data-pay>${esc(t("Pay {amt} for this bill", { amt: inr(b.due) }))}</button>` : ""}
+      <button class="btn btn-line btn-block" data-pdf>${esc(t("Download PDF"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
     </div>`;
   $("[data-close]", sheet).onclick = closeSheet;
   $("[data-pay]", sheet)?.addEventListener("click", () => openUpiSheet([b.id]));
+  $("[data-pdf]", sheet).onclick = async (e) => {
+    const btn = e.currentTarget, label = btn.textContent;
+    btn.disabled = true; btn.textContent = t("Preparing PDF…");
+    try { await billPdf(r); } catch (err) { console.error(err); toast(t("RD Dairy server error. Please try again shortly."), true); }
+    btn.disabled = false; btn.textContent = label;
+  };
 }
 
+/* ---------- bill as PDF (English, for sharing and records) ---------- */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const sc = document.createElement("script");
+    sc.src = src; sc.onload = resolve; sc.onerror = reject;
+    document.head.appendChild(sc);
+  });
+}
+async function billPdf(r) {
+  if (!window.jspdf) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const b = r.bill, h = S.home || {};
+  const rs = (n) => "Rs. " + Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const en = (s, o) => d0(s).toLocaleDateString("en-IN", { timeZone: "UTC", ...o });
+  const period = b.period_start ? `${en(b.period_start, { day: "numeric", month: "short", year: "numeric" })} to ${en(b.period_end || b.period_start, { day: "numeric", month: "short", year: "numeric" })}` : "";
+  const W = 210, L = 18, R = W - 18;
+  let y = 0;
+
+  doc.setFillColor(30, 43, 74); doc.rect(0, 0, W, 34, "F");
+  doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(22);
+  doc.text("RD", L, 20); doc.setTextColor(245, 168, 0); doc.text("Dairy", L + 13, 20);
+  doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+  doc.text("RD Dairy & GoA2 Dairy, Chennai", L, 27);
+  doc.text(`Phone / WhatsApp: +91 ${String(h.support_phone || "9080502101").slice(-10)}`, R, 20, { align: "right" });
+  doc.text("rddairy.com", R, 27, { align: "right" });
+
+  y = 48;
+  doc.setTextColor(30, 43, 74); doc.setFont("helvetica", "bold"); doc.setFontSize(16);
+  doc.text("Monthly bill", L, y);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  if (b.number) doc.text(`Bill no: ${b.number}`, R, y - 5, { align: "right" });
+  if (b.bill_date) doc.text(`Date: ${en(b.bill_date, { day: "numeric", month: "short", year: "numeric" })}`, R, y, { align: "right" });
+  y += 8; doc.setTextColor(91, 103, 128); doc.text(`Period: ${period}`, L, y);
+
+  y += 12; doc.setTextColor(30, 43, 74); doc.setFont("helvetica", "bold"); doc.text("Billed to", L, y);
+  doc.setFont("helvetica", "normal");
+  const addr = doc.splitTextToSize([h.name, h.address, h.area].filter(Boolean).join(", "), 120);
+  doc.text(addr, L, y + 6);
+  doc.text(`+91 ${h.phone || ""}`, L, y + 6 + addr.length * 5);
+  y += 14 + addr.length * 5;
+
+  // items table
+  doc.setFillColor(237, 241, 246); doc.rect(L, y, R - L, 9, "F");
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+  doc.text("Item", L + 3, y + 6); doc.text("Qty", 120, y + 6, { align: "right" }); doc.text("Rate", 150, y + 6, { align: "right" }); doc.text("Amount", R - 3, y + 6, { align: "right" });
+  y += 9; doc.setFont("helvetica", "normal");
+  const rows = r.items.length ? r.items : [
+    b.milk_amount ? { description: "Milk", quantity: b.milk_qty, rate: 0, amount: b.milk_amount } : null,
+    b.other_items_amount ? { description: "Other products", amount: b.other_items_amount } : null,
+    b.delivery_charge ? { description: "Delivery charge", amount: b.delivery_charge } : null,
+    b.discount ? { description: "Discount", amount: -b.discount } : null,
+  ].filter(Boolean);
+  for (const it of rows) {
+    const d = doc.splitTextToSize(String(it.description || it.type || ""), 90);
+    const rh = Math.max(8, d.length * 5 + 3);
+    doc.text(d, L + 3, y + 6);
+    if (it.quantity) doc.text(String(+Number(it.quantity).toFixed(2)), 120, y + 6, { align: "right" });
+    if (it.rate) doc.text(rs(it.rate), 150, y + 6, { align: "right" });
+    doc.text(rs(it.amount), R - 3, y + 6, { align: "right" });
+    y += rh; doc.setDrawColor(217, 224, 234); doc.line(L, y, R, y);
+    if (y > 250) { doc.addPage(); y = 20; }
+  }
+  y += 8; doc.setFont("helvetica", "bold"); doc.setFontSize(12);
+  doc.text("Total", 150, y, { align: "right" }); doc.text(rs(b.total), R - 3, y, { align: "right" });
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  for (const p of r.payments) {
+    y += 7;
+    doc.text(`Paid ${p.date ? en(p.date, { day: "numeric", month: "short" }) : ""} (${modeLabel(p.mode)})`, 150, y, { align: "right" });
+    doc.text("- " + rs(p.amount), R - 3, y, { align: "right" });
+  }
+  y += 9; doc.setFont("helvetica", "bold"); doc.setFontSize(12);
+  doc.setTextColor(b.due > 0 ? 168 : 47, b.due > 0 ? 111 : 143, b.due > 0 ? 0 : 91);
+  doc.text(b.due > 0 ? "Balance due" : "Fully paid", 150, y, { align: "right" }); doc.text(rs(b.due), R - 3, y, { align: "right" });
+
+  doc.setTextColor(91, 103, 128); doc.setFont("helvetica", "normal"); doc.setFontSize(9);
+  doc.text("Thank you for choosing RD Dairy. Pure A2 milk from native Indian breed cows.", W / 2, 285, { align: "center" });
+
+  const name = `RD-Dairy-bill-${(b.period_start || "").slice(0, 7) || b.number || "statement"}.pdf`;
+  const P = window.Capacitor?.Plugins;
+  if (P?.Filesystem && P?.Share) {
+    const data = doc.output("datauristring").split(",")[1];
+    const saved = await P.Filesystem.writeFile({ path: name, data, directory: "CACHE" });
+    await P.Share.share({ title: name, url: saved.uri });
+  } else {
+    doc.save(name);
+  }
+}
+
+/* ---------- pay a bill by UPI, then share proof ---------- */
+async function openUpiSheet(invoiceIds) {
+  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
+  sheet.classList.add("tall");
+  const r = await call("app-api", { action: "upi_start", invoice_ids: invoiceIds });
+  if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
+  const st = { proof: "" };
+
+  sheet.innerHTML = `<div class="grip"></div>
+    <h3>${esc(t("Pay {amt}", { amt: inr(r.amount) }))}</h3>
+    <p class="sub">${esc(t("To {name}. The amount and bill number fill in on their own.", { name: r.upi_name }))}</p>
+    <a class="btn btn-main btn-block" href="${esc(r.upi_link)}">${esc(t("Pay with GPay, PhonePe or Paytm"))}</a>
+    <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
+
+    <h4>${esc(t("After paying"))}</h4>
+    <p class="sub" style="margin-bottom:12px">${esc(t("Share the UPI reference number or a screenshot of the payment."))}</p>
+    <label for="utr" style="display:block;font-weight:600;margin-bottom:6px">${esc(t("UPI reference number (12 digits)"))}</label>
+    <div class="utr-row"><input id="utr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" /><button data-paste>${esc(t("Paste"))}</button></div>
+    <div class="or">${esc(t("or"))}</div>
+    <div data-proofwrap></div>
+    <div class="stack">
+      <button class="btn btn-dark btn-block" data-send disabled>${esc(t("Send payment details"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
+    </div>`;
+
+  const utr = $("#utr", sheet), send = $("[data-send]", sheet);
+  const digits = () => utr.value.replace(/\D/g, "");
+  const refresh = () => { send.disabled = !(digits().length === 12 || st.proof); };
+  utr.addEventListener("input", () => { utr.value = utr.value.replace(/[^\d ]/g, ""); refresh(); });
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-copy]", sheet).onclick = () => copyText(r.upi_id);
+  $("[data-paste]", sheet).onclick = () => pasteUtrInto(utr, refresh);
+  proofBlock(sheet, st, refresh);
+
+  send.onclick = async () => {
+    if (utr.value.trim() && digits().length !== 12) return toast(t("The UPI reference number has 12 digits"), true);
+    send.disabled = true; send.textContent = t("Sending…");
+    const res = await call("app-api", {
+      action: "payment_claim", invoice_ids: r.invoice_ids,
+      utr: digits().length === 12 ? digits() : "", image_base64: st.proof || undefined,
+    });
+    if (!res.ok) { send.textContent = t("Send payment details"); refresh(); return toast(res.message, true); }
+    closeSheet();
+    toast(t("Payment details sent. RD Dairy will confirm shortly."));
+    if (S.tab === "bills") renderBills();
+  };
+}
+
+/* =========================================================
+   ACCOUNT
+   ========================================================= */
+async function renderAccount() {
+  const v = $("#view");
+  if (!S.home) { loadingView(); if (!(await loadHome())) return; }
+  const h = S.home;
+  if (S.tab !== "account") return;
+
+  const kv = (k, val) => `<div class="kv"><span>${esc(t(k))}</span><b>${esc(val)}</b></div>`;
+  const details = h.is_subscriber
+    ? kv("Name", h.name) + kv("Mobile", "+91 " + h.phone) + kv("Address", h.address) + kv("Area", h.area) + kv("Milk", h.milk_type) +
+      kv("Usual quantity", t("{qty} a day", { qty: fmtQty(h.default_qty) })) + kv("Rate", t("{amt} per litre", { amt: inr(h.rate) })) +
+      (h.delivery_charge ? kv("Delivery charge", t("{amt} a month", { amt: inr(h.delivery_charge) })) : "")
+    : kv("Name", h.name) + kv("Mobile", "+91 " + h.phone);
+  const sp = String(h.support_phone || "").replace(/\D/g, "").slice(-10);
+  const pq = h.pending_qty_change;
+
+  v.innerHTML = `
+    <div class="sec-head"><h2>${esc(t("Your details"))}</h2><button id="editp">${esc(t("Edit"))}</button></div>
+    <div class="card">${details}</div>
+
+    ${h.is_subscriber ? `
+      <h2>${esc(t("Change your usual quantity"))}</h2>
+      <div class="card pad">
+        ${pq ? `<div class="pending">${esc(t("Your request for {qty} a day from {date} is with RD Dairy.", { qty: fmtQty(pq.new_qty), date: shortDate(pq.effective_from) }))}</div>` : ""}
+        <div class="stepper">
+          <button data-minus aria-label="${esc(t("Less milk"))}">−</button>
+          <output aria-live="polite">${esc(fmtQty(h.default_qty))}</output>
+          <button data-plus aria-label="${esc(t("More milk"))}">+</button>
+        </div>
+        <div class="field"><label for="qf">${esc(t("Starting from"))}</label><input id="qf" type="date" min="${h.first_editable_date}" value="${h.first_editable_date}" /></div>
+        <button class="btn btn-dark btn-block" style="margin-top:14px" data-req>${esc(t("Send request"))}</button>
+        <p class="muted" style="margin:10px 0 0;font-size:14px">${esc(t("RD Dairy confirms the new quantity before it starts."))}</p>
+      </div>` : ""}
+
+    <h2>${esc(t("Language"))}</h2>
+    <div class="card pad" id="acc-lang"></div>
+
+    <h2>${esc(t("Delivery problems"))}</h2>
+    <div class="card pad">
+      <button class="btn btn-line btn-block" id="acc-issue">${esc(t("Report a delivery problem"))}</button>
+      <div id="acc-issues"></div>
+    </div>
+
+    <h2>${esc(t("Help and support"))}</h2>
+    <div class="card pad">
+      <div class="help">
+        <a class="wa" href="https://wa.me/91${esc(sp)}?text=${encodeURIComponent("Hi RD Dairy, I need help with my account (" + h.phone + ")")}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .2-3.3-.7c-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+          ${esc(t("WhatsApp RD Dairy"))}</a>
+        <a href="tel:+91${esc(sp)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>${esc(t("Call"))}</a>
+        ${h.support_email ? `<a href="mailto:${esc(h.support_email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>${esc(t("Email"))}</a>` : ""}
+      </div>
+      <div class="links">
+        <a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${esc(t("Privacy policy"))}</a>
+        <a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a>
+      </div>
+    </div>
+
+    <div style="margin-top:28px">
+      <button class="btn btn-line btn-block" id="logout">${esc(t("Log out"))}</button>
+      <button class="danger-link" id="delacc">${esc(t("Delete my account"))}</button>
+    </div>`;
+
+  $("#acc-lang").appendChild(langPicker(() => { shell(); go("account"); }));
+  $("#editp").onclick = openProfileSheet;
+  $("#acc-issue").onclick = openIssueSheet;
+  $("#delacc").onclick = openDeleteSheet;
+  loadMyIssues();
+
+  if (h.is_subscriber) {
+    let q = Number(h.default_qty);
+    const out = $("output", v);
+    $("[data-minus]", v).onclick = () => { q = Math.max(STEP, +(q - STEP).toFixed(2)); out.textContent = fmtQty(q); };
+    $("[data-plus]", v).onclick = () => { q = Math.min(20, +(q + STEP).toFixed(2)); out.textContent = fmtQty(q); };
+    $("[data-req]", v).onclick = async (e) => {
+      if (q === Number(h.default_qty) && !pq) return toast(t("{qty} is already your usual quantity", { qty: fmtQty(q) }));
+      e.target.disabled = true;
+      const r = await call("app-api", { action: "request_qty_change", new_qty: q, effective_from: $("#qf").value });
+      e.target.disabled = false;
+      if (!r.ok) return toast(r.message, true);
+      toast(t("Request sent to RD Dairy"));
+      S.home = null; await loadHome(); renderAccount();
+    };
+  }
+
+  $("#logout").onclick = async () => {
+    if (!(await confirmBox(t("Log out of RD Dairy on this phone? You will need a WhatsApp code to log in again."), t("Log out")))) return;
+    await call("app-auth", { action: "logout" });
+    await signOutLocal();
+  };
+}
+
+/* ---------- edit profile ---------- */
+function openProfileSheet() {
+  const h = S.home;
+  const sheet = openSheet(`
+    <h3>${esc(t("Edit your details"))}</h3>
+    <div class="field"><label for="pn">${esc(t("Your name"))}</label><input id="pn" class="txt" autocomplete="name" value="${esc(h.name || "")}" /></div>
+    <div class="field"><label for="pa">${esc(t("Delivery address"))}</label><textarea id="pa" autocomplete="street-address">${esc(h.address || "")}</textarea></div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" data-save>${esc(t("Save changes"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
+    </div>`);
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-save]", sheet).onclick = async (e) => {
+    const name = $("#pn", sheet).value.trim(), address = $("#pa", sheet).value.trim();
+    if (name.length < 2) return toast(t("Enter your name"), true);
+    if (address.length < 8) return toast(t("Enter your full delivery address"), true);
+    e.target.disabled = true; e.target.textContent = t("Saving…");
+    const r = await call("app-api", { action: "update_profile", name, address });
+    if (!r.ok) { e.target.disabled = false; e.target.textContent = t("Save changes"); return toast(r.message, true); }
+    closeSheet();
+    toast(t("Your details are updated"));
+    S.home = null; SH.catalog = null; await loadHome(); renderAccount();
+  };
+}
+
+/* ---------- delivery problems ---------- */
+const ISSUE_KINDS = [
+  ["missed", "Milk not delivered"], ["late", "Delivered late"], ["damaged", "Damaged or leaking"],
+  ["wrong_qty", "Wrong quantity"], ["quality", "Quality concern"], ["other", "Something else"],
+];
+
+function openIssueSheet() {
+  const today = todayIST();
+  const st = { kind: "", proof: "" };
+  const sheet = openSheet(`
+    <h3>${esc(t("Report a delivery problem"))}</h3>
+    <div class="field"><label for="idate">${esc(t("Which delivery?"))}</label><input id="idate" type="date" max="${today}" min="${addDays(today, -30)}" value="${today}" /></div>
+    <h4>${esc(t("What went wrong?"))}</h4>
+    <div class="kinds">${ISSUE_KINDS.map(([k, l]) => `<button data-kind="${k}">${esc(t(l))}</button>`).join("")}</div>
+    <div class="field"><label for="inote">${esc(t("Tell us more (optional)"))}</label><textarea id="inote" maxlength="500"></textarea></div>
+    <h4>${esc(t("Add a photo (optional)"))}</h4>
+    <div data-photowrap></div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" data-send>${esc(t("Send report"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
+    </div>`);
+  sheet.classList.add("tall");
+  sheet.querySelectorAll("[data-kind]").forEach((b) => b.onclick = () => {
+    st.kind = b.dataset.kind;
+    sheet.querySelectorAll("[data-kind]").forEach((x) => x.classList.toggle("on", x === b));
+  });
+  const drawPhoto = () => {
+    const w = $("[data-photowrap]", sheet);
+    w.innerHTML = st.proof
+      ? `<div class="proof"><img src="${st.proof}" alt="" /><span>${esc(t("Photo added"))}</span><button data-remove>${esc(t("Remove"))}</button></div>`
+      : `<label class="attach">${esc(t("Add a photo (optional)"))}<input type="file" accept="image/*" data-file /></label>`;
+    $("[data-file]", w)?.addEventListener("change", async (e) => {
+      const f = e.target.files?.[0]; if (!f) return;
+      try { st.proof = await compressImage(f); } catch { return toast(t("That image could not be opened"), true); }
+      drawPhoto();
+    });
+    $("[data-remove]", w)?.addEventListener("click", () => { st.proof = ""; drawPhoto(); });
+  };
+  drawPhoto();
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-send]", sheet).onclick = async (e) => {
+    if (!st.kind) return toast(t("Choose what went wrong"), true);
+    e.target.disabled = true; e.target.textContent = t("Sending…");
+    const r = await call("app-api", {
+      action: "report_issue", date: $("#idate", sheet).value, kind: st.kind,
+      note: $("#inote", sheet).value, image_base64: st.proof || undefined,
+    });
+    if (!r.ok) { e.target.disabled = false; e.target.textContent = t("Send report"); return toast(r.message, true); }
+    closeSheet();
+    toast(t("Thank you. RD Dairy will look into it today."));
+    if (S.tab === "account") loadMyIssues();
+  };
+}
+
+async function loadMyIssues() {
+  const box = $("#acc-issues");
+  if (!box) return;
+  const r = await call("app-api", { action: "my_issues" });
+  if (!r.ok || !r.issues.length || !$("#acc-issues")) return;
+  const label = Object.fromEntries(ISSUE_KINDS);
+  box.innerHTML = `<h4 style="margin-top:16px">${esc(t("Your reports"))}</h4>` + r.issues.map((i) => `
+    <div class="orow">
+      <div class="top"><span>${esc(t(label[i.kind] || i.kind))}</span><span class="pill ${i.status === "open" ? "due-p" : "paid"}">${esc(t(i.status === "open" ? "Open" : "Resolved"))}</span></div>
+      <div class="it">${esc(fmtDay(i.issue_date, { day: "numeric", month: "short" }))}${i.note ? " · " + esc(i.note) : ""}</div>
+      ${i.admin_note ? `<div class="it"><b>RD Dairy:</b> ${esc(i.admin_note)}</div>` : ""}
+    </div>`).join("");
+}
+
+/* ---------- delete account ---------- */
 function openDeleteSheet() {
   const reasons = ["Moving out of the delivery area", "Stopping milk delivery", "I have another account", "Something else"];
   const sheet = openSheet(`
-    <h3>Delete your account?</h3>
-    <p class="sub">Your login stops working on every phone straight away. RD Dairy settles any pending bills with you, then removes your details within 30 days. Bills that tax law requires us to keep are retained.</p>
-    <div class="reasons">${reasons.map((r, i) => `<label><input type="radio" name="why" value="${esc(r)}" ${i === 0 ? "checked" : ""}/>${esc(r)}</label>`).join("")}</div>
+    <h3>${esc(t("Delete your account?"))}</h3>
+    <p class="sub">${esc(t("Your login stops working on every phone straight away. RD Dairy settles any pending bills with you, then removes your details within 30 days. Bills that tax law requires us to keep are retained."))}</p>
+    <div class="reasons">${reasons.map((r, i) => `<label><input type="radio" name="why" value="${esc(r)}" ${i === 0 ? "checked" : ""}/>${esc(t(r))}</label>`).join("")}</div>
     <div class="stack">
-      <button class="btn btn-block" style="background:var(--danger);color:#fff" data-del>Delete my account</button>
-      <button class="btn btn-quiet btn-block" data-close>Keep my account</button>
+      <button class="btn btn-block" style="background:var(--danger);color:#fff" data-del>${esc(t("Delete my account"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Keep my account"))}</button>
     </div>`);
   $("[data-close]", sheet).onclick = closeSheet;
   $("[data-del]", sheet).onclick = async (e) => {
-    e.target.disabled = true; e.target.textContent = "Deleting…";
+    e.target.disabled = true; e.target.textContent = t("Deleting…");
     const reason = $("input[name=why]:checked", sheet)?.value || "";
     const r = await call("app-api", { action: "delete_account", reason });
-    if (!r.ok) { e.target.disabled = false; e.target.textContent = "Delete my account"; return toast(r.message, true); }
+    if (!r.ok) { e.target.disabled = false; e.target.textContent = t("Delete my account"); return toast(r.message, true); }
     closeSheet();
     await signOutLocal();
-    toast("Your account deletion request is with RD Dairy. Thank you for being with us.");
+    toast(t("Your account deletion request is with RD Dairy. Thank you for being with us."));
   };
 }
 
@@ -1347,6 +2286,9 @@ async function startApp() {
 }
 
 (async function init() {
+  const saved = await store.get("rd_lang");
+  const deviceLang = (navigator.language || "en").slice(0, 2);
+  await setLang(saved || (["ta", "hi"].includes(deviceLang) ? deviceLang : "en"));
   S.token = await store.get("rd_token");
   if (S.token) startApp(); else renderLogin("phone");
 })();
