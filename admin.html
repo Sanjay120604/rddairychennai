@@ -163,6 +163,7 @@
         <div class="lbox" onclick="goSection('reports')"><div class="lbox-ico">📊</div><div class="lbox-label">Reports</div></div>
         <div class="lbox" onclick="window.location.href='inbox.html'"><div class="lbox-ico">💬</div><div class="lbox-label">Messages</div></div>
         <div class="lbox" onclick="goSection('apppay')"><div class="lbox-ico">📲</div><div class="lbox-label">App Payments</div><span class="lbox-count hidden" id="apCount"></span></div>
+        <div class="lbox" onclick="goSection('appreq')"><div class="lbox-ico">🗓️</div><div class="lbox-label">App Requests</div><span class="lbox-count hidden" id="arCount"></span></div>
       </div>
       <div class="ap-alert hidden" id="apAlert" onclick="goSection('apppay')"></div>
     </div>
@@ -483,6 +484,32 @@
       <div id="apArea" class="ap-list"><div class="empty">Loading…</div></div>
     </div>
 
+    <!-- ============ APP REQUESTS VIEW ============ -->
+    <div id="appReqView" class="hidden">
+      <div class="toolbar"><button class="btn refresh" onclick="loadAppRequests()">↻ Refresh</button></div>
+
+      <h3 class="dsub">Changes from the app</h3>
+      <p class="muted" style="margin:0 0 10px">Pauses and quantity changes customers made in the app, from today onwards. These are already in each customer's daily milk log.</p>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="arChanges"><div class="empty">Loading…</div></div></div>
+
+      <h3 class="dsub">Usual quantity change requests</h3>
+      <p class="muted" style="margin:0 0 10px">Update the customer's quantity in Billing from the date shown, then tap Done. The customer sees the request as handled.</p>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="arQty"><div class="empty">Loading…</div></div></div>
+
+      <h3 class="dsub">App settings</h3>
+      <div class="dcard">
+        <div class="dform" style="grid-template-columns:1fr 1fr 1.4fr 1fr auto">
+          <div><label>Change cutoff (24h)</label><input id="arCutoff" placeholder="21:00" /></div>
+          <div><label>Max extra litres</label><input id="arMaxExtra" type="number" step="0.5" min="0" /></div>
+          <div><label>UPI ID for app payments</label><input id="arUpiId" /></div>
+          <div><label>UPI name</label><input id="arUpiName" /></div>
+          <div class="dform-actions"><button class="btn" onclick="saveAppSettingsForm()">Save</button></div>
+        </div>
+        <p class="muted" style="margin-top:10px">Customers can change tomorrow's milk until the cutoff time the night before.</p>
+        <div class="err-msg hidden" id="arErr"></div>
+      </div>
+    </div>
+
     <!-- ============ REPORTS VIEW ============ -->
     <div id="reportsView" class="hidden">
 
@@ -692,7 +719,8 @@ function switchView(v){
   var isExpenses = (v==="expenses");
   var isReports = (v==="reports");
   var isAppPay = (v==="apppay");
-  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay;
+  var isAppReq = (v==="appreq");
+  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
@@ -700,7 +728,9 @@ function switchView(v){
   $("expensesView").classList.toggle("hidden", !isExpenses);
   $("reportsView").classList.toggle("hidden", !isReports);
   $("appPayView").classList.toggle("hidden", !isAppPay);
+  $("appReqView").classList.toggle("hidden", !isAppReq);
   if(isAppPay){ $("cards").innerHTML=""; loadAppPayments(); return; }
+  if(isAppReq){ $("cards").innerHTML=""; loadAppRequests(); return; }
   if(isDelivery){
     if(!driversLoaded){ loadDrivers(); driversLoaded=true; }
     renderDeliveryCards();
@@ -2229,7 +2259,7 @@ function waButton(mobile, name, id, status){
 }
 
 function renderCards(){
-  if(view==="apppay"){ $("cards").innerHTML=""; return; }
+  if(view==="apppay"||view==="appreq"){ $("cards").innerHTML=""; return; }
   var o=data.orders, s=data.subscriptions;
   var revenue=o.filter(x=>/paid|received|confirmed/i.test((x.Status||""))).reduce((a,x)=>a+(Number(x.Amount)||0),0);
   var pending=o.filter(x=>!/paid|received|confirmed/i.test((x.Status||""))).length;
@@ -2447,7 +2477,8 @@ async function refreshAppPayCount(){
   try{
     var r = await aApi({action:"pendingCount"});
     if(!r.ok) return;
-    var n = r.count||0;
+    var n = r.count||0, rq = r.requests||0;
+    $("arCount").textContent = rq; $("arCount").classList.toggle("hidden", rq===0);
     var badge=$("apCount"), alertBox=$("apAlert");
     badge.textContent = n; badge.classList.toggle("hidden", n===0);
     alertBox.classList.toggle("hidden", n===0);
@@ -2533,6 +2564,77 @@ async function apReject(id, btn){
     if(!r.ok){ alert(r.message||"Could not reject"); btn.disabled=false; return; }
     loadAppPayments();
   }catch(e){ alert(e.message); btn.disabled=false; }
+}
+
+/* ============ APP REQUESTS ============ */
+function arDay(d){ return new Date(d+"T00:00:00Z").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"}); }
+function arQty(q){ q=Number(q||0); return q<1 && q>0 ? Math.round(q*1000)+" ml" : (+q.toFixed(2))+" L"; }
+
+async function loadAppRequests(){
+  $("arChanges").innerHTML='<div class="empty">Loading…</div>';
+  $("arQty").innerHTML='<div class="empty">Loading…</div>';
+  try{
+    var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"})]);
+    renderAppChanges(res[0].ok?res[0].changes:[], res[0].ok?null:res[0].message);
+    renderQtyRequests(res[1].ok?res[1].requests:[], res[1].ok?null:res[1].message);
+    if(res[2].ok){
+      var st=res[2].settings||{};
+      $("arCutoff").value=st.change_cutoff_time||"21:00";
+      $("arMaxExtra").value=st.max_extra_qty||"5";
+      $("arUpiId").value=(st.upi_id&&st.upi_id!=="yourbusiness@bank")?st.upi_id:"";
+      $("arUpiName").value=st.upi_name||"RD Dairy";
+    }
+    refreshAppPayCount();
+  }catch(e){ $("arChanges").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+
+function renderAppChanges(list, err){
+  if(err){ $("arChanges").innerHTML='<div class="empty">'+esc(err)+'</div>'; return; }
+  if(!list.length){ $("arChanges").innerHTML='<div class="empty">No upcoming changes from the app.</div>'; return; }
+  var html='<table><thead><tr><th>Date</th><th>Customer</th><th>Area</th><th>Change</th><th>Changed on</th></tr></thead><tbody>';
+  list.forEach(function(c){
+    var change = c.paused ? '<span class="pill cancel">Paused</span>'
+      : '<b>'+arQty(c.qty)+'</b> <span class="muted">(usual '+arQty(c.usual)+')</span> '+(c.qty>c.usual?'<span class="pill pending">Extra</span>':'<span class="pill submitted">Less</span>');
+    html+='<tr><td><b>'+esc(arDay(c.date))+'</b></td><td>'+esc(c.name)+'<br><span class="muted">'+esc(c.phone)+'</span></td><td>'+esc(c.area)+'</td><td>'+change+'</td><td class="muted">'+esc(fmtDate(c.changed_at))+'</td></tr>';
+  });
+  $("arChanges").innerHTML=html+'</tbody></table>';
+}
+
+function renderQtyRequests(list, err){
+  if(err){ $("arQty").innerHTML='<div class="empty">'+esc(err)+'</div>'; return; }
+  if(!list.length){ $("arQty").innerHTML='<div class="empty">No quantity change requests yet.</div>'; return; }
+  var html='<table><thead><tr><th>Requested</th><th>Customer</th><th>Change</th><th>From</th><th>Status</th><th></th></tr></thead><tbody>';
+  list.forEach(function(r){
+    var st = r.status==="pending"?'<span class="pill pending">To do</span>':r.status==="done"?'<span class="pill paid">Done</span>':'<span class="pill cancel">Declined</span>';
+    var act = r.status==="pending"
+      ? '<button class="btn sm" onclick="arQtyUpdate(\''+r.id+'\',\'done\',this)">Done</button> <button class="btn sm danger" onclick="arQtyUpdate(\''+r.id+'\',\'declined\',this)">Decline</button>'
+      : (r.admin_note?'<span class="muted">'+esc(r.admin_note)+'</span>':'');
+    html+='<tr><td class="muted">'+esc(fmtDate(r.created_at))+'</td><td>'+esc(r.name)+'<br><span class="muted">'+esc(r.phone)+(r.area?' · '+esc(r.area):'')+'</span></td>'+
+      '<td>'+arQty(r.usual)+' → <b>'+arQty(r.new_qty)+'</b> a day</td><td><b>'+esc(arDay(r.effective_from))+'</b></td><td>'+st+'</td><td style="white-space:nowrap">'+act+'</td></tr>';
+  });
+  $("arQty").innerHTML=html+'</tbody></table>';
+}
+
+async function arQtyUpdate(id, status, btn){
+  var note = status==="declined" ? prompt("Reason (optional):","") : "";
+  if(note===null) return;
+  btn.disabled=true;
+  try{
+    var r=await aApi({action:"qtyRequestUpdate", id:id, status:status, note:note});
+    if(!r.ok){ alert(r.message||"Could not update"); btn.disabled=false; return; }
+    loadAppRequests();
+  }catch(e){ alert(e.message); btn.disabled=false; }
+}
+
+async function saveAppSettingsForm(){
+  var err=$("arErr"); err.classList.add("hidden");
+  var settings={ change_cutoff_time:$("arCutoff").value.trim(), max_extra_qty:$("arMaxExtra").value.trim(), upi_name:$("arUpiName").value.trim() };
+  if($("arUpiId").value.trim()) settings.upi_id=$("arUpiId").value.trim();
+  try{
+    var r=await aApi({action:"saveAppSettings", settings:settings});
+    if(!r.ok){ err.textContent=r.message||"Could not save"; err.classList.remove("hidden"); return; }
+    alert("App settings saved");
+  }catch(e){ err.textContent=e.message; err.classList.remove("hidden"); }
 }
 
 /* auto-login if key stored this session */
