@@ -2354,7 +2354,7 @@ function render(){
         '<td>'+mapCell(r.MapLink)+'</td>'+
         '<td class="muted">'+(r.Items||"")+'</td>'+
         '<td><b>Rs.'+(r.Amount||0)+'</b></td>'+
-        '<td class="muted">'+(r.PaymentRef||"—")+'</td>'+
+        '<td class="muted">'+payRefCell(r.PaymentRef)+'</td>'+
         '<td>'+statusPill(r.Status)+'<br>'+statusSelect("order",r.OrderId,r.Status,opts)+'</td>'+
         '<td>'+waButton(r.Mobile,r.Name,r.OrderId,r.Status)+'</td>'+
       '</tr>';
@@ -2379,6 +2379,22 @@ function render(){
   }
   html+='</tbody></table>';
   $("tableArea").innerHTML=html;
+}
+
+/* Pay Ref: shows the UTR and a button for website payment screenshots */
+function payRefCell(ref){
+  if(!ref) return "—";
+  var txt=String(ref), m=txt.match(/Screenshot:\s*(orders\/[^\s|]+)/);
+  if(!m) return esc(txt);
+  var rest=txt.replace(m[0],"").replace(/\s*\|\s*$/,"").replace(/^\s*\|\s*/,"").trim();
+  return (rest?esc(rest)+'<br>':'')+'<button class="btn sm ghost" style="margin-top:4px" onclick="viewOrderProof(\''+esc(m[1])+'\')">View screenshot</button>';
+}
+async function viewOrderProof(path){
+  var w=window.open("","_blank");
+  try{
+    var r=await aApi({action:"proofUrl",path:path});
+    if(r.ok && w){ w.location.href=r.url; } else { if(w) w.close(); alert(r.message||"Screenshot unavailable"); }
+  }catch(e){ if(w) w.close(); alert(e.message); }
 }
 
 function statusSelect(type,id,current,opts){
