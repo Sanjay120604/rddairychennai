@@ -329,8 +329,8 @@
 /* =========================================================
    SETTINGS: paste your Supabase Project URL here (one time)
    ========================================================= */
-const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";
-const SUPABASE_KEY = "PASTE-YOUR-PUBLISHABLE-OR-ANON-KEY";
+const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
 const API = SUPABASE_URL.trim().replace(/\/(rest|functions)\/v1.*$/, "").replace(/\/+$/, "") + "/functions/v1";
 const STEP = 0.5;
@@ -397,16 +397,24 @@ const cutoffLabel = (t) => {
 };
 
 async function call(fn, body) {
-  let res, data;
+  let res, data, text = "";
   try {
     res = await fetch(`${API}/${fn}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", apikey: SUPABASE_KEY },
       body: JSON.stringify({ ...body, token: S.token || undefined }),
     });
-    data = await res.json();
   } catch {
     return { ok: false, code: "network", message: "Check your internet connection and try again." };
+  }
+  try { text = await res.text(); data = JSON.parse(text); }
+  catch {
+    console.error(fn, res.status, text);
+    return { ok: false, code: "server", message: `RD Dairy server error (${res.status}). Please try again shortly.` };
+  }
+  if (!data || typeof data !== "object") return { ok: false, code: "server", message: "RD Dairy server error. Please try again shortly." };
+  if (data.ok === undefined && (data.message || data.msg || data.error)) {
+    return { ok: false, code: "server", message: `${res.status}: ${data.message || data.msg || data.error}` };
   }
   if (res.status === 401 && fn === "app-api") { await signOutLocal(); return { ok: false, code: "logged_out", message: "Please log in again." }; }
   return data;
