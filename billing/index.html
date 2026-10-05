@@ -276,6 +276,20 @@
           <button class="btn primary" onclick="saveProductEntry()" style="align-self:flex-end;">Add Entry</button>
         </div>
       </div>
+      <div class="card" id="appEntriesCard" style="margin-bottom:20px;border-left:4px solid var(--amber6, #F5A800);">
+        <div class="row" style="justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <h3 style="margin:0;font-size:16px;font-weight:800;color:var(--navy, #1B2A5A);">📱 Added from the app <span id="appEntriesCount" class="badge" style="margin-left:6px;"></span></h3>
+            <div class="muted" style="font-size:12.5px;margin-top:2px;">Products customers added to their monthly bill in the RD Dairy app. They are included automatically when you generate that month's bill.</div>
+          </div>
+          <button class="btn ghost sm" onclick="loadAppEntries()">↻ Refresh</button>
+        </div>
+        <table>
+          <thead><tr><th>Deliver on</th><th>Customer</th><th>Product</th><th>Qty</th><th>Rate</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="appEntriesBody"></tbody>
+        </table>
+        <div class="empty" id="appEntriesEmpty" style="display:none;">No app items waiting for a bill.</div>
+      </div>
       <div class="card">
         <div class="row" style="justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
           <div class="row" style="gap:8px;">
@@ -665,6 +679,43 @@ async function initApp(){
 function switchView(name){
   document.querySelectorAll('.tab-btn').forEach(b=> b.classList.toggle('active', b.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=> v.classList.toggle('active', v.id === 'view-'+name));
+  if(name==='products') loadAppEntries();
+}
+
+/* ============================================================
+   APP ITEMS ON THE MONTHLY BILL (from the RD Dairy app)
+   ============================================================ */
+const APP_ADMIN_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/functions/v1/app-admin";
+async function appAdmin(payload){
+  const res = await fetch(APP_ADMIN_URL, { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization':'Bearer '+SUPABASE_ANON_KEY }, body: JSON.stringify({ ...payload, adminKey: ADMIN_PASSWORD }) });
+  return res.json();
+}
+async function loadAppEntries(){
+  const body=document.getElementById('appEntriesBody'), empty=document.getElementById('appEntriesEmpty'), count=document.getElementById('appEntriesCount');
+  if(!body) return;
+  try{
+    const r = await appAdmin({ action:'appBillEntries' });
+    if(!r.ok){ body.innerHTML=''; empty.style.display='block'; empty.textContent=r.message||'Could not load app items'; return; }
+    count.textContent = r.entries.length || '';
+    if(!r.entries.length){ body.innerHTML=''; empty.style.display='block'; empty.textContent='No app items waiting for a bill.'; return; }
+    empty.style.display='none';
+    body.innerHTML = r.entries.map(e=>`<tr>
+      <td>${escHtml(e.entry_date)}</td>
+      <td>${escHtml(e.customer)}<div class="muted" style="font-size:12px;">${escHtml(e.phone)}</div></td>
+      <td>${escHtml(e.product)}</td>
+      <td>${Number(e.quantity)} ${escHtml(e.unit||'')}</td>
+      <td>${money(e.rate)}</td>
+      <td><strong>${money(e.amount)}</strong></td>
+      <td><button class="btn ghost sm" data-id="${e.id}" onclick="removeAppEntry(this)">Remove</button></td>
+    </tr>`).join('');
+  }catch(err){ body.innerHTML=''; empty.style.display='block'; empty.textContent=err.message; }
+}
+async function removeAppEntry(btn){
+  if(btn.dataset.armed!=='1'){ btn.dataset.armed='1'; btn.textContent='Tap again to remove'; btn.classList.add('danger'); setTimeout(()=>{ if(btn.isConnected){ btn.dataset.armed=''; btn.textContent='Remove'; btn.classList.remove('danger'); } },4000); return; }
+  btn.disabled=true;
+  const r = await appAdmin({ action:'removeAppBillEntry', id: btn.dataset.id });
+  if(!r.ok){ showToast(r.message||'Could not remove'); btn.disabled=false; return; }
+  showToast('Removed'); loadAppEntries(); loadProductEntryHistory();
 }
 
 /* ============================================================
@@ -785,10 +836,7 @@ function renderCustomerTable(){
       <td>${money(c.default_milk_rate)}</td>
       <td>${money(c.opening_balance)}</td>
       <td>${money(c.delivery_charge != null ? c.delivery_charge : 150)}</td>
-      <td>
-        <button class="btn ghost sm" onclick="editCustomer('${c.id}')">Edit</button>
-        <button class="btn ghost sm" onclick="deleteCustomer('${c.id}')">Delete</button>
-      </td>
+      <td><button class="btn ghost sm" onclick="editCustomer('${c.id}')">Edit</button></td>
     </tr>
   `).join('');
 }
@@ -1008,20 +1056,6 @@ async function saveCustomer(){
   showToast('Customer saved');
 }
 
-async function deleteCustomer(id){
-  const c = CUSTOMERS.find(x=>x.id===id) || ALL_CUSTOMERS.find(x=>x.id===id);
-  if(!c) return;
-  const ok = await showConfirm(
-    `Remove ${c.name} from the customer list? Their past bills and payment history stay intact and stay visible in Billing History — they just won't show up here or in customer pickers anymore.`,
-    'Delete'
-  );
-  if(!ok) return;
-  await api('/customers/'+id, { method:'DELETE' });
-  showToast('Customer removed');
-  await loadCustomers();
-  await loadAllCustomers();
-}
-
 function closeModal(id){ document.getElementById(id).classList.remove('active'); }
 
 let _confirmResolve = null;
@@ -1145,7 +1179,7 @@ async function loadProductEntryHistory(){
     <tr>
       <td>${e.entry_date}</td>
       <td>${e.billing_customers?.name || '—'}</td>
-      <td>${e.products?.name||'—'}</td>
+      <td>${e.products?.name||'—'}${e.source==='app' ? ' <span class="badge" title="Added from the app">📱 App</span>' : ''}</td>
       <td>${e.quantity}</td>
       <td>${money(e.rate)}</td>
       <td>${money(e.amount)}</td>
