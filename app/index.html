@@ -489,6 +489,63 @@
   html[data-theme="dark"] .day.sel .dd { color: #fff; }
   html[data-theme="dark"] .msg.bot { border-color: #3A2F12; }
 
+
+  /* ---------- opening animation ---------- */
+  #splash { position: fixed; inset: 0; z-index: 9999; background: #0C1226; transition: opacity .4s ease, transform .4s ease; }
+  #splash svg { width: 100%; height: 100%; display: block; }
+  #splash.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+  .sp-hint { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 44px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; transition: opacity .6s; }
+  .sp-hint.show { opacity: 1; }
+  .sp-hint span { color: #fff; font-size: 13px; padding: 6px 14px; border-radius: 999px; background: rgba(14,21,41,.5); white-space: nowrap; font-family: var(--body); }
+  .sp-bar { position: relative; width: 110px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+  .sp-bar i { position: absolute; top: 0; bottom: 0; width: 40%; background: #F5A800; border-radius: 2px; animation: spslide 1.4s ease-in-out infinite; }
+  @keyframes spslide { from { left: -40%; } to { left: 100%; } }
+
+
+  /* ---------- loading animations ---------- */
+  .rdload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; min-height: 46vh; padding: 30px 16px; color: #1E2B4A; opacity: 0; animation: ld-in .3s .45s forwards; }
+  html[data-theme="dark"] .rdload { color: #E8ECF4; }
+  .rdload-art svg { overflow: visible; display: block; }
+  .rdload-line { font-size: 15px; font-weight: 600; color: var(--soft); text-align: center; max-width: 30ch; min-height: 22px; transition: opacity .25s; }
+  .sheet .rdload { min-height: 220px; }
+  @keyframes ld-in { to { opacity: 1; } }
+  @keyframes ld-hop{0%,100%{transform:translateY(0) scale(1,1)}10%{transform:translateY(0) scale(1.12,.86)}45%{transform:translateY(-34px) scale(.94,1.08)}55%{transform:translateY(-36px) scale(1,1)}90%{transform:translateY(0) scale(1.1,.9)}}
+  @keyframes ld-shad{0%,100%{transform:scaleX(1);opacity:.25}50%{transform:scaleX(.55);opacity:.12}}
+  @keyframes ld-lvl{0%,100%{transform:translateY(46px)}50%{transform:translateY(6px)}}
+  @keyframes ld-wave{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+  @keyframes ld-chew{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  @keyframes ld-blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.1)}}
+  @keyframes ld-bell{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+  @keyframes ld-tilt{0%,100%{transform:rotate(-55deg)}50%{transform:rotate(-40deg)}}
+  @keyframes ld-str{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.82)}}
+  @keyframes ld-jig{0%,100%{transform:scale(1,1)}25%{transform:scale(1.08,.92)}50%{transform:scale(.95,1.05)}75%{transform:scale(1.03,.97)}}
+  @keyframes ld-knife{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-10px,6px) rotate(-14deg)}}
+  @keyframes ld-ride{0%{transform:translateX(-50px)}100%{transform:translateX(50px)}}
+  @keyframes ld-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes ld-road{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
+  @keyframes ld-boil{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes ld-rise{0%{transform:translateY(0) scaleY(.6);opacity:0}30%{opacity:.9}100%{transform:translateY(-28px) scaleY(1.2);opacity:0}}
+  @keyframes ld-flame{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.25)}}
+  @keyframes ld-ring{0%,40%,100%{transform:rotate(0)}5%{transform:rotate(-12deg)}10%{transform:rotate(12deg)}15%{transform:rotate(-8deg)}20%{transform:rotate(8deg)}25%{transform:rotate(0)}}
+  @keyframes ld-ding{0%,100%{opacity:0;transform:scale(.6)}8%,25%{opacity:1;transform:scale(1)}35%{opacity:0}}
+  @keyframes ld-peek{0%,30%,100%{transform:translateY(22px)}45%,80%{transform:translateY(0)}}
+  @keyframes ld-sun{0%,100%{transform:translateY(18px)}50%{transform:translateY(0)}}
+  @keyframes ld-crow{0%,100%{transform:rotate(0)}10%{transform:rotate(-18deg)}20%{transform:rotate(0)}}
+  @keyframes ld-cup{0%,100%{transform:rotate(0)}50%{transform:rotate(-8deg)}}
+  @keyframes ld-kol{0%{stroke-dashoffset:300;opacity:1}80%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+  @keyframes ld-wag{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(18deg)}}
+  @keyframes ld-bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+  @keyframes ld-swing{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+  @keyframes ld-jump{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-26px) rotate(-8deg)}50%{transform:translateY(-30px) rotate(4deg)}70%{transform:translateY(0) rotate(0)}}
+  @keyframes ld-tailw{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+  @keyframes ld-lid{0%,20%{transform:translateY(0) rotate(0)}45%{transform:translateY(-22px) rotate(-180deg)}70%,100%{transform:translateY(0) rotate(-360deg)}}
+  @keyframes ld-gdrip{0%,30%{transform:translateY(0) scale(0);opacity:0}40%{transform:translateY(0) scale(1);opacity:1}90%{transform:translateY(30px) scale(1);opacity:1}100%{transform:translateY(30px) scale(.4);opacity:0}}
+  @keyframes ld-squeeze{0%,100%{transform:scale(1,1)}50%{transform:scale(1.12,.88)}}
+  @keyframes ld-sip{0%,40%{transform:translateY(0);opacity:0}50%{opacity:1}100%{transform:translateY(-26px);opacity:0}}
+  @keyframes ld-flip{0%,30%{transform:translateY(0) scaleY(1)}55%{transform:translateY(-34px) scaleY(-1)}80%,100%{transform:translateY(0) scaleY(1)}}
+  @keyframes ld-melt{0%,100%{transform:scale(1,1)}50%{transform:scale(1.25,.8)}}
+  @media (prefers-reduced-motion: reduce) { .rdload-art * { animation: none !important; } }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -518,12 +575,118 @@
 </style>
 </head>
 <body>
+<div id="splash" role="img" aria-label="RD Dairy">
+<svg viewBox="0 0 300 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <radialGradient id="cBg" cx="50%" cy="60%" r="80%"><stop offset="0" stop-color="#2A3B66"/><stop offset=".6" stop-color="#17213F"/><stop offset="1" stop-color="#0C1226"/></radialGradient>
+    <radialGradient id="cPool" cx="50%" cy="30%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F3EBDC"/><stop offset="1" stop-color="#CFC2A6"/></radialGradient>
+    <radialGradient id="cDrop" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#F6EFE2"/><stop offset="1" stop-color="#D9CCB2"/></radialGradient>
+    <linearGradient id="cTine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E7DCC6"/></linearGradient>
+    <filter id="cB" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <clipPath id="cLogoClip"><circle cx="150" cy="250" r="38"/></clipPath>
+  </defs>
+  <rect x="-200" y="-200" width="700" height="1020" fill="url(#cBg)"/>
+  <ellipse cx="150" cy="420" rx="150" ry="40" fill="#FFF6E2" opacity=".08" filter="url(#cB)"/>
+  <ellipse id="cPoolE" cx="150" cy="420" rx="135" ry="26" fill="url(#cPool)"/>
+  <g id="cRipples" fill="none" stroke="#fff"></g>
+  <g id="cCrown"></g>
+  <g id="cDrops"></g>
+  <g id="cLogo" opacity="0">
+    <circle cx="150" cy="250" r="56" fill="#FFF6E2" opacity=".18" filter="url(#cB)"/>
+    <circle cx="150" cy="250" r="42" fill="#fff"/>
+    <image href="data:image/png;base64,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" x="112" y="212" width="76" height="76" clip-path="url(#cLogoClip)" preserveAspectRatio="xMidYMid slice"/>
+  </g>
+  <g id="cWord" opacity="0">
+    <text x="150" y="520" text-anchor="middle" font-family="Bricolage Grotesque, Trebuchet MS, sans-serif" font-weight="800" font-size="38" fill="#fff" letter-spacing="-0.5">RD <tspan fill="#F5A800">Dairy</tspan></text>
+    <text x="150" y="546" text-anchor="middle" font-family="Bricolage Grotesque, Trebuchet MS, sans-serif" font-size="14" fill="#fff" fill-opacity=".7">Pure A2 milk, nothing added</text>
+  </g>
+</svg>
+<div class="sp-hint" id="spHint"><span id="spHintText">Getting your deliveries ready</span><div class="sp-bar"><i></i></div></div>
+</div>
 <div id="app"></div>
 
 <script>
 /* =========================================================
    RD Dairy customer app
    ========================================================= */
+/* =========================================================
+   OPENING ANIMATION: milk crown
+   Plays its intro, keeps splashing while the app loads, then hands over.
+   ========================================================= */
+const SPLASH = (() => {
+  const el = document.getElementById("splash");
+  if (!el) return { ready() {} };
+  const svg = el.querySelector("svg"), hint = document.getElementById("spHint");
+  const q = (id) => svg.querySelector("#" + id);
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const INTRO = 1.6, OUTRO = 1.1, P = 1.5, MAX_WAIT = 20;
+  const t0 = performance.now();
+  let readyAt = null, outroAt = null, raf = 0, done = false;
+
+  function crownCycle(p, strength) {
+    let crown = "", ripples = "", drops = "";
+    if (p < .32) {
+      const y = lerp(-30, 404, Math.pow(p / .32, 2));
+      drops += `<ellipse cx="150" cy="${y.toFixed(1)}" rx="9" ry="${(12 + p * 10).toFixed(1)}" fill="url(#cDrop)"/>`;
+    } else {
+      const k = (p - .32) / .68;
+      const h = Math.sin(Math.min(1, k * 1.4) * Math.PI) * 70 * strength;
+      const rad = 22 + k * 26, n = 11;
+      if (h > 2) {
+        let wall = `M${150 - rad} 412 `;
+        for (let i = 0; i <= n; i++) { const a = Math.PI + (i / n) * Math.PI; wall += `L${(150 + rad * Math.cos(a)).toFixed(1)} ${(412 - h * (.55 + .1 * Math.sin(i * 1.7)) + 6 * Math.sin(a)).toFixed(1)} `; }
+        wall += `L${150 + rad} 412 Q150 426 ${150 - rad} 412 Z`;
+        crown += `<path d="${wall}" fill="url(#cTine)" opacity=".96"/>`;
+        for (let i = 0; i <= n; i++) {
+          const a = Math.PI + (i / n) * Math.PI, x = 150 + rad * Math.cos(a) * 1.04;
+          const base = 412 - h * (.55 + .1 * Math.sin(i * 1.7)) + 6 * Math.sin(a);
+          const tip = base - h * (.35 + .15 * ((i * 7) % 3) / 2);
+          crown += `<path d="M${(x - 3).toFixed(1)} ${base.toFixed(1)} Q${x.toFixed(1)} ${tip.toFixed(1)} ${(x + 3).toFixed(1)} ${base.toFixed(1)} Z" fill="url(#cTine)"/>`;
+          if (k > .25 && k < .8) drops += `<circle cx="${(x + (x - 150) * k * .6).toFixed(1)}" cy="${(tip - 10 - (k - .25) * 60 + Math.pow(k * 3, 2) * 6).toFixed(1)}" r="${(2.4 - k * 2).toFixed(1)}" fill="#FFFDF7"/>`;
+        }
+      }
+      for (let r = 0; r < 3; r++) { const rq = k - r * .18; if (rq > 0 && rq < 1) ripples += `<ellipse cx="150" cy="420" rx="${(20 + rq * 120).toFixed(1)}" ry="${(4 + rq * 22).toFixed(1)}" stroke-opacity="${(.5 * (1 - rq)).toFixed(2)}" stroke-width="${(2 - rq).toFixed(1)}"/>`; }
+    }
+    q("cCrown").innerHTML = crown; q("cRipples").innerHTML = ripples; q("cDrops").innerHTML = drops;
+  }
+
+  function finish() {
+    if (done) return; done = true;
+    cancelAnimationFrame(raf);
+    el.classList.add("out");
+    setTimeout(() => el.remove(), 450);
+  }
+
+  function frame(now) {
+    const t = (now - t0) / 1000;
+    if (readyAt === null && t > MAX_WAIT) readyAt = t;
+    if (readyAt !== null && outroAt === null && t >= INTRO) outroAt = Math.max(t, readyAt);
+    const phase = outroAt === null ? (t < INTRO ? "intro" : "loop") : "outro";
+    const to = outroAt === null ? 0 : t - outroAt;
+    if (phase === "outro") crownCycle(clamp(.32 + to / 1.1 * .68, 0, 1), 1.15); else crownCycle((t % P) / P, 1);
+    q("cPoolE").setAttribute("ry", (26 + 1.5 * Math.sin(t * 3)).toFixed(1));
+    q("cLogo").setAttribute("opacity", (phase === "outro" ? 1 : clamp((t - 1) / .6, 0, 1)).toFixed(2));
+    q("cLogo").setAttribute("transform", `translate(0 ${(6 * Math.sin(t * 1.6)).toFixed(1)})`);
+    q("cWord").setAttribute("opacity", clamp((t - 1.2) / .6, 0, 1).toFixed(2));
+    hint.classList.toggle("show", phase === "loop" && t > INTRO + 1.4);
+    if (phase === "outro" && to > OUTRO) return finish();
+    raf = requestAnimationFrame(frame);
+  }
+
+  if (reduce) {
+    q("cLogo").setAttribute("opacity", 1); q("cWord").setAttribute("opacity", 1);
+    return { ready() { setTimeout(finish, 600); } };
+  }
+  raf = requestAnimationFrame(frame);
+  return {
+    ready() { if (readyAt === null) readyAt = (performance.now() - t0) / 1000; },
+    setHint(text) { const s = document.getElementById("spHintText"); if (s) s.textContent = text; },
+  };
+})();
+t
 const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
@@ -564,6 +727,60 @@ const locale = () => (LANGS.find((l) => l.code === LANG) || LANGS[0]).locale;
 const T = {
   ta: {
     "RD Dairy confirms how you pay for repeat items.": "தொடர் பொருட்களுக்கான கட்டண முறையை RD Dairy உறுதிசெய்யும்.",
+    "Fresh milk is on its way": "புதிய பால் வந்துகொண்டிருக்கிறது",
+    "Shaking things up": "கொஞ்சம் குலுக்குகிறோம்",
+    "Almost there": "கிட்டத்தட்ட வந்துவிட்டது",
+    "Pouring your morning glass": "உங்கள் காலை டம்ளரை நிரப்புகிறோம்",
+    "Filling it to the brim": "முழுவதும் நிரப்புகிறோம்",
+    "A sip away": "ஒரு மிடறு தூரம் தான்",
+    "Waking up the cows": "பசுக்களை எழுப்புகிறோம்",
+    "Chewing on your request": "உங்கள் கோரிக்கையை அசைபோடுகிறோம்",
+    "Moo, nearly there": "ம்மா, கிட்டத்தட்ட முடிந்தது",
+    "Stretching your filter coffee milk": "ஃபில்டர் காபிக்கு பால் ஆற்றுகிறோம்",
+    "Getting the froth right": "நுரையை சரியாக்குகிறோம்",
+    "One more pour": "இன்னும் ஒரு முறை ஆற்றுகிறோம்",
+    "Churning some fresh butter": "புதிய வெண்ணெய் கடைகிறோம்",
+    "Spreading it evenly": "சமமாகத் தடவுகிறோம்",
+    "Nearly done": "கிட்டத்தட்ட முடிந்தது",
+    "Our delivery partner is on the way": "எங்கள் டெலிவரி நபர் வந்துகொண்டிருக்கிறார்",
+    "Taking the shortcut": "குறுக்கு வழியில் வருகிறோம்",
+    "Turning into your street": "உங்கள் தெருவுக்குள் திரும்புகிறோம்",
+    "Warming up your milk": "உங்கள் பாலைச் சூடாக்குகிறோம்",
+    "Bringing it to a boil": "கொதிக்க வைக்கிறோம்",
+    "Keeping an eye on it": "கவனமாகப் பார்த்துக்கொள்கிறோம்",
+    "Ding dong, milk at your door": "டிங் டாங், பால் உங்கள் வாசலில்",
+    "Leaving it by the gate": "கேட் அருகே வைக்கிறோம்",
+    "Fresh as promised": "சொன்னபடியே புதியது",
+    "Good morning, almost ready": "காலை வணக்கம், கிட்டத்தட்ட தயார்",
+    "The rooster is up": "சேவல் கூவிவிட்டது",
+    "Sun's out, milk's in": "சூரியன் உதித்தது, பால் வந்தது",
+    "Brewing your chai": "உங்கள் டீ தயாராகிறது",
+    "A little more sugar": "இன்னும் கொஞ்சம் சர்க்கரை",
+    "Strong, the way you like it": "உங்களுக்குப் பிடித்தபடி ஸ்ட்ராங்காக",
+    "Drawing today's kolam": "இன்றைய கோலம் போடுகிறோம்",
+    "Joining the dots": "புள்ளிகளை இணைக்கிறோம்",
+    "Almost a perfect loop": "அழகான சுழி கிட்டத்தட்ட தயார்",
+    "Our street dog is guarding your order": "எங்கள் தெரு நாய் உங்கள் ஆர்டரைக் காக்கிறது",
+    "Tail wagging, nearly there": "வாலாட்டிக்கொண்டே, கிட்டத்தட்ட வந்தாச்சு",
+    "Good boy, almost done": "நல்ல பையன், கிட்டத்தட்ட முடிந்தது",
+    "Our milkman is pedalling over": "எங்கள் பால்காரர் சைக்கிளில் வருகிறார்",
+    "Ringing the cycle bell": "சைக்கிள் மணி அடிக்கிறார்",
+    "Our calf is excited too": "எங்கள் கன்றுக்குட்டியும் உற்சாகமாக இருக்கிறது",
+    "Hopping with joy": "மகிழ்ச்சியில் துள்ளுகிறது",
+    "Nearly there": "கிட்டத்தட்ட வந்தாச்சு",
+    "Melting golden ghee": "தங்க நிற நெய் உருகுகிறது",
+    "Pure and fragrant": "தூய்மையான மணமுள்ள நெய்",
+    "One more spoon": "இன்னும் ஒரு கரண்டி",
+    "Setting thick, creamy curd": "கெட்டியான தயிர் உறைகிறது",
+    "A slow stir": "மெதுவாகக் கலக்குகிறோம்",
+    "Just right": "சரியான பதம்",
+    "Squeezing out the last drop": "கடைசி சொட்டு வரை",
+    "Sip by sip": "மிடறு மிடறாக",
+    "All yours in a moment": "ஒரு நொடியில் உங்களுக்கு",
+    "Adding a spoon of our ghee": "ஒரு கரண்டி எங்கள் நெய் சேர்க்கிறோம்",
+    "Crisp and golden": "மொறுமொறுப்பாகத் தங்க நிறத்தில்",
+    "Almost off the tawa": "தோசைக்கல்லிலிருந்து கிட்டத்தட்ட தயார்",
+    "Getting your deliveries ready": "உங்கள் டெலிவரி விவரங்களைத் தயார் செய்கிறோம்",
     "Set your delivery location": "டெலிவரி இடத்தை அமைக்கவும்",
     "Move the map so the pin sits on your gate.": "பின் உங்கள் வாசலில் இருக்கும்படி வரைபடத்தை நகர்த்துங்கள்.",
     "Use my current location": "என் தற்போதைய இருப்பிடம்",
@@ -913,6 +1130,60 @@ const T = {
 
   hi: {
     "RD Dairy confirms how you pay for repeat items.": "बार बार वाले सामान का भुगतान कैसे होगा, RD Dairy आपसे पक्का करेगा।",
+    "Fresh milk is on its way": "ताज़ा दूध रास्ते में है",
+    "Shaking things up": "थोड़ा हिला रहे हैं",
+    "Almost there": "बस पहुँचने वाले हैं",
+    "Pouring your morning glass": "आपका सुबह का गिलास भर रहे हैं",
+    "Filling it to the brim": "किनारे तक भर रहे हैं",
+    "A sip away": "बस एक घूँट दूर",
+    "Waking up the cows": "गायों को जगा रहे हैं",
+    "Chewing on your request": "आपकी बात पर जुगाली कर रहे हैं",
+    "Moo, nearly there": "म्बा, बस हो गया",
+    "Stretching your filter coffee milk": "फ़िल्टर कॉफ़ी के लिए दूध फेंट रहे हैं",
+    "Getting the froth right": "झाग ठीक कर रहे हैं",
+    "One more pour": "एक बार और उड़ेल रहे हैं",
+    "Churning some fresh butter": "ताज़ा मक्खन मथ रहे हैं",
+    "Spreading it evenly": "बराबर फैला रहे हैं",
+    "Nearly done": "लगभग हो गया",
+    "Our delivery partner is on the way": "हमारा डिलीवरी साथी रास्ते में है",
+    "Taking the shortcut": "छोटा रास्ता ले रहे हैं",
+    "Turning into your street": "आपकी गली में मुड़ रहे हैं",
+    "Warming up your milk": "आपका दूध गरम कर रहे हैं",
+    "Bringing it to a boil": "उबाल आ रहा है",
+    "Keeping an eye on it": "नज़र रखे हुए हैं",
+    "Ding dong, milk at your door": "डिंग डॉंग, दूध आपके दरवाज़े पर",
+    "Leaving it by the gate": "गेट के पास रख रहे हैं",
+    "Fresh as promised": "वादे के मुताबिक ताज़ा",
+    "Good morning, almost ready": "सुप्रभात, लगभग तैयार",
+    "The rooster is up": "मुर्गा जाग गया",
+    "Sun's out, milk's in": "सूरज निकला, दूध आया",
+    "Brewing your chai": "आपकी चाय बन रही है",
+    "A little more sugar": "थोड़ी और चीनी",
+    "Strong, the way you like it": "कड़क, जैसी आपको पसंद है",
+    "Drawing today's kolam": "आज का कोलम बना रहे हैं",
+    "Joining the dots": "बिंदुओं को जोड़ रहे हैं",
+    "Almost a perfect loop": "सुंदर घेरा लगभग पूरा",
+    "Our street dog is guarding your order": "हमारा गली का कुत्ता आपके ऑर्डर की रखवाली कर रहा है",
+    "Tail wagging, nearly there": "पूँछ हिलाते हुए, बस आ गए",
+    "Good boy, almost done": "शाबाश, लगभग हो गया",
+    "Our milkman is pedalling over": "हमारा दूधवाला साइकिल चलाकर आ रहा है",
+    "Ringing the cycle bell": "साइकिल की घंटी बजा रहा है",
+    "Our calf is excited too": "हमारा बछड़ा भी खुश है",
+    "Hopping with joy": "खुशी से उछल रहा है",
+    "Nearly there": "बस पहुँच गए",
+    "Melting golden ghee": "सुनहरा घी पिघल रहा है",
+    "Pure and fragrant": "शुद्ध और खुशबूदार",
+    "One more spoon": "एक चम्मच और",
+    "Setting thick, creamy curd": "गाढ़ा मलाईदार दही जम रहा है",
+    "A slow stir": "धीरे से चला रहे हैं",
+    "Just right": "बिल्कुल सही",
+    "Squeezing out the last drop": "आखिरी बूँद तक",
+    "Sip by sip": "घूँट घूँट करके",
+    "All yours in a moment": "बस एक पल में आपका",
+    "Adding a spoon of our ghee": "एक चम्मच हमारा घी डाल रहे हैं",
+    "Crisp and golden": "कुरकुरा और सुनहरा",
+    "Almost off the tawa": "तवे से बस उतरने वाला",
+    "Getting your deliveries ready": "आपकी डिलीवरी की जानकारी तैयार कर रहे हैं",
     "Set your delivery location": "डिलीवरी की जगह तय करें",
     "Move the map so the pin sits on your gate.": "मैप को खिसकाएँ ताकि पिन आपके गेट पर हो।",
     "Use my current location": "मेरी मौजूदा लोकेशन",
@@ -1494,6 +1765,31 @@ function compressImage(file, maxSide = 1400, quality = 0.75) {
   });
 }
 
+
+/* =========================================================
+   LOADING ANIMATIONS: 18 small scenes, one picked at random each time
+   (never the same twice in a row). They fade in only if loading takes
+   longer than half a second, so quick switches stay instant.
+   ========================================================= */
+const LOADERS = [{"svg": "<svg width=\"70\" height=\"100\" viewBox=\"0 0 70 100\"><ellipse cx=\"35\" cy=\"96\" rx=\"20\" ry=\"4\" fill=\"currentColor\" style=\"transform-origin:35px 96px;animation:ld-shad 1.1s ease-in-out infinite\"/><g style=\"transform-origin:35px 92px;animation:ld-hop 1.1s ease-in-out infinite\"><path d=\"M27 20h16v11c0 5 11 8 11 18v38a5 5 0 0 1-5 5H21a5 5 0 0 1-5-5V49c0-10 11-13 11-18z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><rect x=\"25\" y=\"13\" width=\"20\" height=\"9\" rx=\"3\" fill=\"#F5A800\"/><rect x=\"20\" y=\"58\" width=\"30\" height=\"16\" rx=\"4\" fill=\"#F5A800\"/><circle cx=\"29\" cy=\"49\" r=\"2\" fill=\"#1E2B4A\"/><circle cx=\"41\" cy=\"49\" r=\"2\" fill=\"#1E2B4A\"/></g></svg>", "lines": ["Fresh milk is on its way", "Shaking things up", "Almost there"]}, {"svg": "<svg width=\"80\" height=\"96\" viewBox=\"0 0 80 96\"><defs><clipPath id=\"ldgl\"><path d=\"M14 10h52l-7 78a5 5 0 0 1-5 4H26a5 5 0 0 1-5-4z\"/></clipPath></defs><g clip-path=\"url(#ldgl)\"><g style=\"animation:ld-lvl 2.4s ease-in-out infinite\"><g style=\"animation:ld-wave 1s linear infinite\"><path d=\"M0 30 q10-6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v80 h-120z\" fill=\"#FFF3D1\"/></g></g></g><path d=\"M14 10h52l-7 78a5 5 0 0 1-5 4H26a5 5 0 0 1-5-4z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M20 18l5 64\" stroke=\"#F5A800\" stroke-width=\"3\" stroke-linecap=\"round\"/></svg>", "lines": ["Pouring your morning glass", "Filling it to the brim", "A sip away"]}, {"svg": "<svg width=\"96\" height=\"96\" viewBox=\"0 0 96 96\"><path d=\"M20 26 q-14-6-16 4 q8 6 18 4z M76 26 q14-6 16 4 q-8 6-18 4z\" fill=\"#C9A27A\"/><path d=\"M30 18 q-6-12 2-14 M66 18 q6-12-2-14\" stroke=\"#B7864F\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/><g style=\"transform-origin:48px 30px;animation:ld-chew 1.4s ease-in-out infinite\"><path d=\"M20 30 q0-16 28-16 q28 0 28 16 q0 22-8 34 q-6 10-20 10 q-14 0-20-10 q-8-12-8-34z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M30 24 q8-6 14 2 q-4 10-14 4z\" fill=\"#7A5A44\"/><ellipse cx=\"48\" cy=\"62\" rx=\"16\" ry=\"11\" fill=\"#F2C3B0\" stroke=\"#1E2B4A\" stroke-width=\"2.5\"/><circle cx=\"42\" cy=\"62\" r=\"2\" fill=\"#1E2B4A\"/><circle cx=\"54\" cy=\"62\" r=\"2\" fill=\"#1E2B4A\"/><g style=\"transform-origin:37px 42px;animation:ld-blink 3s infinite\"><ellipse cx=\"37\" cy=\"42\" rx=\"3\" ry=\"4\" fill=\"#1E2B4A\"/></g><g style=\"transform-origin:59px 42px;animation:ld-blink 3s infinite\"><ellipse cx=\"59\" cy=\"42\" rx=\"3\" ry=\"4\" fill=\"#1E2B4A\"/></g><g style=\"transform-origin:48px 74px;animation:ld-bell .9s ease-in-out infinite\"><line x1=\"48\" y1=\"74\" x2=\"48\" y2=\"80\" stroke=\"#1E2B4A\" stroke-width=\"2\"/><path d=\"M42 80h12l2 9h-16z\" fill=\"#F5A800\" stroke=\"#1E2B4A\" stroke-width=\"2\"/></g></g></svg>", "lines": ["Waking up the cows", "Chewing on your request", "Moo, nearly there"]}, {"svg": "<svg width=\"96\" height=\"100\" viewBox=\"0 0 96 100\"><g style=\"transform-origin:58px 26px;animation:ld-tilt 1.6s ease-in-out infinite\"><path d=\"M44 6h28l-4 40h-20z\" fill=\"#D7DCE2\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M49 12l3 30\" stroke=\"#fff\" stroke-width=\"3\" stroke-linecap=\"round\"/></g><rect x=\"44\" y=\"34\" width=\"5\" height=\"44\" rx=\"2.5\" fill=\"#FFF3D1\" style=\"transform-origin:46px 34px;animation:ld-str 1.6s ease-in-out infinite\"/><path d=\"M18 78 q2 18 30 18 q28 0 30-18z\" fill=\"#D7DCE2\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><ellipse cx=\"48\" cy=\"78\" rx=\"30\" ry=\"5\" fill=\"#FFF3D1\" stroke=\"currentColor\" stroke-width=\"3\"/></svg>", "lines": ["Stretching your filter coffee milk", "Getting the froth right", "One more pour"]}, {"svg": "<svg width=\"96\" height=\"96\" viewBox=\"0 0 96 96\"><ellipse cx=\"48\" cy=\"84\" rx=\"38\" ry=\"7\" fill=\"#D7DCE2\" stroke=\"currentColor\" stroke-width=\"3\"/><g style=\"transform-origin:48px 80px;animation:ld-jig 1.2s ease-in-out infinite\"><path d=\"M22 80 V52 q0-8 8-8 h36 q8 0 8 8 V80z\" fill=\"#F7D774\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M28 52 h20\" stroke=\"#FFF3C4\" stroke-width=\"4\" stroke-linecap=\"round\"/><circle cx=\"40\" cy=\"64\" r=\"2\" fill=\"#1E2B4A\"/><circle cx=\"56\" cy=\"64\" r=\"2\" fill=\"#1E2B4A\"/><path d=\"M44 70 q4 4 8 0\" stroke=\"#1E2B4A\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/></g><g style=\"transform-origin:80px 20px;animation:ld-knife 1.2s ease-in-out infinite\"><rect x=\"66\" y=\"12\" width=\"26\" height=\"8\" rx=\"4\" fill=\"currentColor\"/><path d=\"M60 20 l10 -6 l4 8 l-14 4z\" fill=\"#D7DCE2\" stroke=\"currentColor\" stroke-width=\"2\"/></g></svg>", "lines": ["Churning some fresh butter", "Spreading it evenly", "Nearly done"]}, {"svg": "<svg width=\"140\" height=\"80\" viewBox=\"0 0 140 80\"><line x1=\"0\" y1=\"72\" x2=\"140\" y2=\"72\" stroke=\"currentColor\" stroke-width=\"3\" stroke-dasharray=\"12 12\" style=\"animation:ld-road .6s linear infinite\"/><g style=\"animation:ld-ride 2.4s ease-in-out infinite alternate\"><g transform=\"translate(46 20)\"><rect x=\"10\" y=\"22\" width=\"26\" height=\"14\" rx=\"4\" fill=\"currentColor\"/><rect x=\"0\" y=\"16\" width=\"16\" height=\"16\" rx=\"3\" fill=\"#F5A800\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M4 16v-6h8v6\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M34 10l6 2v14\" stroke=\"currentColor\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"26\" cy=\"12\" r=\"6\" fill=\"#F2C3B0\" stroke=\"currentColor\" stroke-width=\"2\"/><g style=\"transform-origin:10px 42px;animation:ld-spin .6s linear infinite\"><circle cx=\"10\" cy=\"42\" r=\"8\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><line x1=\"10\" y1=\"35\" x2=\"10\" y2=\"49\" stroke=\"currentColor\" stroke-width=\"2\"/></g><g style=\"transform-origin:42px 42px;animation:ld-spin .6s linear infinite\"><circle cx=\"42\" cy=\"42\" r=\"8\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><line x1=\"42\" y1=\"35\" x2=\"42\" y2=\"49\" stroke=\"currentColor\" stroke-width=\"2\"/></g></g></g></svg>", "lines": ["Our delivery partner is on the way", "Taking the shortcut", "Turning into your street"]}, {"svg": "<svg width=\"96\" height=\"100\" viewBox=\"0 0 96 100\"><g fill=\"none\" stroke=\"#B4B2A9\" stroke-width=\"3\" stroke-linecap=\"round\"><path d=\"M36 30 q-6-8 0-16\" style=\"animation:ld-rise 1.6s ease-out infinite\"/><path d=\"M48 28 q-6-8 0-16\" style=\"animation:ld-rise 1.6s .5s ease-out infinite\"/><path d=\"M60 30 q-6-8 0-16\" style=\"animation:ld-rise 1.6s 1s ease-out infinite\"/></g><g style=\"animation:ld-boil .5s ease-in-out infinite\"><path d=\"M18 44h60l-4 34a6 6 0 0 1-6 5H28a6 6 0 0 1-6-5z\" fill=\"#D7DCE2\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><rect x=\"12\" y=\"40\" width=\"72\" height=\"7\" rx=\"3.5\" fill=\"currentColor\"/><ellipse cx=\"48\" cy=\"44\" rx=\"27\" ry=\"3\" fill=\"#FFF3D1\"/><rect x=\"78\" y=\"56\" width=\"16\" height=\"5\" rx=\"2.5\" fill=\"currentColor\"/></g><g fill=\"#F5A800\"><path d=\"M34 96 q4-10 6 0z\" style=\"transform-origin:37px 96px;animation:ld-flame .3s infinite\"/><path d=\"M44 96 q4-12 8 0z\" style=\"transform-origin:48px 96px;animation:ld-flame .35s infinite\"/><path d=\"M56 96 q4-10 6 0z\" style=\"transform-origin:59px 96px;animation:ld-flame .3s .1s infinite\"/></g></svg>", "lines": ["Warming up your milk", "Bringing it to a boil", "Keeping an eye on it"]}, {"svg": "<svg width=\"96\" height=\"100\" viewBox=\"0 0 96 100\"><rect x=\"20\" y=\"8\" width=\"56\" height=\"88\" rx=\"4\" fill=\"#F5D9A8\" stroke=\"currentColor\" stroke-width=\"3\"/><rect x=\"28\" y=\"18\" width=\"40\" height=\"30\" rx=\"2\" fill=\"#E8C68E\"/><rect x=\"28\" y=\"56\" width=\"40\" height=\"30\" rx=\"2\" fill=\"#E8C68E\"/><circle cx=\"66\" cy=\"54\" r=\"3\" fill=\"currentColor\"/><g style=\"animation:ld-peek 2.4s ease-in-out infinite\"><g transform=\"translate(34 74)\"><path d=\"M6 0h16v6c0 3 6 5 6 10v10H0V16c0-5 6-7 6-10z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"2.5\"/><rect x=\"4\" y=\"-5\" width=\"20\" height=\"6\" rx=\"2\" fill=\"#F5A800\"/></g></g><g style=\"transform-origin:86px 30px;animation:ld-ring 2.4s infinite\"><circle cx=\"86\" cy=\"30\" r=\"7\" fill=\"#F5A800\" stroke=\"currentColor\" stroke-width=\"2.5\"/></g><g style=\"transform-origin:86px 18px;animation:ld-ding 2.4s infinite\"><path d=\"M80 14 l-4 -4 M86 12 v-5 M92 14 l4 -4\" stroke=\"#F5A800\" stroke-width=\"2.5\" stroke-linecap=\"round\"/></g></svg>", "lines": ["Ding dong, milk at your door", "Leaving it by the gate", "Fresh as promised"]}, {"svg": "<svg width=\"110\" height=\"96\" viewBox=\"0 0 110 96\"><g style=\"animation:ld-sun 3s ease-in-out infinite\"><circle cx=\"55\" cy=\"58\" r=\"18\" fill=\"#F5A800\"/><g stroke=\"#F5A800\" stroke-width=\"3\" stroke-linecap=\"round\" style=\"transform-origin:55px 58px;animation:ld-spin 8s linear infinite\"><line x1=\"55\" y1=\"30\" x2=\"55\" y2=\"24\"/><line x1=\"27\" y1=\"58\" x2=\"21\" y2=\"58\"/><line x1=\"83\" y1=\"58\" x2=\"89\" y2=\"58\"/><line x1=\"35\" y1=\"38\" x2=\"31\" y2=\"34\"/><line x1=\"75\" y1=\"38\" x2=\"79\" y2=\"34\"/></g></g><rect x=\"0\" y=\"66\" width=\"110\" height=\"30\" fill=\"var(--mist)\"/><path d=\"M0 70 q27-10 55 0 t55 0\" stroke=\"#639922\" stroke-width=\"4\" fill=\"none\"/><g transform=\"translate(70 40)\"><g style=\"transform-origin:10px 24px;animation:ld-crow 2s infinite\"><path d=\"M2 14 q8-12 18-2 q4 8-2 14 q-8 4-14-2z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"2.5\"/><path d=\"M18 8 l4-6 l2 6 l4-4 l0 6z\" fill=\"#E24B4A\"/><path d=\"M20 14 l6 2 l-6 2z\" fill=\"#F5A800\"/><circle cx=\"16\" cy=\"12\" r=\"1.5\" fill=\"#1E2B4A\"/></g><line x1=\"8\" y1=\"26\" x2=\"6\" y2=\"32\" stroke=\"currentColor\" stroke-width=\"2\"/><line x1=\"14\" y1=\"26\" x2=\"16\" y2=\"32\" stroke=\"currentColor\" stroke-width=\"2\"/></g></svg>", "lines": ["Good morning, almost ready", "The rooster is up", "Sun's out, milk's in"]}, {"svg": "<svg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><g style=\"transform-origin:50px 90px;animation:ld-cup 1.8s ease-in-out infinite\"><path d=\"M24 44h44l-4 40a6 6 0 0 1-6 5H34a6 6 0 0 1-6-5z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M68 52 q14 0 12 14 q-2 10-14 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"/><ellipse cx=\"46\" cy=\"44\" rx=\"22\" ry=\"4\" fill=\"#C9A27A\"/><path d=\"M32 60h28\" stroke=\"#F5A800\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g fill=\"none\" stroke=\"#B4B2A9\" stroke-width=\"3\" stroke-linecap=\"round\"><path d=\"M38 34 q-6-8 0-16\" style=\"animation:ld-rise 1.8s ease-out infinite\"/><path d=\"M52 34 q-6-8 0-16\" style=\"animation:ld-rise 1.8s .7s ease-out infinite\"/></g></svg>", "lines": ["Brewing your chai", "A little more sugar", "Strong, the way you like it"]}, {"svg": "<svg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><g fill=\"currentColor\"><circle cx=\"30\" cy=\"30\" r=\"2.5\"/><circle cx=\"50\" cy=\"30\" r=\"2.5\"/><circle cx=\"70\" cy=\"30\" r=\"2.5\"/><circle cx=\"30\" cy=\"50\" r=\"2.5\"/><circle cx=\"50\" cy=\"50\" r=\"2.5\"/><circle cx=\"70\" cy=\"50\" r=\"2.5\"/><circle cx=\"30\" cy=\"70\" r=\"2.5\"/><circle cx=\"50\" cy=\"70\" r=\"2.5\"/><circle cx=\"70\" cy=\"70\" r=\"2.5\"/></g><path d=\"M40 20 q10 10 0 20 q-10 10 0 20 q10 10 0 20 M60 20 q-10 10 0 20 q10 10 0 20 q-10 10 0 20 M20 40 q10 -10 20 0 q10 10 20 0 q10 -10 20 0 M20 60 q10 10 20 0 q10 -10 20 0 q10 10 20 0\" fill=\"none\" stroke=\"#F5A800\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-dasharray=\"300\" style=\"animation:ld-kol 3s ease-in-out infinite\"/></svg>", "lines": ["Drawing today's kolam", "Joining the dots", "Almost a perfect loop"]}, {"svg": "<svg width=\"110\" height=\"100\" viewBox=\"0 0 110 100\"><g style=\"transform-origin:72px 70px;animation:ld-wag .5s ease-in-out infinite\"><path d=\"M72 70 q14-6 20-20\" stroke=\"#C9A27A\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/></g><g style=\"animation:ld-bob 1s ease-in-out infinite\"><ellipse cx=\"50\" cy=\"72\" rx=\"26\" ry=\"16\" fill=\"#E8C68E\" stroke=\"currentColor\" stroke-width=\"3\"/><circle cx=\"32\" cy=\"50\" r=\"16\" fill=\"#E8C68E\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M20 40 q-6 14 4 16 M44 40 q6 14-4 16\" fill=\"#C9A27A\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"27\" cy=\"50\" r=\"2\" fill=\"#1E2B4A\"/><circle cx=\"37\" cy=\"50\" r=\"2\" fill=\"#1E2B4A\"/><ellipse cx=\"32\" cy=\"57\" rx=\"4\" ry=\"3\" fill=\"#1E2B4A\"/><path d=\"M28 62 q4 6 8 0\" fill=\"#E24B4A\" stroke=\"#1E2B4A\" stroke-width=\"2\"/></g><rect x=\"14\" y=\"88\" width=\"76\" height=\"4\" rx=\"2\" fill=\"#B4B2A9\"/></svg>", "lines": ["Our street dog is guarding your order", "Tail wagging, nearly there", "Good boy, almost done"]}, {"svg": "<svg width=\"140\" height=\"90\" viewBox=\"0 0 140 90\"><line x1=\"0\" y1=\"86\" x2=\"140\" y2=\"86\" stroke=\"currentColor\" stroke-width=\"3\" stroke-dasharray=\"12 12\" style=\"animation:ld-road .5s linear infinite\"/><g transform=\"translate(22 10)\"><g style=\"transform-origin:16px 60px;animation:ld-spin .7s linear infinite\"><circle cx=\"16\" cy=\"60\" r=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M16 44v32M0 60h32\" stroke=\"#888780\" stroke-width=\"1.5\"/></g><g style=\"transform-origin:80px 60px;animation:ld-spin .7s linear infinite\"><circle cx=\"80\" cy=\"60\" r=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M80 44v32M64 60h32\" stroke=\"#888780\" stroke-width=\"1.5\"/></g><path d=\"M16 60 L40 34 L70 34 L80 60 M40 34 L48 60 L70 34 M48 60 L16 60\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M70 34 l4 -12 h8\" stroke=\"currentColor\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><rect x=\"34\" y=\"28\" width=\"12\" height=\"4\" rx=\"2\" fill=\"currentColor\"/><g style=\"transform-origin:86px 22px;animation:ld-swing .7s ease-in-out infinite\"><path d=\"M80 26h12l2 14a3 3 0 0 1-3 3h-10a3 3 0 0 1-3-3z\" fill=\"#F5A800\" stroke=\"currentColor\" stroke-width=\"2\"/></g><g style=\"transform-origin:28px 30px;animation:ld-swing .7s .2s ease-in-out infinite\"><path d=\"M22 34h12l2 14a3 3 0 0 1-3 3h-10a3 3 0 0 1-3-3z\" fill=\"#F5A800\" stroke=\"currentColor\" stroke-width=\"2\"/></g></g></svg>", "lines": ["Our milkman is pedalling over", "Ringing the cycle bell", "Turning into your street"]}, {"svg": "<svg width=\"110\" height=\"96\" viewBox=\"0 0 110 96\"><ellipse cx=\"55\" cy=\"90\" rx=\"30\" ry=\"4\" fill=\"currentColor\" opacity=\".15\"/><g style=\"transform-origin:55px 86px;animation:ld-jump 1.2s ease-in-out infinite\"><g style=\"transform-origin:82px 50px;animation:ld-tailw .4s ease-in-out infinite\"><path d=\"M82 50 q10 4 8 16\" stroke=\"#C9A27A\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/></g><rect x=\"34\" y=\"42\" width=\"50\" height=\"28\" rx=\"14\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M58 46 q10 -2 12 8 q-8 4-12-8z\" fill=\"#7A5A44\"/><g stroke=\"currentColor\" stroke-width=\"5\" stroke-linecap=\"round\"><line x1=\"42\" y1=\"68\" x2=\"40\" y2=\"86\"/><line x1=\"52\" y1=\"68\" x2=\"52\" y2=\"86\"/><line x1=\"68\" y1=\"68\" x2=\"68\" y2=\"86\"/><line x1=\"76\" y1=\"68\" x2=\"78\" y2=\"86\"/></g><circle cx=\"30\" cy=\"40\" r=\"14\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M20 30 q-8-2-10 4 q6 2 12 0z M38 28 q6-6 10-2 q-4 4-10 4z\" fill=\"#C9A27A\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"26\" cy=\"38\" r=\"2\" fill=\"#1E2B4A\"/><ellipse cx=\"22\" cy=\"47\" rx=\"6\" ry=\"4\" fill=\"#F2C3B0\"/></g></svg>", "lines": ["Our calf is excited too", "Hopping with joy", "Nearly there"]}, {"svg": "<svg width=\"90\" height=\"100\" viewBox=\"0 0 90 100\"><g style=\"transform-origin:45px 22px;animation:ld-lid 2.2s ease-in-out infinite\"><rect x=\"24\" y=\"14\" width=\"42\" height=\"12\" rx=\"4\" fill=\"#F5A800\" stroke=\"currentColor\" stroke-width=\"3\"/></g><path d=\"M22 30h46v54a8 8 0 0 1-8 8H30a8 8 0 0 1-8-8z\" fill=\"#FAC775\" stroke=\"currentColor\" stroke-width=\"3\"/><rect x=\"22\" y=\"30\" width=\"46\" height=\"10\" fill=\"#FFF3D1\" stroke=\"currentColor\" stroke-width=\"3\"/><rect x=\"30\" y=\"52\" width=\"30\" height=\"20\" rx=\"4\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M38 62h14\" stroke=\"#F5A800\" stroke-width=\"3\" stroke-linecap=\"round\"/><ellipse cx=\"71\" cy=\"50\" rx=\"3\" ry=\"4\" fill=\"#F5A800\" style=\"transform-origin:71px 50px;animation:ld-gdrip 2.2s infinite\"/></svg>", "lines": ["Melting golden ghee", "Pure and fragrant", "One more spoon"]}, {"svg": "<svg width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><path d=\"M14 46 q0 44 36 44 q36 0 36-44z\" fill=\"#D85A30\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M22 62 q28 10 56 0\" stroke=\"#F0997B\" stroke-width=\"3\" fill=\"none\" stroke-dasharray=\"3 6\" stroke-linecap=\"round\"/><ellipse cx=\"50\" cy=\"46\" rx=\"36\" ry=\"9\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\"/><g style=\"transform-origin:50px 46px;animation:ld-spin 2.4s linear infinite reverse\"><path d=\"M36 46 a14 3.5 0 0 1 28 0 M42 46 a8 2 0 0 1 16 0\" fill=\"none\" stroke=\"#E6D7B5\" stroke-width=\"2\"/></g><g style=\"transform-origin:50px 46px;animation:ld-spin 2.4s linear infinite\"><g transform=\"translate(18 0)\"><rect x=\"28\" y=\"2\" width=\"6\" height=\"44\" rx=\"3\" fill=\"#C9A27A\" stroke=\"currentColor\" stroke-width=\"2\"/></g></g></svg>", "lines": ["Setting thick, creamy curd", "A slow stir", "Just right"]}, {"svg": "<svg width=\"90\" height=\"100\" viewBox=\"0 0 90 100\"><g style=\"transform-origin:45px 90px;animation:ld-squeeze .9s ease-in-out infinite\"><path d=\"M20 26 L70 26 L74 86 Q74 92 68 92 L22 92 Q16 92 16 86 Z\" fill=\"#FFFDF6\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M20 26 L28 14 L62 14 L70 26\" fill=\"#E6F1FB\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linejoin=\"round\"/><rect x=\"22\" y=\"44\" width=\"46\" height=\"26\" rx=\"4\" fill=\"#F5A800\"/><circle cx=\"36\" cy=\"57\" r=\"2.5\" fill=\"#1E2B4A\"/><circle cx=\"54\" cy=\"57\" r=\"2.5\" fill=\"#1E2B4A\"/><path d=\"M40 63 q5 5 10 0\" stroke=\"#1E2B4A\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M58 14 l8 -12\" stroke=\"#E24B4A\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><circle cx=\"68\" cy=\"2\" r=\"2.5\" fill=\"#FFF3D1\" style=\"animation:ld-sip .9s infinite\"/></svg>", "lines": ["Squeezing out the last drop", "Sip by sip", "All yours in a moment"]}, {"svg": "<svg width=\"110\" height=\"100\" viewBox=\"0 0 110 100\"><g fill=\"none\" stroke=\"#B4B2A9\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M40 60 q-4-6 0-12\" style=\"animation:ld-rise 1.4s infinite\"/><path d=\"M70 60 q-4-6 0-12\" style=\"animation:ld-rise 1.4s .6s infinite\"/></g><g style=\"transform-origin:55px 72px;animation:ld-flip 2.4s ease-in-out infinite\"><ellipse cx=\"55\" cy=\"72\" rx=\"34\" ry=\"9\" fill=\"#EF9F27\" stroke=\"currentColor\" stroke-width=\"3\"/><path d=\"M30 70 q25 8 50 0\" stroke=\"#BA7517\" stroke-width=\"2\" fill=\"none\"/></g><ellipse cx=\"55\" cy=\"68\" rx=\"7\" ry=\"3.5\" fill=\"#FAC775\" style=\"transform-origin:55px 68px;animation:ld-melt 1s ease-in-out infinite\"/><ellipse cx=\"55\" cy=\"86\" rx=\"46\" ry=\"8\" fill=\"#444441\"/><rect x=\"96\" y=\"82\" width=\"12\" height=\"5\" rx=\"2.5\" fill=\"#1E2B4A\"/></svg>", "lines": ["Adding a spoon of our ghee", "Crisp and golden", "Almost off the tawa"]}];
+let lastLoader = -1;
+function loaderHTML() {
+  let i = Math.floor(Math.random() * LOADERS.length);
+  if (i === lastLoader) i = (i + 1) % LOADERS.length;
+  lastLoader = i;
+  const L = LOADERS[i];
+  return `<div class="rdload" role="status" data-ld="${i}" data-step="0"><div class="rdload-art" aria-hidden="true">${L.svg}</div><div class="rdload-line">${esc(t(L.lines[0]))}</div></div>`;
+}
+setInterval(() => {
+  document.querySelectorAll(".rdload").forEach((el) => {
+    const L = LOADERS[+el.dataset.ld]; if (!L) return;
+    const step = (+el.dataset.step + 1) % L.lines.length; el.dataset.step = step;
+    const line = el.querySelector(".rdload-line");
+    line.style.opacity = 0;
+    setTimeout(() => { line.textContent = t(L.lines[step]); line.style.opacity = 1; }, 250);
+  });
+}, 2200);
+
 /* ---------- light and dark theme ---------- */
 let THEME = "system";
 const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
@@ -1732,7 +2028,7 @@ const icons = {
 function shell() {
   $("#app").innerHTML = `
     <header class="topbar">${brandHTML()}<small id="tb-area"></small></header>
-    <main id="view"><div class="loading">${esc(t("Loading…"))}</div></main>
+    <main id="view">${loaderHTML()}</main>
     <nav class="tabs" aria-label="Main">
       <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
       <button data-tab="shop">${icons.shop}${esc(t("Shop"))}</button>
@@ -1783,7 +2079,7 @@ async function loadHome() {
   return r;
 }
 
-const loadingView = () => { $("#view").innerHTML = `<div class="loading">${esc(t("Loading…"))}</div>`; };
+const loadingView = () => { $("#view").innerHTML = `${loaderHTML()}`; };
 
 /* =========================================================
    HOME
@@ -1815,7 +2111,7 @@ async function renderHome() {
     v.innerHTML = `
       <div class="subhead"><button id="calback" aria-label="${esc(t("Back"))}">‹</button><h2>${esc(t("Full calendar"))}</h2></div>
       <p class="muted" style="margin:-4px 4px 12px">${esc(t("Tap days to select them, then change them together."))}</p>
-      <div id="homecal"><div class="loading">${esc(t("Loading…"))}</div></div>
+      <div id="homecal">${loaderHTML()}</div>
       <div class="row-actions" style="grid-template-columns:1fr"><button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button></div>`;
     $("#calback").onclick = () => { S.homeCal = false; renderHome(); };
     $("#away").onclick = openAwaySheet;
@@ -2292,7 +2588,7 @@ function openCartSheet() {
 }
 
 async function openMyOrders() {
-  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
+  const sheet = openSheet(`${loaderHTML()}`);
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "my_orders" });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
@@ -2373,7 +2669,7 @@ async function renderBills() {
 }
 
 async function openBillSheet(id) {
-  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
+  const sheet = openSheet(`${loaderHTML()}`);
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "bill_detail", invoice_id: id });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
@@ -2567,7 +2863,7 @@ async function billDownload(r) {
 
 /* ---------- pay a bill by UPI, then share proof ---------- */
 async function openUpiSheet(invoiceIds) {
-  const sheet = openSheet(`<div class="loading">${esc(t("Loading…"))}</div>`);
+  const sheet = openSheet(`${loaderHTML()}`);
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "upi_start", invoice_ids: invoiceIds });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
@@ -2898,7 +3194,7 @@ async function loadChat() {
 
 async function renderChat() {
   const v = $("#view");
-  v.innerHTML = `<div class="loading">${esc(t("Loading…"))}</div>`;
+  v.innerHTML = `${loaderHTML()}`;
   await loadChat();
   if (S.tab !== "help" || !S.chatOpen) return;
   const name = (S.home?.name || "").split(" ")[0];
@@ -3018,8 +3314,16 @@ async function startApp() {
   const saved = await store.get("rd_lang");
   const deviceLang = (navigator.language || "en").slice(0, 2);
   await setLang(saved || (["ta", "hi"].includes(deviceLang) ? deviceLang : "en"));
+  SPLASH.setHint && SPLASH.setHint(t("Getting your deliveries ready"));
   S.token = await store.get("rd_token");
-  if (S.token) startApp(); else renderLogin("phone");
+  if (S.token) {
+    // load the home screen data behind the opening animation, then reveal the app
+    await Promise.race([loadHome(), new Promise((r) => setTimeout(r, 20000))]);
+    await startApp();
+  } else {
+    renderLogin("phone");
+  }
+  SPLASH.ready();
 })();
 </script>
 </body>
