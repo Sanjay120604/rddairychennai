@@ -425,6 +425,70 @@
   .chat-in textarea:focus { outline: none; border-color: var(--butter); background: var(--milk); }
   .chat-send { width: 48px; height: 44px; border-radius: 14px; background: var(--butter); color: var(--ink); font-size: 18px; font-weight: 800; flex-shrink: 0; }
 
+
+  /* ---------- round 3: profile, map pin, full calendar ---------- */
+  .day.sel { background: var(--navy, #1E2B4A) !important; color: #fff !important; border-color: transparent; opacity: 1; }
+  .day.sel .dn, .day.sel .dq { color: var(--butter) !important; }
+  .day.paused { background: var(--pause-bg); border: 2px solid transparent; }
+  .day.paused .dq { color: var(--pause-fg); }
+  .day.extra { background: var(--extra-bg); } .day.extra .dq { color: var(--extra-fg); }
+  .day.less { background: var(--less-bg); } .day.less .dq { color: var(--less-fg); }
+  .subhead { display: flex; align-items: center; gap: 8px; margin: 2px 0 8px; }
+  .subhead h2 { margin: 0; }
+  .subhead button { width: 44px; height: 44px; border-radius: 12px; background: var(--milk); font-size: 26px; font-weight: 700; }
+  .pf-card { display: flex; align-items: center; gap: 14px; background: var(--navy, #1E2B4A); color: #fff; border-radius: 24px; padding: 18px; margin-top: 4px; }
+  .pf-av { width: 62px; height: 62px; border-radius: 50%; background: var(--butter); color: #1E2B4A; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 24px; flex-shrink: 0; }
+  .pf-who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pf-who b { font-family: var(--display); font-size: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-who span { opacity: 0.8; font-size: 14px; }
+  .pf-tag { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--butter); opacity: 1 !important; }
+  .pf-edit { margin-left: auto; background: rgba(255,255,255,0.14); color: #fff; font-weight: 700; border-radius: 12px; padding: 0 16px; min-height: 44px; flex-shrink: 0; }
+  .pref-l { font-weight: 700; margin-bottom: 8px; }
+  .mappick { position: relative; height: 56vh; border-radius: 16px; overflow: hidden; margin: 6px 0 4px; background: var(--mist); }
+  #pickmap { position: absolute; inset: 0; }
+  .mappick .pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); font-size: 40px; z-index: 500; pointer-events: none; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); }
+  .mylocbtn { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 500; background: #fff; color: #1E2B4A; font-weight: 700; border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.2); white-space: nowrap; }
+  .mapmini { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); }
+  .mapmini .mm { height: 150px; background: var(--mist); }
+  .mapmini-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--extra-bg); color: var(--extra-fg); font-weight: 700; }
+  .mapmini-bar button { color: inherit; font-weight: 800; text-decoration: underline; min-height: 36px; }
+  .login .mapmini { border-color: rgba(255,255,255,0.2); }
+
+  /* ---------- dark theme ---------- */
+  :root { --navy: #1E2B4A; }
+  html[data-theme="dark"] {
+    --ink: #E8ECF4; --milk: #172034; --mist: #0D1321; --line: #2A3652; --soft: #9AA7C2; --pause: #7E8AA6;
+    --butter-soft: #3A2F12; --pause-bg: #3A1C1A; --pause-fg: #FF8A80; --extra-bg: #12321F; --extra-fg: #6EE7A0; --less-bg: #152A4A; --less-fg: #8AB8FF;
+    --navy: #22305A; color-scheme: dark;
+  }
+  html[data-theme="dark"] body { background: var(--mist); color: var(--ink); }
+  html[data-theme="dark"] .topbar { background: #101A30; color: #fff; }
+  html[data-theme="dark"] .login, html[data-theme="dark"] .due, html[data-theme="dark"] .pf-card, html[data-theme="dark"] .chat-card { color: #fff; }
+  html[data-theme="dark"] .selbar button { color: #fff; }
+  html[data-theme="dark"] .selbar button.go { color: #1E2B4A; }
+  .pin-ico { font-size: 30px; line-height: 1; background: none; border: 0; }
+  html[data-theme="dark"] .login { background: #101A30; }
+  html[data-theme="dark"] .btn-dark, html[data-theme="dark"] .due, html[data-theme="dark"] .chat-card,
+  html[data-theme="dark"] .cartbar, html[data-theme="dark"] .selbar, html[data-theme="dark"] .msg.me,
+  html[data-theme="dark"] .cd.sel, html[data-theme="dark"] .mini-step, html[data-theme="dark"] .cats button.on,
+  html[data-theme="dark"] .lg-sel { background: var(--navy) !important; color: #fff; }
+  html[data-theme="dark"] .mini-step button, html[data-theme="dark"] .mini-step span { color: #fff; }
+  html[data-theme="dark"] .btn-main, html[data-theme="dark"] .addbtn, html[data-theme="dark"] .msg-act,
+  html[data-theme="dark"] .chat-send, html[data-theme="dark"] .selbar button.go, html[data-theme="dark"] .langs button.on { color: #1E2B4A; }
+  html[data-theme="dark"] .login input, html[data-theme="dark"] .su-input { background: #0D1321; color: #E8ECF4; }
+  html[data-theme="dark"] .tabs { background: #101A30; border-top-color: var(--line); }
+  html[data-theme="dark"] .scrim, html[data-theme="dark"] .confirm-box { background: rgba(0,0,0,0.6); }
+  html[data-theme="dark"] .toast { background: #E8ECF4; color: #0D1321; }
+  html[data-theme="dark"] .toast.bad { background: #B4442E; color: #fff; }
+  html[data-theme="dark"] .bottle path, html[data-theme="dark"] .bottle text { stroke: #E8ECF4; fill: none; }
+  html[data-theme="dark"] .bottle text { fill: #E8ECF4; stroke: none; }
+  html[data-theme="dark"] .bottle rect[fill="#FFFFFF"] { fill: #0D1321; }
+  html[data-theme="dark"] .bottle .fill:not([height="4"]) { fill: #F4E6C0; }
+  html[data-theme="dark"] .prod img, html[data-theme="dark"] .cl-l img { background: #fff; }
+  html[data-theme="dark"] .billframe { border-color: var(--line); }
+  html[data-theme="dark"] .day.sel .dd { color: #fff; }
+  html[data-theme="dark"] .msg.bot { border-color: #3A2F12; }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -500,6 +564,21 @@ const locale = () => (LANGS.find((l) => l.code === LANG) || LANGS[0]).locale;
 const T = {
   ta: {
     "RD Dairy confirms how you pay for repeat items.": "தொடர் பொருட்களுக்கான கட்டண முறையை RD Dairy உறுதிசெய்யும்.",
+    "Set your delivery location": "டெலிவரி இடத்தை அமைக்கவும்",
+    "Move the map so the pin sits on your gate.": "பின் உங்கள் வாசலில் இருக்கும்படி வரைபடத்தை நகர்த்துங்கள்.",
+    "Use my current location": "என் தற்போதைய இருப்பிடம்",
+    "Confirm location": "இருப்பிடத்தை உறுதிசெய்",
+    "Set your location on the map": "வரைபடத்தில் உங்கள் இருப்பிடத்தை அமைக்கவும்",
+    "Delivery location": "டெலிவரி இடம்",
+    "Appearance": "தோற்றம்",
+    "Automatic": "தானியங்கு",
+    "Light": "வெளிச்சம்",
+    "Dark": "இருள்",
+    "Profile": "சுயவிவரம்",
+    "Milk subscriber": "பால் சந்தாதாரர்",
+    "RD Dairy customer": "RD Dairy வாடிக்கையாளர்",
+    "Preferences": "விருப்பங்கள்",
+    "Your location is saved": "உங்கள் இருப்பிடம் சேமிக்கப்பட்டது",
     "Anything else we can help with?": "வேறு ஏதாவது உதவி வேண்டுமா?",
     "Chat with RD Dairy": "RD Dairy உடன் அரட்டை",
     "Get help in a few taps, or chat with our team.": "சில தொடுதல்களில் உதவி பெறுங்கள், அல்லது எங்கள் குழுவுடன் பேசுங்கள்.",
@@ -834,6 +913,21 @@ const T = {
 
   hi: {
     "RD Dairy confirms how you pay for repeat items.": "बार बार वाले सामान का भुगतान कैसे होगा, RD Dairy आपसे पक्का करेगा।",
+    "Set your delivery location": "डिलीवरी की जगह तय करें",
+    "Move the map so the pin sits on your gate.": "मैप को खिसकाएँ ताकि पिन आपके गेट पर हो।",
+    "Use my current location": "मेरी मौजूदा लोकेशन",
+    "Confirm location": "लोकेशन पक्की करें",
+    "Set your location on the map": "मैप पर अपनी लोकेशन तय करें",
+    "Delivery location": "डिलीवरी की जगह",
+    "Appearance": "दिखावट",
+    "Automatic": "अपने आप",
+    "Light": "लाइट",
+    "Dark": "डार्क",
+    "Profile": "प्रोफ़ाइल",
+    "Milk subscriber": "दूध सदस्य",
+    "RD Dairy customer": "RD Dairy ग्राहक",
+    "Preferences": "पसंद",
+    "Your location is saved": "आपकी लोकेशन सेव हो गई",
     "Anything else we can help with?": "और किसी चीज़ में मदद चाहिए?",
     "Chat with RD Dairy": "RD Dairy से चैट करें",
     "Get help in a few taps, or chat with our team.": "कुछ ही टैप में मदद पाएँ, या हमारी टीम से चैट करें।",
@@ -1213,20 +1307,82 @@ function getLocationLink() {
     );
   });
 }
-function locationBlock(container, state) {
-  const draw = () => {
-    container.innerHTML = state.map_link
-      ? `<div class="loc ok"><span>✓ ${esc(t("Location shared"))}</span><a href="${esc(state.map_link)}" target="_blank" rel="noopener">${esc(t("View on map"))}</a></div>`
-      : `<button type="button" class="loc-btn">📍 ${esc(t("Share my location"))}</button><div class="su-help">${esc(t("Helps our delivery partner find your home."))}</div>`;
-    container.querySelector(".loc-btn")?.addEventListener("click", async (e) => {
-      e.target.disabled = true; e.target.textContent = t("Getting your location…");
-      try { state.map_link = await getLocationLink(); }
+/* ---------- map pin (Leaflet + OpenStreetMap) ---------- */
+let leafletReady = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  if (leafletReady) return leafletReady;
+  leafletReady = new Promise((resolve, reject) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet"; css.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
+    document.head.appendChild(css);
+    const sc = document.createElement("script");
+    sc.src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    sc.onload = resolve; sc.onerror = reject;
+    document.head.appendChild(sc);
+  });
+  return leafletReady;
+}
+const CHENNAI = [13.0827, 80.2707];
+function latLngFromLink(link) {
+  const m = String(link || "").match(/q=(-?[\d.]+),(-?[\d.]+)/);
+  return m ? [Number(m[1]), Number(m[2])] : null;
+}
+const linkFromLatLng = (lat, lng) => `https://maps.google.com/?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
+function tileLayer() {
+  return window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" });
+}
+
+// Full screen picker: the pin stays in the middle and the customer moves the map under it
+function openMapPicker(current, onPick) {
+  const sheet = openSheet(`
+    <h3>${esc(t("Set your delivery location"))}</h3>
+    <p class="sub">${esc(t("Move the map so the pin sits on your gate."))}</p>
+    <div class="mappick"><div id="pickmap"></div><div class="pin" aria-hidden="true">📍</div>
+      <button class="mylocbtn" id="myloc">◎ ${esc(t("Use my current location"))}</button></div>
+    <div class="stack">
+      <button class="btn btn-main btn-block" id="pickok">${esc(t("Confirm location"))}</button>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
+    </div>`);
+  sheet.classList.add("tall");
+  $("[data-close]", sheet).onclick = closeSheet;
+  loadLeaflet().then(() => {
+    const start = latLngFromLink(current) || CHENNAI;
+    const map = window.L.map("pickmap", { zoomControl: true, attributionControl: true }).setView(start, latLngFromLink(current) ? 17 : 12);
+    tileLayer().addTo(map);
+    setTimeout(() => map.invalidateSize(), 250);
+    const locate = async () => {
+      const b = $("#myloc"); b.textContent = t("Getting your location…");
+      try { const ll = latLngFromLink(await getLocationLink()); map.setView(ll, 17); }
       catch { toast(t("Allow location access in your phone settings, then try again."), true); }
-      draw();
-    });
+      b.textContent = "◎ " + t("Use my current location");
+    };
+    $("#myloc").onclick = locate;
+    if (!latLngFromLink(current)) locate();
+    $("#pickok").onclick = () => { const c = map.getCenter(); closeSheet(); onPick(linkFromLatLng(c.lat, c.lng)); };
+  }).catch(() => toast(t("Check your internet connection and try again."), true));
+}
+
+// Small map preview with a pin, plus set or change button
+function mapPinBlock(container, state, onChange) {
+  const draw = () => {
+    const ll = latLngFromLink(state.map_link);
+    container.innerHTML = ll
+      ? `<div class="mapmini"><div class="mm"></div><div class="mapmini-bar"><span>✓ ${esc(t("Location shared"))}</span><button type="button" data-set>${esc(t("Change"))}</button></div></div>`
+      : `<button type="button" class="loc-btn" data-set>📍 ${esc(t("Set your location on the map"))}</button><div class="su-help">${esc(t("Helps our delivery partner find your home."))}</div>`;
+    container.querySelector("[data-set]").onclick = () => openMapPicker(state.map_link, (link) => { state.map_link = link; draw(); onChange && onChange(link); });
+    if (ll) loadLeaflet().then(() => {
+      const el = container.querySelector(".mm"); if (!el) return;
+      const m = window.L.map(el, { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, attributionControl: false }).setView(ll, 16);
+      tileLayer().addTo(m);
+      window.L.marker(ll, { icon: window.L.divIcon({ className: "pin-ico", html: "📍", iconSize: [32, 32], iconAnchor: [16, 30] }) }).addTo(m);
+      setTimeout(() => m.invalidateSize(), 200);
+    }).catch(() => {});
   };
   draw();
 }
+// kept for older calls
+const locationBlock = (c, s) => mapPinBlock(c, s);
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -1336,6 +1492,29 @@ function compressImage(file, maxSide = 1400, quality = 0.75) {
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
     img.src = url;
   });
+}
+
+/* ---------- light and dark theme ---------- */
+let THEME = "system";
+const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+function applyTheme() {
+  const dark = THEME === "dark" || (THEME === "system" && mq && mq.matches);
+  document.documentElement.dataset.theme = dark ? "dark" : "light";
+  const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = dark ? "#0E1422" : "#1E2B4A";
+  window.Capacitor?.Plugins?.StatusBar?.setStyle?.({ style: dark ? "DARK" : "LIGHT" }).catch?.(() => {});
+}
+mq && mq.addEventListener && mq.addEventListener("change", () => THEME === "system" && applyTheme());
+async function setTheme(v) { THEME = ["light", "dark", "system"].includes(v) ? v : "system"; await store.set("rd_theme", THEME); applyTheme(); }
+function themePicker(onChange) {
+  const wrap = document.createElement("div");
+  wrap.className = "langs";
+  wrap.innerHTML = [["system", "Automatic"], ["light", "Light"], ["dark", "Dark"]]
+    .map(([v, l]) => `<button data-theme-set="${v}" class="${THEME === v ? "on" : ""}">${v === "light" ? "☀️ " : v === "dark" ? "🌙 " : "⚙️ "}${esc(t(l))}</button>`).join("");
+  wrap.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-theme-set]"); if (!b) return;
+    await setTheme(b.dataset.themeSet); onChange && onChange();
+  });
+  return wrap;
 }
 
 async function setLang(code) {
@@ -1477,14 +1656,6 @@ async function renderSignup(err = "") {
       <div class="su-help" id="su-addr-help">${esc(t("House number, street and a landmark"))}</div>
       <div id="su-loc" class="su-loc"></div>
 
-      ${f.options.areas.length ? `
-        <label for="su-area">${esc(t("Area"))}</label>
-        <select id="su-area" class="su-input">
-          <option value="">${esc(t("Choose your area"))}</option>
-          ${f.options.areas.map((a) => `<option value="${esc(a.id)}" ${a.id === f.area_id ? "selected" : ""}>${esc(a.name)}</option>`).join("")}
-          <option value="other" ${f.area_id === "other" ? "selected" : ""}>${esc(t("Other area"))}</option>
-        </select>` : ""}
-
       ${f.options.milk.length ? `
         <label>${esc(t("Would you like daily milk delivery?"))}</label>
         <div class="seg dark"><button data-milk="1" class="${f.wants_milk ? "on" : ""}">${esc(t("Yes, daily milk"))}</button><button data-milk="0" class="${f.wants_milk ? "" : "on"}">${esc(t("Just shopping"))}</button></div>
@@ -1507,14 +1678,13 @@ async function renderSignup(err = "") {
 
   const keep = () => {
     f.name = $("#su-name").value; f.address = $("#su-addr").value;
-    if ($("#su-area")) f.area_id = $("#su-area").value;
     if ($("#su-milk")) f.milk_id = $("#su-milk").value;
     if ($("#su-size")) f.milk_size = $("#su-size").value;
     if ($("#su-qty")) f.milk_qty = Number($("#su-qty").value);
     if ($("#su-start")) f.start = $("#su-start").value;
   };
   $("#lp").appendChild(langPicker(() => { keep(); renderSignup(); }));
-  locationBlock($("#su-loc"), f);
+  mapPinBlock($("#su-loc"), f, () => keep());
   app.querySelectorAll("[data-milk]").forEach((b) => b.onclick = () => { keep(); f.wants_milk = b.dataset.milk === "1"; renderSignup(); });
   $("#su-milk")?.addEventListener("change", () => { keep(); const m = f.options.milk.find((x) => x.id === f.milk_id); f.milk_size = m?.sizes?.[0]?.label || ""; renderSignup(); });
   $("#su-go").onclick = async () => {
@@ -1524,7 +1694,7 @@ async function renderSignup(err = "") {
     const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your account…");
     const r = await call("app-auth", {
       action: "signup", phone: S.phone, signup_token: f.token, device: deviceType(),
-      name: f.name, address: f.address, map_link: f.map_link || "", area_id: f.area_id && f.area_id !== "other" ? f.area_id : "",
+      name: f.name, address: f.address, map_link: f.map_link || "", area_id: "",
       wants_milk: f.wants_milk && !!f.milk_id, milk_id: f.milk_id, milk_size: f.milk_size, milk_qty: f.milk_qty, start_date: f.start,
     });
     if (!r.ok) {
@@ -1568,7 +1738,7 @@ function shell() {
       <button data-tab="shop">${icons.shop}${esc(t("Shop"))}</button>
       <button data-tab="bills"><span class="ico">${icons.bills}<i class="dot hidden" id="billdot"></i></span>${esc(t("Bills"))}</button>
       <button data-tab="help"><span class="ico">${icons.help}<i class="dot hidden" id="helpdot"></i></span>${esc(t("Help"))}</button>
-      <button data-tab="account">${icons.account}${esc(t("Account"))}</button>
+      <button data-tab="account">${icons.account}${esc(t("Profile"))}</button>
     </nav>`;
   $(".tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-tab]");
@@ -1585,12 +1755,14 @@ function updateDots() {
 }
 
 function go(tab) {
+  if (tab !== "home") S.homeCal = false;
+  if (S.tab === "home" && tab === "home") S.homeCal = false;
   S.tab = tab;
   document.querySelectorAll(".tabs button").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === tab);
     b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
   });
-  if (tab === "home") renderHome();
+  if (tab === "home") { if (S.tab === tab && document.querySelector(".subhead")) S.homeCal = false; renderHome(); }
   if (tab === "calendar") { S.tab = "home"; return go("home"); }
   if (tab === "help") renderHelp();
   if (tab === "shop") renderShop();
@@ -1639,6 +1811,18 @@ async function renderHome() {
     return;
   }
 
+  if (S.homeCal) {
+    v.innerHTML = `
+      <div class="subhead"><button id="calback" aria-label="${esc(t("Back"))}">‹</button><h2>${esc(t("Full calendar"))}</h2></div>
+      <p class="muted" style="margin:-4px 4px 12px">${esc(t("Tap days to select them, then change them together."))}</p>
+      <div id="homecal"><div class="loading">${esc(t("Loading…"))}</div></div>
+      <div class="row-actions" style="grid-template-columns:1fr"><button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button></div>`;
+    $("#calback").onclick = () => { S.homeCal = false; renderHome(); };
+    $("#away").onclick = openAwaySheet;
+    drawHomeCalendar();
+    return;
+  }
+
   const tm = h.tomorrow;
   const canEditTomorrow = tm.date >= h.first_editable_date;
   const p = qtyParts(tm.qty);
@@ -1661,17 +1845,36 @@ async function renderHome() {
       `}
     </section>
 
-    <h2>${esc(t("Your deliveries"))}</h2>
-    <p class="muted" style="margin:-4px 4px 12px">${esc(t("Tap days to select them, then change them together."))}</p>
-    <div id="homecal"><div class="loading">${esc(t("Loading…"))}</div></div>
+    <h2>${esc(t("Next 7 days"))}</h2>
+    <div class="week">
+      ${h.next7.map((d) => {
+        const locked = d.date < h.first_editable_date;
+        return `<button class="day ${d.status} ${locked ? "locked" : ""} ${S.sel.has(d.date) ? "sel" : ""}" data-day="${d.date}" aria-pressed="${S.sel.has(d.date)}"
+          aria-label="${esc(longDate(d.date))}, ${esc(d.status === "paused" ? t("Paused") : fmtQty(d.qty))}">
+          <div class="dn">${esc(fmtDay(d.date, { weekday: "short" }))}</div>
+          <div class="dd">${esc(fmtDay(d.date, { day: "numeric" }))}</div>
+          <div class="dq">${d.status === "paused" ? esc(t("Paused")) : esc(shortQty(d.qty))}</div>
+        </button>`;
+      }).join("")}
+    </div>
+    <p class="muted" style="margin:10px 4px 0;font-size:14px">${esc(t("Tap days to select them, then change them together."))}</p>
 
-    <div class="row-actions" style="grid-template-columns:1fr">
+    <div class="row-actions">
       <button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button>
+      <button class="btn btn-line" id="fullcal">📅 ${esc(t("Full calendar"))}</button>
     </div>`;
 
+  v.querySelectorAll("[data-day]").forEach((el) => el.onclick = () => {
+    const date = el.dataset.day;
+    if (date < h.first_editable_date) return toast(t("Changes for {date} are closed.", { date: shortDate(date) }));
+    if (S.sel.has(date)) S.sel.delete(date); else S.sel.add(date);
+    el.classList.toggle("sel", S.sel.has(date)); el.setAttribute("aria-pressed", S.sel.has(date));
+    updateSelBar();
+  });
+  $("#fullcal").onclick = () => { S.homeCal = true; renderHome(); };
   $("#chg-tmr")?.addEventListener("click", () => openDaySheet(tm.date, tm.qty, tm.status));
   $("#away").onclick = openAwaySheet;
-  drawHomeCalendar();
+  updateSelBar();
 }
 
 /* ---------- sheets ---------- */
@@ -1833,7 +2036,7 @@ function updateSelBar() {
   bar.className = "selbar";
   bar.innerHTML = `<span>${esc(n === 1 ? t("1 day selected") : t("{n} days selected", { n }))}</span>
     <div><button data-clear>${esc(t("Clear"))}</button><button data-change class="go">${esc(t("Change"))}</button></div>`;
-  bar.querySelector("[data-clear]").onclick = () => { S.sel.clear(); updateSelBar(); drawHomeCalendar(); };
+  bar.querySelector("[data-clear]").onclick = () => { S.sel.clear(); updateSelBar(); if ($("#homecal")) drawHomeCalendar(); else renderHome(); };
   bar.querySelector("[data-change]").onclick = () => {
     const dates = [...S.sel].sort();
     if (dates.length === 1) {
@@ -2419,19 +2622,36 @@ async function renderAccount() {
   const h = S.home;
   if (S.tab !== "account") return;
 
-  const kv = (k, val) => `<div class="kv"><span>${esc(t(k))}</span><b>${esc(val)}</b></div>`;
-  const details = h.is_subscriber
-    ? kv("Name", h.name) + kv("Mobile", "+91 " + h.phone) + kv("Address", h.address) + kv("Area", h.area) + kv("Milk", h.milk_type) +
-      kv("Usual quantity", t("{qty} a day", { qty: fmtQty(h.default_qty) })) + kv("Rate", t("{amt} per litre", { amt: inr(h.rate) })) +
-      (h.delivery_charge ? kv("Delivery charge", t("{amt} a month", { amt: inr(h.delivery_charge) })) : "")
-    : kv("Name", h.name) + kv("Mobile", "+91 " + h.phone);
+  const kv = (k, val) => val ? `<div class="kv"><span>${esc(t(k))}</span><b>${esc(val)}</b></div>` : "";
+  const initials = String(h.name || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
   const pq = h.pending_qty_change;
 
   v.innerHTML = `
-    <div class="sec-head"><h2>${esc(t("Your details"))}</h2><button id="editp">${esc(t("Edit"))}</button></div>
-    <div class="card">${details}</div>
+    <section class="pf-card">
+      <div class="pf-av">${esc(initials)}</div>
+      <div class="pf-who">
+        <b>${esc(h.name || "")}</b>
+        <span>+91 ${esc(h.phone)}</span>
+        <span class="pf-tag">${esc(h.is_subscriber ? t("Milk subscriber") : t("RD Dairy customer"))}${h.area ? " · " + esc(h.area) : ""}</span>
+      </div>
+      <button class="pf-edit" id="editp">${esc(t("Edit"))}</button>
+    </section>
+
+    <h2>${esc(t("Delivery location"))}</h2>
+    <div class="card pad">
+      ${h.address ? `<p style="margin:0 0 12px;font-weight:600">${esc(h.address)}</p>` : ""}
+      <div id="pf-loc"></div>
+    </div>
 
     ${h.is_subscriber ? `
+      <h2>${esc(t("Your details"))}</h2>
+      <div class="card">
+        ${kv("Milk", h.milk_type)}
+        ${kv("Usual quantity", t("{qty} a day", { qty: fmtQty(h.default_qty) }))}
+        ${kv("Rate", t("{amt} per litre", { amt: inr(h.rate) }))}
+        ${h.delivery_charge ? kv("Delivery charge", t("{amt} a month", { amt: inr(h.delivery_charge) })) : ""}
+      </div>
+
       <h2>${esc(t("Change your usual quantity"))}</h2>
       <div class="card pad">
         ${pq ? `<div class="pending">${esc(t("Your request for {qty} a day from {date} is with RD Dairy.", { qty: fmtQty(pq.new_qty), date: shortDate(pq.effective_from) }))}</div>` : ""}
@@ -2445,8 +2665,11 @@ async function renderAccount() {
         <p class="muted" style="margin:10px 0 0;font-size:14px">${esc(t("RD Dairy confirms the new quantity before it starts."))}</p>
       </div>` : ""}
 
-    <h2>${esc(t("Language"))}</h2>
-    <div class="card pad" id="acc-lang"></div>
+    <h2>${esc(t("Preferences"))}</h2>
+    <div class="card pad">
+      <div class="pref-l">${esc(t("Language"))}</div><div id="acc-lang"></div>
+      <div class="pref-l" style="margin-top:16px">${esc(t("Appearance"))}</div><div id="acc-theme"></div>
+    </div>
 
     <div style="margin-top:28px">
       <button class="btn btn-line btn-block" id="logout">${esc(t("Log out"))}</button>
@@ -2454,8 +2677,16 @@ async function renderAccount() {
     </div>`;
 
   $("#acc-lang").appendChild(langPicker(() => { shell(); go("account"); }));
+  $("#acc-theme").appendChild(themePicker(() => renderAccount()));
   $("#editp").onclick = openProfileSheet;
   $("#delacc").onclick = openDeleteSheet;
+  mapPinBlock($("#pf-loc"), { map_link: h.map_link || "" }, async (link) => {
+    const r = await call("app-api", { action: "update_profile", name: h.name, address: h.address || "", map_link: link });
+    if (!r.ok) return toast(r.message, true);
+    S.home.map_link = link;
+    toast(t("Your location is saved"));
+  });
+
   if (h.is_subscriber) {
     let q = Number(h.default_qty);
     const out = $("output", v);
@@ -2492,7 +2723,7 @@ function openProfileSheet() {
       <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button>
     </div>`);
   const loc = { map_link: h.map_link || "" };
-  locationBlock($("#ploc", sheet), loc);
+  mapPinBlock($("#ploc", sheet), loc);
   $("[data-close]", sheet).onclick = closeSheet;
   $("[data-save]", sheet).onclick = async (e) => {
     const name = $("#pn", sheet).value.trim(), address = $("#pa", sheet).value.trim();
@@ -2783,6 +3014,7 @@ async function startApp() {
 }
 
 (async function init() {
+  THEME = (await store.get("rd_theme")) || "system"; applyTheme();
   const saved = await store.get("rd_lang");
   const deviceLang = (navigator.language || "en").slice(0, 2);
   await setLang(saved || (["ta", "hi"].includes(deviceLang) ? deviceLang : "en"));
