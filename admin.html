@@ -142,6 +142,8 @@
   /* app payments */
   .lbox{position:relative}
   .lbox-count.hidden{display:none !important}
+  .nav-count{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:5px;border-radius:9px;background:var(--err);color:#fff;font-size:.7rem;font-weight:800;vertical-align:1px}
+  .nav-count.hidden{display:none}
   .lbox-count{position:absolute;top:10px;right:10px;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:var(--err);color:#fff;font-weight:800;font-size:.78rem;display:grid;place-items:center}
   .ap-alert{max-width:640px;margin:22px auto 0;background:var(--navy);color:#fff;border-radius:16px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;box-shadow:0 6px 18px rgba(27,42,90,.18)}
   .ap-alert b{color:var(--amber)}
@@ -178,7 +180,7 @@
     <div class="top-links">
       <a href="https://sanjay120604.github.io/rddairychennai/collection/" target="_blank">📋 Collection</a>
       <a href="https://sanjay120604.github.io/rddairychennai/delivery/" target="_blank">🚚 Delivery</a>
-      <a href="inbox.html">💬 Messages</a>
+      <a href="inbox.html">💬 Messages<span class="nav-count hidden" id="inNav"></span></a>
       <a href="stats.html">📊 Analytics</a>
       <a href="index.html">🏠 Store</a>
       <a href="#" onclick="logout();return false;">Logout</a>
@@ -190,15 +192,15 @@
     <!-- ============ LANDING GRID (shown first, on entry) ============ -->
     <div id="landing">
       <div class="landing-grid">
-        <div class="lbox" onclick="goSection('orders')"><div class="lbox-ico">🧾</div><div class="lbox-label">Orders</div></div>
-        <div class="lbox" onclick="goSection('subs')"><div class="lbox-ico">🔁</div><div class="lbox-label">Subscriptions</div></div>
+        <div class="lbox" onclick="goSection('orders')"><div class="lbox-ico">🧾</div><div class="lbox-label">Orders</div><span class="lbox-count hidden" id="orCount"></span></div>
+        <div class="lbox" onclick="goSection('subs')"><div class="lbox-ico">🔁</div><div class="lbox-label">Subscriptions</div><span class="lbox-count hidden" id="suCount"></span></div>
         <div class="lbox" onclick="goSection('delivery')"><div class="lbox-ico">🚚</div><div class="lbox-label">Delivery</div></div>
         <div class="lbox" onclick="goSection('ledger')"><div class="lbox-ico">🥛</div><div class="lbox-label">Collection</div></div>
         <div class="lbox" onclick="goSection('stock')"><div class="lbox-ico">📦</div><div class="lbox-label">Stocks</div></div>
         <div class="lbox" onclick="window.location.href='billing/index.html'"><div class="lbox-ico">💵</div><div class="lbox-label">Billing</div></div>
         <div class="lbox" onclick="goSection('expenses')"><div class="lbox-ico">💰</div><div class="lbox-label">Expenses</div></div>
         <div class="lbox" onclick="goSection('reports')"><div class="lbox-ico">📊</div><div class="lbox-label">Reports</div></div>
-        <div class="lbox" onclick="window.location.href='inbox.html'"><div class="lbox-ico">💬</div><div class="lbox-label">Messages</div></div>
+        <div class="lbox" onclick="window.location.href='inbox.html'"><div class="lbox-ico">💬</div><div class="lbox-label">Messages</div><span class="lbox-count hidden" id="inCount"></span></div>
         <div class="lbox" onclick="goSection('apppay')"><div class="lbox-ico">📲</div><div class="lbox-label">App Payments</div><span class="lbox-count hidden" id="apCount"></span></div>
         <div class="lbox" onclick="goSection('appreq')"><div class="lbox-ico">🗓️</div><div class="lbox-label">App Requests</div><span class="lbox-count hidden" id="arCount"></span></div>
         <div class="lbox" onclick="goSection('chat')"><div class="lbox-ico">🗨️</div><div class="lbox-label">Support Chat</div><span class="lbox-count hidden" id="chCount"></span></div>
@@ -775,7 +777,7 @@ function goLanding(){
 async function loadData(){
   try{
     var r = await api({action:"getAdminData",adminKey:adminKey});
-    if(r.success){ data={orders:r.orders||[],subscriptions:r.subscriptions||[]}; renderCards(); render(); }
+    if(r.success){ data={orders:r.orders||[],subscriptions:r.subscriptions||[]}; renderCards(); render(); updateOrderBadges(); }
   }catch(e){ alert(e.message); }
 }
 
@@ -2600,15 +2602,19 @@ async function refreshAppPayCount(){
     $("arCount").textContent = rq; $("arCount").classList.toggle("hidden", rq===0);
     var chn = r.chats||0;
     $("chCount").textContent = chn; $("chCount").classList.toggle("hidden", chn===0);
+    var inb = r.inbox||0;
+    $("inCount").textContent = inb; $("inCount").classList.toggle("hidden", inb===0);
+    if($("inNav")){ $("inNav").textContent = inb; $("inNav").classList.toggle("hidden", inb===0); }
     var badge=$("apCount"), alertBox=$("apAlert");
     badge.textContent = n; badge.classList.toggle("hidden", n===0);
     var parts=[];
     if(n) parts.push('<b>'+n+'</b> app '+(n===1?'payment':'payments')+' to confirm');
     if(chn) parts.push('<b>'+chn+'</b> new '+(chn===1?'chat':'chats'));
+    if(inb) parts.push('<b>'+inb+'</b> WhatsApp '+(inb===1?'message':'messages')+' waiting');
     alertBox.classList.toggle("hidden", parts.length===0);
     alertBox.innerHTML = '<span>'+parts.join(' · ')+'</span><span>Open →</span>';
-    alertBox.onclick = function(){ goSection(n ? 'apppay' : 'chat'); };
-    document.title = ((n+chn)?"("+(n+chn)+") ":"")+"Admin Dashboard — RD Dairy";
+    alertBox.onclick = function(){ if(n) goSection('apppay'); else if(chn) goSection('chat'); else window.location.href='inbox.html'; };
+    document.title = ((n+chn+inb)?"("+(n+chn+inb)+") ":"")+"Admin Dashboard — RD Dairy";
     if(!$("chatView").classList.contains("hidden") && chn) loadChatThreads(true);
     if(apLastCount!==null && n>apLastCount && !$("appPayView").classList.contains("hidden")) loadAppPayments();
     apLastCount = n;
@@ -2824,6 +2830,17 @@ async function saveAppSettingsForm(){
     notice("App settings saved");
   }catch(e){ err.textContent=e.message; err.classList.remove("hidden"); }
 }
+
+/* ============ Red counts for Orders and Subscriptions ============ */
+var ORDER_TODO=["Pending Payment","Payment Submitted"], SUB_TODO=["Pending Confirmation","Payment Submitted"];
+function updateOrderBadges(){
+  var o=(data.orders||[]).filter(function(r){ return ORDER_TODO.indexOf(r.Status)>-1; }).length;
+  var s2=(data.subscriptions||[]).filter(function(r){ return SUB_TODO.indexOf(r.Status)>-1; }).length;
+  $("orCount").textContent=o; $("orCount").classList.toggle("hidden", o===0);
+  $("suCount").textContent=s2; $("suCount").classList.toggle("hidden", s2===0);
+}
+// Refresh orders and subscriptions every minute while the dashboard home is showing
+setInterval(function(){ if(adminKey && !$("landing").classList.contains("hidden")) loadData(); },60000);
 
 /* ============ SUPPORT CHAT ============ */
 var chFilter="open", chPhone=null, chTimer=null, chThreads=[];
