@@ -465,6 +465,7 @@
   html[data-theme="dark"] .topbar { background: #101A30; color: #fff; }
   html[data-theme="dark"] .login, html[data-theme="dark"] .due, html[data-theme="dark"] .pf-card, html[data-theme="dark"] .chat-card { color: #fff; }
   html[data-theme="dark"] .selbar button { color: #fff; }
+  .sheet-x { box-shadow: 0 2px 8px rgba(30,43,74,.15); }
   html[data-theme="dark"] .selbar button.go { color: #1E2B4A; }
   .pin-ico { font-size: 30px; line-height: 1; background: none; border: 0; }
   html[data-theme="dark"] .login { background: #101A30; }
@@ -674,6 +675,40 @@
   .tile b { font-size: 15px; } .tile span { font-size: 13px; color: var(--soft); }
   .tile.gold { background: #1E2B4A; color: #F5C34A; } .tile.gold span { color: rgba(255,255,255,.75); }
   .plus { color: var(--extra-fg); }
+
+
+  /* ---------- round 5: top bar, settings, close button, UPI apps ---------- */
+  .tb-btn { position: relative; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.1); font-size: 17px; }
+  .tb-dot { position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; border-radius: 50%; background: #E0362C; }
+  .tb-dot.hidden { display: none; }
+  .sheet { padding-top: 14px; }
+  .sheet-x { position: sticky; top: 0; float: right; margin: -4px -6px 0 8px; z-index: 5; width: 40px; height: 40px; border-radius: 50%; background: var(--mist); color: var(--ink); font-size: 16px; font-weight: 800; }
+  .sheet [data-close] { display: none !important; }
+  .set-row { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 4px; border-bottom: 1px solid var(--mist); font-weight: 600; color: var(--ink); text-align: left; }
+  .set-row.link b { font-size: 22px; color: var(--soft); }
+  .set-row select { min-height: 44px; border-radius: 12px; border: 1.5px solid var(--line); padding: 0 10px; background: var(--milk); color: var(--ink); font: inherit; }
+  .switch { position: relative; width: 52px; height: 30px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch i { position: absolute; inset: 0; border-radius: 15px; background: var(--line); transition: .2s; }
+  .switch i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: .2s; }
+  .switch input:checked + i { background: var(--ink); }
+  html[data-theme="dark"] .switch input:checked + i { background: var(--butter); }
+  .switch input:checked + i::after { left: 25px; }
+  .upi-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .upi-app { display: flex; flex-direction: column; justify-content: center; min-height: 54px; padding: 8px 12px; border-radius: 14px; background: var(--butter); color: #1E2B4A; text-decoration: none; }
+  .upi-app b { font-size: 16px; } .upi-app span { font-size: 12.5px; opacity: .8; }
+  .upi-app.other { background: var(--mist); color: var(--ink); }
+  .feenote { font-size: 13.5px; color: var(--soft); margin-top: 6px; }
+  .othumbs { display: flex; gap: 6px; margin-top: 6px; }
+  .othumbs img { width: 42px; height: 42px; border-radius: 10px; object-fit: contain; background: #fff; border: 1px solid var(--mist); }
+  .ot-one { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; background: #fff; vertical-align: middle; margin-right: 8px; }
+  .ot-n { display: flex; align-items: center; }
+  .inb-code { font-style: normal; font-weight: 800; color: #B87A00; font-size: 13px; }
+  /* keep maps beneath sheets, bars and tabs */
+  .mapmini, .mappick { position: relative; isolation: isolate; z-index: 0; }
+  .leaflet-container { z-index: 0 !important; }
+  .leaflet-pane, .leaflet-top, .leaflet-bottom { z-index: 1 !important; }
+  .mappick .pin, .mylocbtn { z-index: 2 !important; }
 
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
@@ -1049,6 +1084,22 @@ const T = {
     "{pct}% off all shop products": "அனைத்து கடைப் பொருட்களுக்கும் {pct}% தள்ளுபடி",
     "{size} every morning for {days} days, just {amt}": "{days} நாட்கள் தினமும் காலை {size}, வெறும் {amt}",
     "{size} of {product} every morning for {days} days.": "{days} நாட்கள் தினமும் காலை {size} {product}.",
+    "Dark or light": "இருள் அல்லது வெளிச்சம்",
+    "Settings": "அமைப்புகள்",
+    "Dark mode": "இருள் பயன்முறை",
+    "Other UPI app": "வேறு UPI ஆப்",
+    "Pay with UPI app": "UPI ஆப்பில் செலுத்து",
+    "Code {code} is ready in your cart": "குறியீடு {code} உங்கள் கார்ட்டில் தயார்",
+    "Tap to use": "பயன்படுத்தத் தொடவும்",
+    "Free delivery on orders above {amt}": "{amt} க்கு மேல் ஆர்டர்களுக்கு இலவச டெலிவரி",
+    "Bills to pay": "செலுத்த வேண்டிய பில்கள்",
+    "All your bills are paid": "உங்கள் பில்கள் அனைத்தும் செலுத்தப்பட்டன",
+    "Payment": "கட்டணம்",
+    "Ordered by mistake": "தவறுதலாக ஆர்டர் செய்தேன்",
+    "Need it on another day": "வேறு நாளில் வேண்டும்",
+    "Want to change items": "பொருட்களை மாற்ற வேண்டும்",
+    "Found it elsewhere": "வேறு இடத்தில் கிடைத்தது",
+    "Keep it": "இருக்கட்டும்",
     "Getting your deliveries ready": "உங்கள் டெலிவரி விவரங்களைத் தயார் செய்கிறோம்",
     "Set your delivery location": "டெலிவரி இடத்தை அமைக்கவும்",
     "Move the map so the pin sits on your gate.": "பின் உங்கள் வாசலில் இருக்கும்படி வரைபடத்தை நகர்த்துங்கள்.",
@@ -1592,6 +1643,22 @@ const T = {
     "{pct}% off all shop products": "दुकान के सभी सामान पर {pct}% छूट",
     "{size} every morning for {days} days, just {amt}": "{days} दिन हर सुबह {size}, सिर्फ़ {amt}",
     "{size} of {product} every morning for {days} days.": "{days} दिन हर सुबह {size} {product}।",
+    "Dark or light": "डार्क या लाइट",
+    "Settings": "सेटिंग्स",
+    "Dark mode": "डार्क मोड",
+    "Other UPI app": "दूसरा UPI ऐप",
+    "Pay with UPI app": "UPI ऐप से भुगतान",
+    "Code {code} is ready in your cart": "कोड {code} आपके कार्ट में तैयार है",
+    "Tap to use": "इस्तेमाल के लिए छुएँ",
+    "Free delivery on orders above {amt}": "{amt} से ऊपर के ऑर्डर पर मुफ़्त डिलीवरी",
+    "Bills to pay": "चुकाने वाले बिल",
+    "All your bills are paid": "आपके सभी बिल चुका दिए गए हैं",
+    "Payment": "भुगतान",
+    "Ordered by mistake": "गलती से ऑर्डर किया",
+    "Need it on another day": "किसी और दिन चाहिए",
+    "Want to change items": "सामान बदलना है",
+    "Found it elsewhere": "कहीं और मिल गया",
+    "Keep it": "रहने दें",
     "Getting your deliveries ready": "आपकी डिलीवरी की जानकारी तैयार कर रहे हैं",
     "Set your delivery location": "डिलीवरी की जगह तय करें",
     "Move the map so the pin sits on your gate.": "मैप को खिसकाएँ ताकि पिन आपके गेट पर हो।",
@@ -2200,7 +2267,7 @@ setInterval(() => {
 }, 2200);
 
 /* ---------- light and dark theme ---------- */
-let THEME = "system";
+let THEME = "light";
 const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 function applyTheme() {
   const dark = THEME === "dark" || (THEME === "system" && mq && mq.matches);
@@ -2209,12 +2276,13 @@ function applyTheme() {
   window.Capacitor?.Plugins?.StatusBar?.setStyle?.({ style: dark ? "DARK" : "LIGHT" }).catch?.(() => {});
 }
 mq && mq.addEventListener && mq.addEventListener("change", () => THEME === "system" && applyTheme());
-async function setTheme(v) { THEME = ["light", "dark", "system"].includes(v) ? v : "system"; await store.set("rd_theme", THEME); applyTheme(); }
+async function setTheme(v) { THEME = v === "dark" ? "dark" : "light"; await store.set("rd_theme", THEME); applyTheme(); }
 function themePicker(onChange) {
   const wrap = document.createElement("div");
   wrap.className = "langs";
-  wrap.innerHTML = [["system", "Automatic"], ["light", "Light"], ["dark", "Dark"]]
-    .map(([v, l]) => `<button data-theme-set="${v}" class="${THEME === v ? "on" : ""}">${v === "light" ? "☀️ " : v === "dark" ? "🌙 " : "⚙️ "}${esc(t(l))}</button>`).join("");
+  const cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  wrap.innerHTML = [["light", "☀️ ", "Light"], ["dark", "🌙 ", "Dark"]]
+    .map(([v, ic, l]) => `<button data-theme-set="${v}" class="${cur === v ? "on" : ""}">${ic}${esc(t(l))}</button>`).join("");
   wrap.addEventListener("click", async (e) => {
     const b = e.target.closest("[data-theme-set]"); if (!b) return;
     await setTheme(b.dataset.themeSet); onChange && onChange();
@@ -2241,6 +2309,41 @@ function langPicker(onChange) {
     onChange();
   });
   return wrap;
+}
+
+/* ---------- UPI: open the exact app the customer taps ---------- */
+function upiAppButtons(link, amountLabel) {
+  const q = String(link).split("?")[1] || "";
+  const android = /Android/i.test(navigator.userAgent), ios = /iPhone|iPad/i.test(navigator.userAgent);
+  const intent = (pkg) => `intent://pay?${q}#Intent;scheme=upi;package=${pkg};end`;
+  const apps = android
+    ? [["GPay", intent("com.google.android.apps.nbu.paisa.user")], ["PhonePe", intent("com.phonepe.app")], ["Paytm", intent("net.one97.paytm")]]
+    : ios
+    ? [["GPay", `gpay://upi/pay?${q}`], ["PhonePe", `phonepe://pay?${q}`], ["Paytm", `paytmmp://pay?${q}`]]
+    : [];
+  return `<div class="upi-apps">
+    ${apps.map(([n, href]) => `<a class="upi-app" href="${esc(href)}"><b>${esc(n)}</b><span>${esc(amountLabel || "")}</span></a>`).join("")}
+    <a class="upi-app other" href="${esc(link)}"><b>${esc(t(apps.length ? "Other UPI app" : "Pay with UPI app"))}</b><span>${esc(amountLabel || "")}</span></a>
+  </div>`;
+}
+
+/* ---------- Settings: language, theme, help ---------- */
+function openSettings() {
+  const sheet = openSheet(`
+    <h3>⚙️ ${esc(t("Settings"))}</h3>
+    <div class="set-row"><span>🌐 ${esc(t("Language"))}</span>
+      <select id="setLang">${LANGS.map((l) => `<option value="${l.code}" ${l.code === LANG ? "selected" : ""}>${l.label}</option>`).join("")}</select></div>
+    <div class="set-row"><span>${document.documentElement.dataset.theme === "dark" ? "🌙" : "☀️"} ${esc(t("Dark mode"))}</span>
+      <label class="switch"><input type="checkbox" id="setDark" ${document.documentElement.dataset.theme === "dark" ? "checked" : ""}/><i></i></label></div>
+    <button class="set-row link" data-help><span>🎧 ${esc(t("Help and support"))}</span><b>›</b></button>
+    <button class="set-row link" data-chat><span>💬 ${esc(t("Chat with RD Dairy"))}${S.home?.chat_unread ? ` <i class="cc-badge" style="position:static">${S.home.chat_unread}</i>` : ""}</span><b>›</b></button>
+    <button class="set-row link" data-issue><span>🚚 ${esc(t("Report a delivery problem"))}</span><b>›</b></button>
+    <div class="links" style="margin-top:16px"><a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${esc(t("Privacy policy"))}</a><a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a></div>`);
+  $("#setLang", sheet).onchange = async (e) => { await setLang(e.target.value); closeSheet(); shell(); go(S.tab || "home"); };
+  $("#setDark", sheet).onchange = async (e) => { await setTheme(e.target.checked ? "dark" : "light"); closeSheet(); shell(); go(S.tab || "home"); };
+  $("[data-help]", sheet).onclick = () => { closeSheet(); S.chatOpen = false; go("help"); };
+  $("[data-chat]", sheet).onclick = () => { closeSheet(); S.chatOpen = true; go("help"); };
+  $("[data-issue]", sheet).onclick = () => { closeSheet(); openIssueSheet(); };
 }
 
 /* ---------- bottle ---------- */
@@ -2438,28 +2541,31 @@ const icons = {
 
 function shell() {
   $("#app").innerHTML = `
-    <header class="topbar">${brandHTML()}<div class="tb-r"><small id="tb-area"></small><button class="bell" id="bell" aria-label="${esc(t("Notifications"))}">🔔<i class="hidden" id="bellCount"></i></button></div></header>
+    <header class="topbar">${brandHTML()}<div class="tb-r">
+      <button class="tb-btn" id="tbTheme" aria-label="${esc(t("Dark or light"))}">${document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙"}</button>
+      <button class="tb-btn" id="tbSettings" aria-label="${esc(t("Settings"))}">⚙️<i class="tb-dot hidden" id="setDot"></i></button>
+      <button class="bell" id="bell" aria-label="${esc(t("Notifications"))}">🔔<i class="hidden" id="bellCount"></i></button></div></header>
     <main id="view">${loaderHTML()}</main>
     <nav class="tabs" aria-label="Main">
       <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
       <button data-tab="shop">${icons.shop}${esc(t("Shop"))}</button>
       <button data-tab="bills"><span class="ico">${icons.bills}<i class="dot hidden" id="billdot"></i></span>${esc(t("Bills"))}</button>
-      <button data-tab="help"><span class="ico">${icons.help}<i class="dot hidden" id="helpdot"></i></span>${esc(t("Help"))}</button>
       <button data-tab="account">${icons.account}${esc(t("Profile"))}</button>
     </nav>`;
   $("#bell").onclick = openInbox;
+  $("#tbSettings").onclick = openSettings;
+  $("#tbTheme").onclick = async () => { await setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); $("#tbTheme").textContent = document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙"; };
   updateBell();
   $(".tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-tab]");
     if (b) go(b.dataset.tab);
   });
-  const ta = $("#tb-area"); if (ta && S.home) ta.textContent = S.home.area || "";
   updateDots();
 }
 function updateDots() {
   const d = $("#billdot");
   if (d) d.classList.toggle("hidden", !(S.home && S.home.bills_due > 0));
-  const hd = $("#helpdot");
+  const hd = $("#setDot");
   if (hd) hd.classList.toggle("hidden", !(S.home && S.home.chat_unread > 0));
 }
 
@@ -2487,7 +2593,6 @@ async function loadHome() {
   const r = await call("app-api", { action: "home" });
   if (!r.ok) { if (r.code !== "logged_out") toast(r.message, true); return null; }
   S.home = r;
-  const ta = $("#tb-area"); if (ta) ta.textContent = r.area || "";
   updateDots();
   return r;
 }
@@ -2519,7 +2624,6 @@ async function renderHome() {
       </div>
       <div id="homeBottom"></div>`;
     $("#toshop").onclick = () => go("shop");
-    loadNotices();
     drawHomeExtras();
     return;
   }
@@ -2590,7 +2694,6 @@ async function renderHome() {
   $("#chg-tmr")?.addEventListener("click", () => openDaySheet(tm.date, tm.qty, tm.status));
   $("#away").onclick = openAwaySheet;
   updateSelBar();
-  loadNotices();
   drawHomeExtras();
 }
 
@@ -2625,6 +2728,16 @@ function openSheet(html) {
   sheet.innerHTML = `<div class="grip"></div>${html}`;
   scrim.onclick = closeSheet;
   document.body.append(scrim, sheet);
+  // A close button at the top corner, kept in place whenever the sheet redraws
+  const addX = () => {
+    if (sheet.querySelector(":scope > .sheet-x")) return;
+    const x = document.createElement("button");
+    x.className = "sheet-x"; x.setAttribute("aria-label", t("Close")); x.innerHTML = "✕";
+    x.onclick = () => { const c = sheet.querySelector("[data-close]"); if (c) c.click(); else closeSheet(); };
+    sheet.prepend(x);
+  };
+  addX();
+  new MutationObserver(addX).observe(sheet, { childList: true });
   return sheet;
 }
 function closeSheet() { document.querySelectorAll(".scrim,.sheet").forEach((e) => e.remove()); }
@@ -2862,7 +2975,8 @@ async function renderShop() {
   }
   if (S.tab !== "shop") return;
 
-  const cats = ["All", ...new Set(SH.catalog.map((p) => p.category))];
+  const cats = ["All", ...new Set(SH.catalog.map((p) => p.category))].filter((c) => c !== "Fresh");
+  if (SH.cat === "Fresh") SH.cat = "All";
   const list = SH.catalog.filter((p) => SH.cat === "All" || p.category === SH.cat);
   v.innerHTML = `
     <div class="shop-head"><h2>${esc(t("Shop"))}</h2><button id="myord">${esc(t("My orders"))}</button></div>
@@ -2969,7 +3083,7 @@ async function openProduct(id) {
       </div>
       ${r.reviews.filter((x) => !x.mine).map((x) => `<div class="rv">
         <div class="top">${starRow(x.rating, "sm")} <b>${esc(x.name)}</b> <span class="muted">${esc(new Date(x.at).toLocaleDateString(locale(), { day: "numeric", month: "short" }))}</span></div>
-        ${x.comment ? `<p>${esc(x.comment)}</p>` : ""}</div>`).join("") || (r.mine ? "" : `<p class="sub">${esc(t("Be the first to review this product."))}</p>`)}`;
+        ${x.comment ? `<p>${esc(x.comment)}</p>` : ""}</div>`).join("")}`;
     box.querySelectorAll("[data-star]").forEach((b) => b.onclick = () => { st.rating = +b.dataset.star; box.querySelectorAll("[data-star]").forEach((x) => x.classList.toggle("on", +x.dataset.star <= st.rating)); });
     $("[data-rvsave]", box).onclick = async (e) => {
       if (!st.rating) return toast(t("Choose 1 to 5 stars"), true);
@@ -3010,7 +3124,8 @@ async function copyText(text) {
 
 function openCartSheet() {
   const meta = SH.meta || {};
-  const st = { repeat: false, plan: "daily", weekday: "0", start: addDays(todayIST(), 1), pay: "cod", proof: "", utr: "" };
+  const st = { repeat: false, plan: "daily", weekday: "0", start: addDays(todayIST(), 1), pay: "cod", proof: "", utr: "", code: SH.pendingCode || "" };
+  SH.pendingCode = "";
   const sheet = openSheet("");
   sheet.classList.add("tall");
   const weekdays = [...Array(7)].map((_, i) => new Date(Date.UTC(2026, 0, 4 + i)).toLocaleDateString(locale(), { timeZone: "UTC", weekday: "long" }));
@@ -3100,7 +3215,7 @@ function openCartSheet() {
     const r = await call("app-api", { action: "shop_upi", items: SH.cart, code: st.q?.coupon?.ok ? st.code : "" });
     if (!r.ok) { area.innerHTML = ""; return toast(r.message, true); }
     area.innerHTML = `
-      <a class="btn btn-main btn-block" style="margin-top:12px" href="${esc(r.upi_link)}">${esc(t("Pay {amt} with UPI app", { amt: inr(r.amount) }))}</a>
+      <div style="margin-top:12px">${upiAppButtons(r.upi_link, inr(r.amount))}</div>
       <div class="upi-box" style="margin-top:10px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
       <p class="sub" style="margin:4px 0 10px">${esc(t("After paying, add the UPI reference number or a screenshot."))}</p>
       <div class="utr-row"><input id="sutr" type="text" inputmode="numeric" autocomplete="off" maxlength="16" aria-label="${esc(t("UPI reference number (12 digits)"))}" value="${esc(st.utr)}" /><button data-paste>${esc(t("Paste"))}</button></div>
@@ -3148,21 +3263,23 @@ async function openMyOrders() {
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "my_orders" });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
+  if (!SH.catalog) { const c = await call("app-api", { action: "shop_catalog" }); if (c.ok) { SH.catalog = c.catalog; SH.meta = c; } }
   const pillFor = (s) => /deliver|paid|active/i.test(s) ? "paid" : /cancel/i.test(s) ? "wait" : "due-p";
   const when = (iso) => new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
   sheet.innerHTML = `<div class="grip"></div>
     <h3>${esc(t("My orders"))}</h3>
     ${(r.on_bill || []).length ? `<h4>${esc(t("On your monthly bill"))}</h4><div>${r.on_bill.map((x) => `<div class="orow">
-      <div class="top"><span>${esc(x.name)} × ${esc(+x.quantity.toFixed(3))}</span><span>${esc(inr(x.amount))}</span></div>
+      <div class="top"><span class="ot-n">${orderThumbs(x.name, true)}${esc(x.name)} × ${esc(+x.quantity.toFixed(3))}</span><span>${esc(inr(x.amount))}</span></div>
       <div class="it">${esc(shortDate(x.date))} <span class="pill ${x.billed ? "paid" : "due-p"}" style="margin-left:6px">${esc(t(x.billed ? "Billed" : "Next bill"))}</span></div>
       ${x.can_cancel ? `<div class="oacts"><button data-bcancel="${esc(x.id)}">${esc(t("Cancel"))}</button></div>` : ""}</div>`).join("")}</div>` : ""}
     ${r.repeats.length ? `<h4>${esc(t("Repeat orders"))}</h4><div>${r.repeats.map((x) => `<div class="orow">
-      <div class="top"><span>${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(t(x.status))}</span></div>
+      <div class="top"><span class="ot-n">${orderThumbs(x.product, true)}${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(t(x.status))}</span></div>
       <div class="it">${esc(String(x.plan || "").replace(/ · .*$/, ""))} · ${esc(t("{amt} each time", { amt: inr(x.amount) }))}</div>
       ${x.can_cancel ? `<div class="oacts"><button data-rcancel="${esc(x.sub_id)}">${esc(t("Cancel"))}</button></div>` : ""}</div>`).join("")}</div>` : ""}
     <h4>${esc(t("Orders"))}</h4>
     ${r.orders.length ? `<div>${r.orders.map((o) => `<div class="orow">
       <div class="top"><span>${esc(when(o.created_at))}</span><span>${esc(inr(o.amount))}</span></div>
+      ${orderThumbs(o.items)}
       <div class="it">${esc(o.items)}</div>
       <div class="it">${esc(o.order_id)} · ${esc(t(o.pay_method))} <span class="pill ${pillFor(o.status)}" style="margin-left:6px">${esc(t(o.status))}</span></div>
       ${o.can_cancel || o.can_edit ? `<div class="oacts">${o.can_edit ? `<button data-oedit="${esc(o.order_id)}">${esc(t("Change items"))}</button>` : ""}${o.can_cancel ? `<button data-ocancel="${esc(o.order_id)}" data-paid="${o.pay_method !== "COD" ? 1 : 0}">${esc(t("Cancel order"))}</button>` : ""}</div>` : ""}</div>`).join("")}</div>`
@@ -3170,7 +3287,9 @@ async function openMyOrders() {
     <div class="stack"><button class="btn btn-line btn-block" data-close>${esc(t("Close"))}</button></div>`;
   $("[data-close]", sheet).onclick = closeSheet;
   const act = async (payload, okMsg, question) => {
-    if (!(await confirmBox(question, t("Yes")))) return;
+    const reason = await askCancelReason(question);
+    if (reason === null) return;
+    payload.reason = reason;
     const res = await call("app-api", payload);
     if (!res.ok) return toast(res.message, true);
     toast(res.refund ? t("Order cancelled. RD Dairy will refund your payment.") : okMsg);
@@ -3220,9 +3339,43 @@ function quoteHTML(q) {
     ${q.coupon?.ok && q.coupon.discount ? `<div class="cline2"><span>${esc(t("Offer"))} ${esc(q.coupon.code)}</span><span class="free">−${esc(inr(q.coupon.discount))}</span></div>` : ""}
     <div class="cline2"><span>${esc(t("Delivery fee"))}</span><span>${q.fee ? esc(inr(q.fee)) : `<b class="free">${esc(t("Free"))}</b>`}</span></div>
     <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(q.total))}</span></div>
-    ${q.short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(q.short) }))}</div>`
+    ${q.short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(q.short) }))}</div>` : ""}
+    ${q.fee && q.free_above ? `<div class="feenote">🚚 ${esc(t("Free delivery on orders above {amt}", { amt: inr(q.free_above) }))}</div>` : ""}
+    ${q.short > 0 ? ""
       : q.fee && q.free_above ? `<div class="freebar"><div>${esc(t("Add {amt} more for free delivery", { amt: inr(q.free_above - q.subtotal) }))}</div><i style="width:${Math.min(100, Math.round(q.subtotal / q.free_above * 100))}%"></i></div>`
       : !q.fee ? `<div class="freebar done"><div>🎉 ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
+}
+
+// Small product photos for an order line, matched by product name or keyword
+const THUMB_KEYS = [["pouch", "milk-pouch-goa2-rd-dairy"], ["buffalo", "buffalo-milk"], ["buffalow", "buffalo-milk"], ["ghee", "a2-bilona-cow-ghee"], ["paneer", "rd-dairy-paneer"], ["curd", "rd-dairy-curd"], ["butter", "rd-dairy-butter"], ["milk", "a2-cow-milk"]];
+function orderThumbs(text, single) {
+  const parts = String(text || "").toLowerCase().split(/,\s*/);
+  const ids = [];
+  for (const part of parts) {
+    const p = (SH.catalog || []).find((x) => part.includes(x.name.toLowerCase()));
+    const id = p ? p.id : (THUMB_KEYS.find(([k]) => part.includes(k)) || [])[1];
+    if (id && !ids.includes(id)) ids.push(id);
+  }
+  const imgs = ids.map((id) => PRODUCT_IMAGES[id] || (SH.catalog || []).find((x) => x.id === id)?.image).filter(Boolean).slice(0, single ? 1 : 4);
+  if (!imgs.length) return "";
+  return single ? `<img class="ot-one" src="${esc(imgs[0])}" alt="" />` : `<div class="othumbs">${imgs.map((u) => `<img src="${esc(u)}" alt="" />`).join("")}</div>`;
+}
+
+// Ask why, with quick choices, before cancelling
+function askCancelReason(question) {
+  return new Promise((resolve) => {
+    const reasons = ["Ordered by mistake", "Need it on another day", "Want to change items", "Found it elsewhere", "Something else"];
+    const box = document.createElement("div");
+    box.className = "confirm-box";
+    box.innerHTML = `<div class="inner"><p>${esc(question)}</p>
+      <div class="reasons">${reasons.map((r, i) => `<label><input type="radio" name="cr" value="${esc(r)}" ${i === 0 ? "checked" : ""}/>${esc(t(r))}</label>`).join("")}</div>
+      <div class="row-actions" style="margin-top:14px"><button class="btn btn-line" data-no>${esc(t("Keep it"))}</button><button class="btn btn-dark" data-yes>${esc(t("Cancel order"))}</button></div></div>`;
+    document.body.appendChild(box);
+    box.addEventListener("click", (e) => {
+      if (e.target.closest("[data-yes]")) { const v = box.querySelector("input[name=cr]:checked")?.value || ""; box.remove(); resolve(v); }
+      else if (e.target.closest("[data-no]") || e.target === box) { box.remove(); resolve(null); }
+    });
+  });
 }
 
 /* =========================================================
@@ -3265,24 +3418,26 @@ async function renderBills() {
       <div class="list">${b.upcoming.map((x) => `<div class="li"><div><div class="t">${esc(x.name)} × ${esc(+x.quantity.toFixed(3))}</div>
         <div class="s">${esc(shortDate(x.date))}</div></div><div class="r"><b>${esc(inr(x.amount))}</b></div></div>`).join("")}</div>` : ""}
 
-    <h2>${esc(t("Bills"))}</h2>
-    ${b.bills.length ? `<div class="list">${b.bills.map((x) => {
+    <h2>${esc(t("Bills to pay"))}</h2>
+    ${b.bills.filter((x) => x.due > 0).length ? `<div class="list">${b.bills.filter((x) => x.due > 0).map((x) => {
       const sub = [x.milk_qty ? t("{qty} of milk", { qty: fmtQty(x.milk_qty) }) : "", x.number ? t("Bill {no}", { no: x.number }) : ""].filter(Boolean).join(", ");
       return `<button class="li" data-bill="${esc(x.id)}">
         <div><div class="t">${esc(periodLabel(x.period_start, x.period_end))}</div><div class="s">${esc(sub)}</div></div>
         <div class="r"><b>${esc(inr(x.total))}</b><br>
-          ${x.due <= 0 ? `<span class="pill paid">${esc(t("Paid"))}</span>` : x.pending ? `<span class="pill wait">${esc(t("Being confirmed"))}</span>` : `<span class="pill due-p">${esc(t("{amt} due", { amt: inr(x.due) }))}</span>`}</div>
+          ${x.pending ? `<span class="pill wait">${esc(t("Being confirmed"))}</span>` : `<span class="pill due-p">${esc(t("{amt} due", { amt: inr(x.due) }))}</span>`}</div>
       </button>`;
     }).join("")}</div>`
-    : `<div class="empty">${esc(t("Your first bill appears here at the end of the month."))}</div>`}
+    : `<div class="empty">✓ ${esc(t("All your bills are paid"))}</div>`}
 
     <h2>${esc(t("Payments"))}</h2>
-    ${p.payments.length ? `<div class="list">${p.payments.map((x) => `
-      <div class="li">
-        <div><div class="t">${esc(x.date ? fmtDay(x.date, { day: "numeric", month: "short", year: "numeric" }) : "")}</div>
-          <div class="s">${esc(modeLabel(x.mode))}${x.bill_period ? " · " + esc(t("for {month}", { month: fmtDay(x.bill_period, { month: "long" }) })) : ""}</div></div>
-        <div class="r"><b>${esc(inr(x.amount))}</b></div>
-      </div>`).join("")}</div>`
+    ${p.payments.length || b.bills.some((x) => x.due <= 0) ? `<div class="list">${p.payments.map((x) => `
+      <button class="li" ${x.invoice_id ? `data-bill="${esc(x.invoice_id)}"` : ""}>
+        <div><div class="t">${esc(x.bill_period ? fmtDay(x.bill_period, { month: "long", year: "numeric" }) : t("Payment"))}</div>
+          <div class="s">${esc(x.date ? fmtDay(x.date, { day: "numeric", month: "short", year: "numeric" }) : "")} · ${esc(modeLabel(x.mode))}</div></div>
+        <div class="r"><b>${esc(inr(x.amount))}</b><br><span class="pill paid">${esc(t("Paid"))}</span></div>
+      </button>`).join("")}${b.bills.filter((x) => x.due <= 0 && !p.payments.some((y) => y.invoice_id === x.id)).map((x) => `
+      <button class="li" data-bill="${esc(x.id)}"><div><div class="t">${esc(periodLabel(x.period_start, x.period_end))}</div><div class="s">${esc(x.number ? t("Bill {no}", { no: x.number }) : "")}</div></div>
+        <div class="r"><b>${esc(inr(x.total))}</b><br><span class="pill paid">${esc(t("Paid"))}</span></div></button>`).join("")}</div>`
     : `<div class="empty">${esc(t("Payments you make show up here."))}</div>`}`;
 
   v.querySelectorAll("[data-bill]").forEach((el) => el.onclick = () => openBillSheet(el.dataset.bill));
@@ -3500,7 +3655,7 @@ async function openUpiSheet(invoiceIds) {
   sheet.innerHTML = `<div class="grip"></div>
     <h3>${esc(t("Pay {amt}", { amt: inr(r.amount) }))}</h3>
     <p class="sub">${esc(t("To {name}. The amount and bill number fill in on their own.", { name: r.upi_name }))}</p>
-    <a class="btn btn-main btn-block" href="${esc(r.upi_link)}">${esc(t("Pay with GPay, PhonePe or Paytm"))}</a>
+    ${upiAppButtons(r.upi_link, inr(r.amount))}
     <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(r.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
 
     <h4>${esc(t("After paying"))}</h4>
@@ -3548,6 +3703,7 @@ function openLink(link) {
   if (!link) return;
   if (/^https?:\/\//.test(link)) { window.open(link, "_blank", "noopener"); return; }
   if (link.startsWith("product:")) { SH.openAfter = link.slice(8); return go("shop"); }
+  if (link.startsWith("offer:")) { SH.pendingCode = link.slice(6); toast(t("Code {code} is ready in your cart", { code: SH.pendingCode })); return go("shop"); }
   const map = { shop: () => go("shop"), bills: () => go("bills"), help: () => go("help"), profile: () => go("account"),
     chat: () => { S.chatOpen = true; go("help"); }, wallet: openWalletSheet, gold: openGoldSheet, refer: openReferSheet,
     trial: openTrialSheet, visit: openVisitSheet, home: () => go("home") };
@@ -3590,11 +3746,6 @@ async function drawHomeExtras() {
     if (!r.ok) { e.target.disabled = false; return toast(r.message, true); }
     toast(t("{amt} paid from your RD Wallet", { amt: inr(r.paid) })); S.extras = null; S.home = null; await loadHome(); renderHome();
   });
-  const bottom = $("#homeBottom");
-  if (bottom) {
-    bottom.innerHTML = `<div class="row-actions"><button class="btn btn-line" data-link="visit">🚜 ${esc(t("Visit our farm"))}</button><button class="btn btn-line" data-link="refer">🎁 ${esc(t("Refer and earn"))}</button></div>`;
-    bottom.querySelectorAll("[data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link));
-  }
   weather(x.weather);
 }
 
@@ -3648,7 +3799,7 @@ async function openInbox() {
   const r = await call("app-api", { action: "inbox" });
   if (!r.ok) { closeSheet(); return toast(r.message, true); }
   sheet.innerHTML = `<div class="grip"></div><div class="sec-head" style="margin:0 0 8px"><h3 style="margin:0">${esc(t("Notifications"))}</h3>${r.items.some((x) => !x.read_at) ? `<button data-all>${esc(t("Mark all read"))}</button>` : ""}</div>
-    ${r.items.length ? r.items.map((n) => `<button class="inb ${n.read_at ? "" : "new"}" data-link="${esc(n.link || "")}"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}<i>${esc(new Date(n.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }))}</i></button>`).join("")
+    ${r.items.length ? r.items.map((n) => `<button class="inb ${n.read_at ? "" : "new"}" data-link="${esc(n.link || "")}"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}${String(n.link || "").startsWith("offer:") ? `<em class="inb-code">🏷️ ${esc(n.link.slice(6))} · ${esc(t("Tap to use"))}</em>` : ""}<i>${esc(new Date(n.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }))}</i></button>`).join("")
       : `<p class="sub">${esc(t("Offers, payment updates and replies from RD Dairy show up here."))}</p>`}
     <div class="stack"><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
   $("[data-close]", sheet).onclick = closeSheet;
@@ -3700,7 +3851,7 @@ function openWalletSheet(preset) {
       };
     } else {
       sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Pay {amt}", { amt: inr(st.amount) }))}</h3>
-        <a class="btn btn-main btn-block" href="${esc(st.link.upi_link)}">${esc(t("Pay with GPay, PhonePe or Paytm"))}</a>
+        ${upiAppButtons(st.link.upi_link, inr(st.amount))}
         <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(st.link.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
         <h4>${esc(t("After paying"))}</h4>
         <div class="utr-row"><input id="wutr" type="text" inputmode="numeric" maxlength="16" aria-label="${esc(t("UPI reference number (12 digits)"))}" placeholder="${esc(t("UPI reference number (12 digits)"))}" /><button data-paste>${esc(t("Paste"))}</button></div>
@@ -3801,7 +3952,7 @@ async function openTrialSheet() {
     $("[data-close]", sheet).onclick = closeSheet;
     if (st.pay === "upi") {
       const u = await call("app-api", { action: "trial_upi" });
-      if (u.ok) $("#tupi", sheet).innerHTML = `<a class="btn btn-main btn-block" style="margin-top:10px" href="${esc(u.upi_link)}">${esc(t("Pay {amt} with UPI app", { amt: inr(u.amount) }))}</a>
+      if (u.ok) $("#tupi", sheet).innerHTML = `<div style="margin-top:10px">${upiAppButtons(u.upi_link, inr(u.amount))}</div>
         <div class="utr-row" style="margin-top:10px"><input id="tutr" type="text" inputmode="numeric" maxlength="16" placeholder="${esc(t("UPI reference number (12 digits)"))}" /><button data-tpaste>${esc(t("Paste"))}</button></div>`;
       $("[data-tpaste]", sheet)?.addEventListener("click", () => pasteUtrInto($("#tutr", sheet)));
     }
@@ -3908,19 +4059,11 @@ async function renderAccount() {
         <p class="muted" style="margin:10px 0 0;font-size:14px">${esc(t("RD Dairy confirms the new quantity before it starts."))}</p>
       </div>` : ""}
 
-    <h2>${esc(t("Preferences"))}</h2>
-    <div class="card pad">
-      <div class="pref-l">${esc(t("Language"))}</div><div id="acc-lang"></div>
-      <div class="pref-l" style="margin-top:16px">${esc(t("Appearance"))}</div><div id="acc-theme"></div>
-    </div>
-
     <div style="margin-top:28px">
       <button class="btn btn-line btn-block" id="logout">${esc(t("Log out"))}</button>
       <button class="danger-link" id="delacc">${esc(t("Delete my account"))}</button>
     </div>`;
 
-  $("#acc-lang").appendChild(langPicker(() => { shell(); go("account"); }));
-  $("#acc-theme").appendChild(themePicker(() => renderAccount()));
   $("#editp").onclick = openProfileSheet;
   v.querySelectorAll(".pf-tiles [data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link === "wallet" ? "bills" : b.dataset.link));
   if (S.extras?.gold?.active) $("#pfGold").textContent = t("Active till {date}", { date: new Date(S.extras.gold.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) });
@@ -4085,6 +4228,7 @@ async function renderHelp() {
   if (S.chatOpen) return renderChat();
   const sp = String(h.support_phone || "").replace(/\D/g, "").slice(-10);
   v.innerHTML = `
+    <div class="subhead"><button id="helpback" aria-label="${esc(t("Back"))}">‹</button><h2>🎧 ${esc(t("Help and support"))}</h2></div>
     <button class="chat-card" id="openchat">
       <span class="cc-ico">💬${h.chat_unread ? `<i class="cc-badge">${h.chat_unread}</i>` : ""}</span>
       <span><b>${esc(t("Chat with RD Dairy"))}</b><br><span class="muted">${esc(t("Get help in a few taps, or chat with our team."))}</span></span>
@@ -4093,7 +4237,7 @@ async function renderHelp() {
 
     <h2>${esc(t("Delivery problems"))}</h2>
     <div class="card pad">
-      <button class="btn btn-main btn-block" id="help-issue">${esc(t("Report a delivery problem"))}</button>
+      <button class="btn btn-main btn-block" id="help-issue">🚚 ${esc(t("Report a delivery problem"))}</button>
       <div id="acc-issues"></div>
     </div>
 
@@ -4114,6 +4258,7 @@ async function renderHelp() {
       <a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a>
     </div>`;
   $("#openchat").onclick = () => { S.chatOpen = true; renderChat(); };
+  $("#helpback").onclick = () => go("home");
   $("#help-issue").onclick = openIssueSheet;
   loadMyIssues();
 }
@@ -4171,6 +4316,7 @@ async function renderChat() {
     $("#chatprev [data-rm]").onclick = () => { CHAT.proof = ""; $("#chatprev").innerHTML = ""; };
   };
   $("#chatsend").onclick = sendChat;
+  ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !/Android|iPhone|iPad/i.test(navigator.userAgent)) { e.preventDefault(); sendChat(); } });
   drawChat(name);
   clearInterval(CHAT.timer);
   CHAT.timer = setInterval(async () => {
@@ -4259,7 +4405,7 @@ async function startApp() {
 }
 
 (async function init() {
-  THEME = (await store.get("rd_theme")) || "system"; applyTheme();
+  THEME = (await store.get("rd_theme")) === "dark" ? "dark" : "light"; applyTheme();
   const saved = await store.get("rd_lang");
   const deviceLang = (navigator.language || "en").slice(0, 2);
   await setLang(saved || (["ta", "hi"].includes(deviceLang) ? deviceLang : "en"));
