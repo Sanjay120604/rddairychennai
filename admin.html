@@ -2619,7 +2619,8 @@ function askInline(message, opts){
     box.querySelector("[data-yes]").onclick=function(){ done(inp?inp.value:true); };
     box.querySelector("[data-no]").onclick=function(){ done(inp?null:false); };
     if(inp) inp.addEventListener("keydown",function(e){ if(e.key==="Enter") done(inp.value); if(e.key==="Escape") done(null); });
-    if(anchor && anchor.parentNode){ anchor.insertAdjacentElement("afterend", box); }
+    var clipped = anchor && anchor.closest && anchor.closest(".mk-bn,.mk-st,.mk-act,.ap-card,.pr-row");
+    if(anchor && anchor.parentNode && !opts.float && !clipped){ anchor.insertAdjacentElement("afterend", box); }
     else { box.classList.add("floating"); document.body.appendChild(box); }
     (inp||box.querySelector("[data-yes]")).focus();
     box.scrollIntoView({block:"nearest",behavior:"smooth"});
@@ -3160,7 +3161,9 @@ async function mkOffers(){
     '<div class="dform" style="grid-template-columns:1fr 1.4fr 1fr 1fr"><div><label>Code</label><input id="ofC" style="text-transform:uppercase" placeholder="PONGAL10"></div><div><label>Title</label><input id="ofT" placeholder="Pongal special"></div>'+
     '<div><label>Type</label><select id="ofK"><option value="percent">% off</option><option value="flat">₹ off</option><option value="free_delivery">Free delivery</option></select></div><div><label>Value</label><input id="ofV" type="number" value="10"></div></div>'+
     '<div class="dform" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;margin-top:10px"><div><label>Minimum order ₹</label><input id="ofM" type="number" value="0"></div><div><label>Max discount ₹</label><input id="ofX" type="number"></div><div><label>Uses per customer</label><input id="ofU" type="number" value="1"></div><div><label>From</label><input type="date" id="ofFrom"></div><div><label>Until</label><input type="date" id="ofTo"></div></div>'+
-    '<div class="row" style="margin-top:12px"><button class="btn" onclick="mkSaveOffer(this)">Create code</button><span class="muted">Customers type the code in their cart.</span></div></div>'+
+    '<label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-weight:700"><input type="checkbox" id="ofTell" checked> Send it to customers in their app notifications</label>'+
+    '<div class="dform" id="ofTellBox" style="grid-template-columns:1fr 1.6fr;margin-top:8px"><div><label>Send to</label><select id="ofAud"><option value="all">Everyone with the app</option><option value="subscribers">Milk subscribers</option><option value="shoppers">Shop only customers</option></select></div><div><label>Message</label><input id="ofMsg" placeholder="Fresh paneer and ghee at a special price this week"></div></div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn" onclick="mkSaveOffer(this)">Create code</button><span class="muted">Customers see it in notifications and tap to use it in the cart.</span></div></div>'+
     '<div class="table-wrap" style="margin-top:14px">'+(list.length?'<table><thead><tr><th>Code</th><th>Offer</th><th>For</th><th>Dates</th><th>Status</th><th></th></tr></thead><tbody>'+list.map(function(o){
       return '<tr><td><b>'+esc(o.code)+'</b><br><span class="muted">'+esc(o.title||"")+'</span></td><td>'+(o.kind==="percent"?esc(o.value)+'% off':o.kind==="flat"?'₹'+esc(o.value)+' off':'Free delivery')+(Number(o.min_order)?'<br><span class="muted">min ₹'+esc(o.min_order)+'</span>':'')+'</td>'+
       '<td>'+(o.allowed_phones&&o.allowed_phones.length?o.allowed_phones.length+' selected customers':'Everyone')+'</td><td class="muted">'+esc(o.starts_on||"")+(o.ends_on?' to '+esc(o.ends_on):'')+'</td>'+
@@ -3170,7 +3173,13 @@ async function mkSaveOffer(btn){
   var code=$("ofC").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,""); if(!code){ notice("Add a code"); return; }
   btn.disabled=true;
   var r=await aApi({action:"offerSave", item:{code:code, title:$("ofT").value, kind:$("ofK").value, value:Number($("ofV").value||0), min_order:Number($("ofM").value||0), max_discount:$("ofX").value?Number($("ofX").value):"", uses_per_customer:Number($("ofU").value||1), starts_on:$("ofFrom").value, ends_on:$("ofTo").value, active:true}});
-  btn.disabled=false; if(!r.ok){ notice(r.message); return; } notice("Code "+code+" is live"); mkOffers();
+  if(!r.ok){ btn.disabled=false; notice(r.message); return; }
+  var sent=0;
+  if($("ofTell").checked){
+    var a=await aApi({action:"announce", audience:$("ofAud").value, title:($("ofT").value||"A special offer for you"), body:($("ofMsg").value||"")+" Use code "+code+".", link:"offer:"+code});
+    if(a.ok) sent=a.sent;
+  }
+  btn.disabled=false; notice("Code "+code+" is live"+(sent?", sent to "+sent+" customers":"")); mkOffers();
 }
 
 async function mkStories(){
