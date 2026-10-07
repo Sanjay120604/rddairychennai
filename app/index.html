@@ -546,6 +546,61 @@
   @keyframes ld-melt{0%,100%{transform:scale(1,1)}50%{transform:scale(1.25,.8)}}
   @media (prefers-reduced-motion: reduce) { .rdload-art * { animation: none !important; } }
 
+
+  /* ---------- shop experience ---------- */
+  .prod-img { position: relative; padding: 0; border-radius: 16px; }
+  .prod-name { padding: 0; text-align: left; color: inherit; }
+  .prod.oos .prod-img img { filter: grayscale(1); opacity: .55; }
+  .oos-tag { position: absolute; left: 6px; bottom: 6px; background: var(--ink); color: var(--milk); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 8px; }
+  html[data-theme="dark"] .oos-tag { background: #E8ECF4; color: #0D1321; }
+  .stars-s { font-size: 13px; font-weight: 700; color: #B87A00; margin-top: 2px; }
+  .stars-s span { color: var(--soft); font-weight: 500; }
+  .notifybtn { background: var(--milk); border: 1.5px solid var(--ink); color: var(--ink); font-weight: 800; border-radius: 12px; padding: 0 12px; min-height: 44px; }
+  .notified { font-weight: 700; color: var(--extra-fg); font-size: 14px; }
+  .pd .pd-gal { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 18px; background: #fff; scrollbar-width: none; }
+  .pd .pd-gal::-webkit-scrollbar { display: none; }
+  .pd .pd-gal img { flex: 0 0 100%; height: 240px; object-fit: contain; scroll-snap-align: center; }
+  .pd-dots { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+  .pd-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+  .pd-dots i.on { background: var(--ink); }
+  .pd-rate { display: flex; align-items: center; gap: 6px; margin: 2px 0 8px; }
+  .stars i { font-style: normal; color: var(--line); font-size: 18px; }
+  .stars.sm i { font-size: 14px; }
+  .stars i.on { color: #F5A800; }
+  .pd-buy { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--mist); border-radius: 16px; padding: 12px 14px; margin: 14px 0 4px; }
+  .pd-buy b { font-family: var(--display); font-size: 24px; }
+  .mini-step.big button { width: 48px; height: 48px; }
+  .nut { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .nut div { background: var(--mist); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; }
+  .nut span { font-size: 13px; color: var(--soft); }
+  .rv-write { background: var(--mist); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .rv-q { font-weight: 700; margin-bottom: 6px; }
+  .rv-stars button { font-size: 32px; color: var(--line); padding: 0 2px; min-height: 44px; }
+  .rv-stars button.on { color: #F5A800; }
+  .rv-write textarea { width: 100%; border-radius: 12px; border: 1.5px solid var(--line); padding: 10px; font: inherit; margin: 8px 0; background: var(--milk); color: var(--ink); }
+  .rv { padding: 12px 0; border-bottom: 1px solid var(--mist); }
+  .rv .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rv p { margin: 6px 0 0; }
+  .sugg { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .sg { flex: 0 0 132px; background: var(--mist); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .sg img { width: 100%; height: 80px; object-fit: contain; background: #fff; border-radius: 10px; }
+  .sg-n { font-weight: 700; font-size: 14px; line-height: 1.2; }
+  .sg-p { font-size: 12.5px; color: var(--soft); }
+  .sg button { margin-top: auto; background: var(--butter); color: #1E2B4A; font-weight: 800; border-radius: 10px; min-height: 36px; }
+  .cline2 { display: flex; justify-content: space-between; padding: 6px 0; color: var(--soft); }
+  .cline2 .free { color: var(--extra-fg); }
+  .minwarn { background: var(--pause-bg); color: var(--pause-fg); border-radius: 12px; padding: 10px 12px; font-weight: 700; font-size: 14px; margin-top: 6px; }
+  .freebar { position: relative; background: var(--mist); border-radius: 12px; padding: 10px 12px; font-weight: 700; font-size: 14px; overflow: hidden; margin-top: 6px; }
+  .freebar div { position: relative; z-index: 1; }
+  .freebar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--extra-bg); }
+  .oacts { display: flex; gap: 8px; margin-top: 8px; }
+  .oacts button { border: 1.5px solid var(--line); border-radius: 10px; padding: 0 12px; min-height: 38px; font-weight: 700; color: var(--ink); }
+  .notice { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--extra-bg); color: var(--extra-fg); border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+  .notice b { display: block; }
+  .notice span { font-size: 14px; opacity: .85; }
+  .notice-acts { display: flex; gap: 4px; flex-shrink: 0; }
+  .notice-acts button { font-weight: 800; color: inherit; min-height: 40px; padding: 0 8px; }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -686,7 +741,7 @@ const SPLASH = (() => {
     setHint(text) { const s = document.getElementById("spHintText"); if (s) s.textContent = text; },
   };
 })();
-t
+
 const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
 const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
@@ -780,6 +835,46 @@ const T = {
     "Adding a spoon of our ghee": "ஒரு கரண்டி எங்கள் நெய் சேர்க்கிறோம்",
     "Crisp and golden": "மொறுமொறுப்பாகத் தங்க நிறத்தில்",
     "Almost off the tawa": "தோசைக்கல்லிலிருந்து கிட்டத்தட்ட தயார்",
+    "Out of stock": "இருப்பு இல்லை",
+    "We'll tell you": "தெரிவிப்போம்",
+    "Notify me": "எனக்குத் தெரிவி",
+    "We'll tell you when it's back in stock": "மீண்டும் வந்ததும் தெரிவிப்போம்",
+    "{n} reviews": "{n} மதிப்புரைகள்",
+    "Add to cart": "கார்ட்டில் சேர்",
+    "Nutrition": "ஊட்டச்சத்து",
+    "Shelf life and storage": "பயன்படுத்தும் காலம் மற்றும் சேமிப்பு",
+    "How it's made": "எப்படித் தயாரிக்கப்படுகிறது",
+    "Ratings and reviews": "மதிப்பீடுகள் மற்றும் மதிப்புரைகள்",
+    "Your review": "உங்கள் மதிப்புரை",
+    "Tried it? Rate it": "பயன்படுத்தினீர்களா? மதிப்பிடுங்கள்",
+    "What did you like?": "உங்களுக்கு என்ன பிடித்தது?",
+    "Post review": "மதிப்புரை இடு",
+    "Be the first to review this product.": "இந்தப் பொருளை முதலில் மதிப்பிடுங்கள்.",
+    "Choose 1 to 5 stars": "1 முதல் 5 நட்சத்திரங்களைத் தேர்ந்தெடுக்கவும்",
+    "Thank you for your review": "உங்கள் மதிப்புரைக்கு நன்றி",
+    "You might also like": "இவையும் உங்களுக்குப் பிடிக்கலாம்",
+    "Items": "பொருட்கள்",
+    "Delivery fee": "டெலிவரி கட்டணம்",
+    "Free": "இலவசம்",
+    "Add items worth {amt} more to place this order": "ஆர்டர் செய்ய இன்னும் {amt} மதிப்புள்ள பொருட்களைச் சேர்க்கவும்",
+    "Add {amt} more for free delivery": "இலவச டெலிவரிக்கு இன்னும் {amt} சேர்க்கவும்",
+    "You get free delivery": "உங்களுக்கு இலவச டெலிவரி",
+    "Note for the delivery partner (optional)": "டெலிவரி நபருக்கு குறிப்பு (விருப்பம்)",
+    "Cancel": "ரத்து செய்",
+    "Change items": "பொருட்களை மாற்று",
+    "Cancel order": "ஆர்டரை ரத்து செய்",
+    "Yes": "ஆம்",
+    "Order cancelled. RD Dairy will refund your payment.": "ஆர்டர் ரத்து செய்யப்பட்டது. RD Dairy உங்கள் பணத்தைத் திருப்பித் தரும்.",
+    "Order cancelled": "ஆர்டர் ரத்து செய்யப்பட்டது",
+    "Removed from your bill": "உங்கள் பில்லிலிருந்து நீக்கப்பட்டது",
+    "Repeat order cancelled": "தொடர் ஆர்டர் ரத்து செய்யப்பட்டது",
+    "Cancel this order?": "இந்த ஆர்டரை ரத்து செய்யவா?",
+    "Cancel this item?": "இந்தப் பொருளை ரத்து செய்யவா?",
+    "Cancel this repeat order?": "இந்தத் தொடர் ஆர்டரை ரத்து செய்யவா?",
+    "Order updated": "ஆர்டர் புதுப்பிக்கப்பட்டது",
+    "Please chat with us to change this order": "இந்த ஆர்டரை மாற்ற எங்களுடன் பேசுங்கள்",
+    "View": "பார்",
+    "Dismiss": "மூடு",
     "Getting your deliveries ready": "உங்கள் டெலிவரி விவரங்களைத் தயார் செய்கிறோம்",
     "Set your delivery location": "டெலிவரி இடத்தை அமைக்கவும்",
     "Move the map so the pin sits on your gate.": "பின் உங்கள் வாசலில் இருக்கும்படி வரைபடத்தை நகர்த்துங்கள்.",
@@ -1183,6 +1278,46 @@ const T = {
     "Adding a spoon of our ghee": "एक चम्मच हमारा घी डाल रहे हैं",
     "Crisp and golden": "कुरकुरा और सुनहरा",
     "Almost off the tawa": "तवे से बस उतरने वाला",
+    "Out of stock": "स्टॉक में नहीं",
+    "We'll tell you": "हम बताएँगे",
+    "Notify me": "मुझे बताएँ",
+    "We'll tell you when it's back in stock": "वापस आते ही हम बताएँगे",
+    "{n} reviews": "{n} समीक्षाएँ",
+    "Add to cart": "कार्ट में डालें",
+    "Nutrition": "पोषण",
+    "Shelf life and storage": "टिकाऊपन और रखरखाव",
+    "How it's made": "यह कैसे बनता है",
+    "Ratings and reviews": "रेटिंग और समीक्षाएँ",
+    "Your review": "आपकी समीक्षा",
+    "Tried it? Rate it": "इस्तेमाल किया? रेटिंग दें",
+    "What did you like?": "आपको क्या पसंद आया?",
+    "Post review": "समीक्षा भेजें",
+    "Be the first to review this product.": "इस सामान की पहली समीक्षा आप लिखें।",
+    "Choose 1 to 5 stars": "1 से 5 स्टार चुनें",
+    "Thank you for your review": "समीक्षा के लिए धन्यवाद",
+    "You might also like": "यह भी पसंद आ सकता है",
+    "Items": "सामान",
+    "Delivery fee": "डिलीवरी शुल्क",
+    "Free": "मुफ़्त",
+    "Add items worth {amt} more to place this order": "ऑर्डर के लिए {amt} का और सामान जोड़ें",
+    "Add {amt} more for free delivery": "मुफ़्त डिलीवरी के लिए {amt} और जोड़ें",
+    "You get free delivery": "आपको मुफ़्त डिलीवरी मिलेगी",
+    "Note for the delivery partner (optional)": "डिलीवरी साथी के लिए नोट (वैकल्पिक)",
+    "Cancel": "रद्द करें",
+    "Change items": "सामान बदलें",
+    "Cancel order": "ऑर्डर रद्द करें",
+    "Yes": "हाँ",
+    "Order cancelled. RD Dairy will refund your payment.": "ऑर्डर रद्द हो गया। RD Dairy आपका भुगतान लौटाएगा।",
+    "Order cancelled": "ऑर्डर रद्द हो गया",
+    "Removed from your bill": "आपके बिल से हटा दिया गया",
+    "Repeat order cancelled": "बार बार वाला ऑर्डर रद्द हो गया",
+    "Cancel this order?": "यह ऑर्डर रद्द करें?",
+    "Cancel this item?": "यह सामान रद्द करें?",
+    "Cancel this repeat order?": "यह बार बार वाला ऑर्डर रद्द करें?",
+    "Order updated": "ऑर्डर अपडेट हो गया",
+    "Please chat with us to change this order": "यह ऑर्डर बदलने के लिए हमसे चैट करें",
+    "View": "देखें",
+    "Dismiss": "हटाएँ",
     "Getting your deliveries ready": "आपकी डिलीवरी की जानकारी तैयार कर रहे हैं",
     "Set your delivery location": "डिलीवरी की जगह तय करें",
     "Move the map so the pin sits on your gate.": "मैप को खिसकाएँ ताकि पिन आपके गेट पर हो।",
@@ -2094,6 +2229,7 @@ async function renderHome() {
     const mr = h.milk_request;
     v.innerHTML = `
       <p class="hello">${esc(t("Hello"))} <b>${esc(h.name || "")}</b></p>
+      <div id="notices"></div>
       <div class="card pad">
         ${mr && /pending/i.test(mr.status || "")
           ? `<p style="margin:0;font-weight:700;font-size:17px">${esc(t("Your daily milk request ({item}) is with RD Dairy. We will call you to confirm the start date.", { item: `${mr.product} × ${mr.qty}` }))}</p>`
@@ -2104,6 +2240,7 @@ async function renderHome() {
         <button class="btn btn-main" id="toshop">${esc(t("Browse the shop"))}</button>
       </div>`;
     $("#toshop").onclick = () => go("shop");
+    loadNotices();
     return;
   }
 
@@ -2126,6 +2263,7 @@ async function renderHome() {
 
   v.innerHTML = `
     <p class="hello">${esc(t("Hello"))} <b>${esc(h.name)}</b></p>
+    <div id="notices"></div>
     <section class="tomorrow" aria-label="${esc(t("Tomorrow, {date}", { date: shortDate(tm.date) }))}">
       <div>${bottleSVG(tm.qty, h.default_qty)}</div>
       <div>
@@ -2171,6 +2309,26 @@ async function renderHome() {
   $("#chg-tmr")?.addEventListener("click", () => openDaySheet(tm.date, tm.qty, tm.status));
   $("#away").onclick = openAwaySheet;
   updateSelBar();
+  loadNotices();
+}
+
+// Small cards on Home for in-app messages, like a product back in stock
+async function loadNotices() {
+  const r = await call("app-api", { action: "notices" });
+  const box = $("#notices");
+  if (!box || !r.ok || !r.notices.length) return;
+  box.innerHTML = r.notices.map((n) => `<div class="notice" data-nid="${esc(n.id)}">
+    <div><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}</div>
+    <div class="notice-acts">${n.link ? `<button data-nopen="${esc(n.link)}">${esc(t("View"))}</button>` : ""}<button data-nx aria-label="${esc(t("Dismiss"))}">✕</button></div></div>`).join("");
+  box.querySelectorAll(".notice").forEach((el) => {
+    const id = el.dataset.nid;
+    const done = () => { call("app-api", { action: "notice_read", id }); el.remove(); };
+    el.querySelector("[data-nx]").onclick = done;
+    el.querySelector("[data-nopen]")?.addEventListener("click", (e) => {
+      const link = e.currentTarget.dataset.nopen; done();
+      if (link.startsWith("product:")) { SH.openAfter = link.slice(8); go("shop"); }
+    });
+  });
 }
 
 /* ---------- sheets ---------- */
@@ -2430,14 +2588,18 @@ async function renderShop() {
     <div class="prods">${list.map((p) => {
       const size = p.sizes.find((z) => z.label === SH.sel[p.id]) || p.sizes[0];
       const inCart = SH.cart.find((c) => cartKey(c.id, c.size) === cartKey(p.id, size.label));
-      return `<article class="prod">
-        <img src="${esc(prodImg(p))}" alt="${esc(p.name)}" loading="lazy" />
+      const waiting = (SH.meta.notify_me || []).includes(p.id);
+      return `<article class="prod ${p.in_stock ? "" : "oos"}">
+        <button class="prod-img" data-open="${esc(p.id)}" aria-label="${esc(p.name)}"><img src="${esc(prodImg(p))}" alt="" loading="lazy" />${p.in_stock ? "" : `<span class="oos-tag">${esc(t("Out of stock"))}</span>`}</button>
         <div>
-          <h3>${esc(p.name)}</h3>
+          <button class="prod-name" data-open="${esc(p.id)}"><h3>${esc(p.name)}</h3></button>
+          ${p.rating ? `<div class="stars-s">★ ${esc(p.rating)} <span>(${esc(p.rating_count)})</span></div>` : ""}
           <p>${esc(p.description)}</p>
           ${p.sizes.length > 1 ? `<div class="sizes">${p.sizes.map((z) => `<button class="${z.label === size.label ? "on" : ""}" data-size="${esc(p.id)}" data-label="${esc(z.label)}">${esc(z.label)}</button>`).join("")}</div>` : `<div class="sizes"><button class="on" disabled>${esc(size.label)}</button></div>`}
           <div class="addrow"><b>${esc(inr(size.price))}</b>
-            ${inCart
+            ${!p.in_stock
+              ? (waiting ? `<span class="notified">✓ ${esc(t("We'll tell you"))}</span>` : `<button class="notifybtn" data-notify="${esc(p.id)}">🔔 ${esc(t("Notify me"))}</button>`)
+              : inCart
               ? `<div class="mini-step"><button data-dec="${esc(p.id)}" aria-label="${esc(t("One less"))}">−</button><span>${inCart.qty}</span><button data-inc="${esc(p.id)}" aria-label="${esc(t("One more"))}">+</button></div>`
               : `<button class="addbtn" data-inc="${esc(p.id)}">${esc(t("Add"))}</button>`}
           </div>
@@ -2451,7 +2613,92 @@ async function renderShop() {
   const pick = (id) => { const p = SH.catalog.find((x) => x.id === id); return [p, p.sizes.find((z) => z.label === SH.sel[id]) || p.sizes[0]]; };
   v.querySelectorAll("[data-inc]").forEach((b) => b.onclick = () => { const [p, z] = pick(b.dataset.inc); setQty(p, z, 1); renderShop(); });
   v.querySelectorAll("[data-dec]").forEach((b) => b.onclick = () => { const [p, z] = pick(b.dataset.dec); setQty(p, z, -1); renderShop(); });
+  v.querySelectorAll("[data-open]").forEach((b) => b.onclick = () => openProduct(b.dataset.open));
+  v.querySelectorAll("[data-notify]").forEach((b) => b.onclick = () => notifyMe(b.dataset.notify));
   updateCartBar();
+  if (SH.openAfter) { const id = SH.openAfter; SH.openAfter = null; openProduct(id); }
+}
+
+async function notifyMe(id) {
+  const r = await call("app-api", { action: "notify_me", id });
+  if (!r.ok) return toast(r.message, true);
+  SH.meta.notify_me = [...new Set([...(SH.meta.notify_me || []), id])];
+  toast(t("We'll tell you when it's back in stock"));
+  if (S.tab === "shop") renderShop();
+  if ($(".pd")) openProduct(id);
+}
+
+const starRow = (n, size = "") => `<span class="stars ${size}">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= Math.round(n) ? "on" : ""}">★</i>`).join("")}</span>`;
+
+/* ---------- product detail page ---------- */
+async function openProduct(id) {
+  const p = SH.catalog.find((x) => x.id === id); if (!p) return;
+  const d = p.details || {};
+  const photos = [prodImg(p), ...(p.photos || [])];
+  let size = p.sizes.find((z) => z.label === SH.sel[p.id]) || p.sizes[0];
+  const sheet = openSheet("");
+  sheet.classList.add("tall", "pd");
+  const draw = (reviews) => {
+    const inCart = SH.cart.find((c) => cartKey(c.id, c.size) === cartKey(p.id, size.label));
+    const waiting = (SH.meta.notify_me || []).includes(p.id);
+    sheet.innerHTML = `<div class="grip"></div>
+      <div class="pd-gal">${photos.map((u) => `<img src="${esc(u)}" alt="${esc(p.name)}" />`).join("")}</div>
+      ${photos.length > 1 ? `<div class="pd-dots">${photos.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}
+      <h3 style="margin-top:12px">${esc(p.name)}</h3>
+      ${p.rating ? `<div class="pd-rate">${starRow(p.rating)} <b>${esc(p.rating)}</b> <span class="muted">· ${esc(t("{n} reviews", { n: p.rating_count }))}</span></div>` : ""}
+      <p class="sub">${esc(d.about || p.description)}</p>
+      ${p.sizes.length > 1 ? `<div class="sizes">${p.sizes.map((z) => `<button class="${z.label === size.label ? "on" : ""}" data-psize="${esc(z.label)}">${esc(z.label)} · ${esc(inr(z.price))}</button>`).join("")}</div>` : ""}
+      <div class="pd-buy">
+        <b>${esc(inr(size.price))}</b>
+        ${!p.in_stock
+          ? (waiting ? `<span class="notified">✓ ${esc(t("We'll tell you when it's back in stock"))}</span>` : `<button class="btn btn-main" data-pnotify>🔔 ${esc(t("Notify me"))}</button>`)
+          : inCart
+          ? `<div class="mini-step big"><button data-pdec aria-label="${esc(t("One less"))}">−</button><span>${inCart.qty}</span><button data-pinc aria-label="${esc(t("One more"))}">+</button></div>`
+          : `<button class="btn btn-main" data-pinc>${esc(t("Add to cart"))}</button>`}
+      </div>
+      ${d.nutrition && d.nutrition.length ? `<h4>${esc(t("Nutrition"))} <span class="muted" style="font-weight:500;font-size:13px">${esc(d.nutrition_basis || "")}</span></h4>
+        <div class="nut">${d.nutrition.map((r) => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join("")}</div>` : ""}
+      ${d.shelf_life || d.storage ? `<h4>${esc(t("Shelf life and storage"))}</h4><p class="sub">${esc([d.shelf_life, d.storage].filter(Boolean).join(". "))}</p>` : ""}
+      ${d.how_made ? `<h4>${esc(t("How it's made"))}</h4><p class="sub">${esc(d.how_made)}</p>` : ""}
+      <h4>${esc(t("Ratings and reviews"))}</h4>
+      <div id="pdRev">${reviews ? "" : loaderHTML()}</div>
+      <div class="stack"><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+    $("[data-close]", sheet).onclick = () => { closeSheet(); if (S.tab === "shop") renderShop(); };
+    sheet.querySelectorAll("[data-psize]").forEach((b) => b.onclick = () => { size = p.sizes.find((z) => z.label === b.dataset.psize); SH.sel[p.id] = size.label; draw(reviews); });
+    $("[data-pinc]", sheet)?.addEventListener("click", () => { setQty(p, size, 1); draw(reviews); });
+    $("[data-pdec]", sheet)?.addEventListener("click", () => { setQty(p, size, -1); draw(reviews); });
+    $("[data-pnotify]", sheet)?.addEventListener("click", () => notifyMe(p.id));
+    const gal = $(".pd-gal", sheet);
+    gal?.addEventListener("scroll", () => { const i = Math.round(gal.scrollLeft / gal.clientWidth); sheet.querySelectorAll(".pd-dots i").forEach((d2, k) => d2.classList.toggle("on", k === i)); });
+    if (reviews) drawReviews(reviews);
+  };
+  const drawReviews = (r) => {
+    const box = $("#pdRev", sheet); if (!box) return;
+    const st = { rating: r.mine?.rating || 0 };
+    box.innerHTML = `
+      <div class="rv-write">
+        <div class="rv-q">${esc(r.mine ? t("Your review") : t("Tried it? Rate it"))}</div>
+        <div class="rv-stars">${[1, 2, 3, 4, 5].map((i) => `<button data-star="${i}" class="${i <= st.rating ? "on" : ""}" aria-label="${i}">★</button>`).join("")}</div>
+        <textarea id="rvText" rows="2" placeholder="${esc(t("What did you like?"))}">${esc(r.mine?.comment || "")}</textarea>
+        <button class="btn btn-dark btn-block" data-rvsave>${esc(t("Post review"))}</button>
+      </div>
+      ${r.reviews.filter((x) => !x.mine).map((x) => `<div class="rv">
+        <div class="top">${starRow(x.rating, "sm")} <b>${esc(x.name)}</b> <span class="muted">${esc(new Date(x.at).toLocaleDateString(locale(), { day: "numeric", month: "short" }))}</span></div>
+        ${x.comment ? `<p>${esc(x.comment)}</p>` : ""}</div>`).join("") || (r.mine ? "" : `<p class="sub">${esc(t("Be the first to review this product."))}</p>`)}`;
+    box.querySelectorAll("[data-star]").forEach((b) => b.onclick = () => { st.rating = +b.dataset.star; box.querySelectorAll("[data-star]").forEach((x) => x.classList.toggle("on", +x.dataset.star <= st.rating)); });
+    $("[data-rvsave]", box).onclick = async (e) => {
+      if (!st.rating) return toast(t("Choose 1 to 5 stars"), true);
+      e.target.disabled = true;
+      const res = await call("app-api", { action: "review_save", id: p.id, rating: st.rating, comment: $("#rvText", box).value });
+      e.target.disabled = false;
+      if (!res.ok) return toast(res.message, true);
+      toast(t("Thank you for your review"));
+      SH.catalog = null; await renderShop(); openProduct(p.id);
+    };
+  };
+  draw(null);
+  const r = await call("app-api", { action: "product_reviews", id: p.id });
+  if (r.ok && $(".pd")) draw(r);
 }
 
 // shared UTR / screenshot block, used by the shop and bill payments
@@ -2485,6 +2732,7 @@ function openCartSheet() {
 
   const keep = () => {
     const a = $("#addr", sheet); if (a) st.addr = a.value;
+    const nt = $("#dnote", sheet); if (nt) st.note = nt.value;
     const u = $("#sutr", sheet); if (u) st.utr = u.value;
   };
   const draw = () => {
@@ -2496,7 +2744,26 @@ function openCartSheet() {
         <div class="cl-l"><img src="${esc(prodImg(SH.catalog?.find((p) => p.id === c.id) || { id: c.id }))}" alt="" /><div><div class="n">${esc(c.name)}</div><div class="z">${esc(c.size)} · ${esc(t("{price} each", { price: inr(c.price) }))}</div></div></div>
         <div class="mini-step"><button data-cdec="${i}" aria-label="${esc(t("One less"))}">−</button><span>${c.qty}</span><button data-cinc="${i}" aria-label="${esc(t("One more"))}">+</button></div>
       </div>`).join("")}</div>
-      <div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>
+      ${(() => {
+        const inCart = new Set(SH.cart.map((x) => x.id));
+        const want = [...new Set(SH.cart.flatMap((x) => (SH.catalog.find((p) => p.id === x.id)?.details?.pairs) || []))]
+          .map((id) => SH.catalog.find((p) => p.id === id)).filter((p) => p && p.in_stock && !inCart.has(p.id)).slice(0, 4);
+        return want.length ? `<h4>${esc(t("You might also like"))}</h4><div class="sugg">${want.map((p) => `<div class="sg"><img src="${esc(prodImg(p))}" alt="" /><div class="sg-n">${esc(p.name)}</div><div class="sg-p">${esc(p.sizes[0].label)} · ${esc(inr(p.sizes[0].price))}</div><button data-sugg="${esc(p.id)}">+ ${esc(t("Add"))}</button></div>`).join("")}</div>` : "";
+      })()}
+      ${(() => {
+        const R = meta.rules || { min_order: 0, delivery_fee: 0, free_above: 0 };
+        const forBill = !st.repeat && st.pay === "bill";
+        if (st.repeat || forBill) return `<div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>`;
+        const fee = R.free_above && total >= R.free_above ? 0 : R.delivery_fee;
+        const short = Math.max(0, R.min_order - total);
+        return `
+          <div class="cline2"><span>${esc(t("Items"))}</span><span>${esc(inr(total))}</span></div>
+          <div class="cline2"><span>${esc(t("Delivery fee"))}</span><span>${fee ? esc(inr(fee)) : `<b class="free">${esc(t("Free"))}</b>`}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total + fee))}</span></div>
+          ${short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(short) }))}</div>`
+            : fee && R.free_above ? `<div class="freebar"><div>${esc(t("Add {amt} more for free delivery", { amt: inr(R.free_above - total) }))}</div><i style="width:${Math.min(100, Math.round(total / R.free_above * 100))}%"></i></div>`
+            : R.free_above ? `<div class="freebar done"><div>🎉 ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
+      })()}
 
       <h4>${esc(t("How often?"))}</h4>
       <div class="seg"><button data-rep="0" class="${st.repeat ? "" : "on"}">${esc(t("Just once"))}</button><button data-rep="1" class="${st.repeat ? "on" : ""}">${esc(t("Repeat"))}</button></div>
@@ -2513,6 +2780,7 @@ function openCartSheet() {
 
       <h4>${esc(t("Deliver to"))}</h4>
       <textarea id="addr" aria-label="${esc(t("Deliver to"))}">${esc(st.addr ?? meta.address ?? "")}</textarea>
+      <div class="field"><label for="dnote">${esc(t("Note for the delivery partner (optional)"))}</label><input id="dnote" class="txt" maxlength="200" value="${esc(st.note || "")}" /></div>
 
       ${st.repeat ? "" : `
         <h4>${esc(t("Payment"))}</h4>
@@ -2529,6 +2797,7 @@ function openCartSheet() {
     sheet.querySelectorAll("[data-cinc]").forEach((b) => b.onclick = () => { keep(); SH.cart[+b.dataset.cinc].qty = Math.min(50, SH.cart[+b.dataset.cinc].qty + 1); saveCart(); draw(); });
     sheet.querySelectorAll("[data-cdec]").forEach((b) => b.onclick = () => { keep(); const c = SH.cart[+b.dataset.cdec]; c.qty -= 1; if (!c.qty) SH.cart.splice(+b.dataset.cdec, 1); saveCart(); draw(); });
     sheet.querySelectorAll("[data-rep]").forEach((b) => b.onclick = () => { keep(); st.repeat = b.dataset.rep === "1"; draw(); });
+    sheet.querySelectorAll("[data-sugg]").forEach((b) => b.onclick = () => { keep(); const p = SH.catalog.find((x) => x.id === b.dataset.sugg); setQty(p, p.sizes[0], 1); draw(); });
     $("#plan", sheet)?.addEventListener("change", (e) => { keep(); st.plan = e.target.value; draw(); });
     $("#wd", sheet)?.addEventListener("change", (e) => { st.weekday = e.target.value; });
     $("#sd", sheet)?.addEventListener("change", (e) => { st.start = e.target.value; });
@@ -2558,7 +2827,7 @@ function openCartSheet() {
   const place = async () => {
     keep();
     const btn = $("#place", sheet);
-    const payload = { action: "shop_order", items: SH.cart, address: (st.addr ?? meta.address ?? "").trim(), frequency: st.repeat ? st.plan : "once" };
+    const payload = { action: "shop_order", items: SH.cart, address: (st.addr ?? meta.address ?? "").trim(), note: (st.note || "").trim(), frequency: st.repeat ? st.plan : "once" };
     if (payload.address.length < 6) return toast(t("Add your delivery address"), true);
     if (st.repeat) { payload.weekday = st.weekday; payload.start_date = st.start; }
     else {
@@ -2588,7 +2857,7 @@ function openCartSheet() {
 }
 
 async function openMyOrders() {
-  const sheet = openSheet(`${loaderHTML()}`);
+  const sheet = openSheet(loaderHTML());
   sheet.classList.add("tall");
   const r = await call("app-api", { action: "my_orders" });
   if (!r.ok) { closeSheet(); if (r.code !== "logged_out") toast(r.message, true); return; }
@@ -2596,20 +2865,65 @@ async function openMyOrders() {
   const when = (iso) => new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
   sheet.innerHTML = `<div class="grip"></div>
     <h3>${esc(t("My orders"))}</h3>
-    ${r.repeats.length ? `<h4>${esc(t("Repeat orders"))}</h4><div>${r.repeats.map((x) => `<div class="orow">
-      <div class="top"><span>${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(t(x.status))}</span></div>
-      <div class="it">${esc(String(x.plan || "").replace(/ · .*$/, ""))} · ${esc(t("{amt} each time", { amt: inr(x.amount) }))}</div></div>`).join("")}</div>` : ""}
     ${(r.on_bill || []).length ? `<h4>${esc(t("On your monthly bill"))}</h4><div>${r.on_bill.map((x) => `<div class="orow">
       <div class="top"><span>${esc(x.name)} × ${esc(+x.quantity.toFixed(3))}</span><span>${esc(inr(x.amount))}</span></div>
-      <div class="it">${esc(shortDate(x.date))} <span class="pill ${x.billed ? "paid" : "due-p"}" style="margin-left:6px">${esc(t(x.billed ? "Billed" : "Next bill"))}</span></div></div>`).join("")}</div>` : ""}
+      <div class="it">${esc(shortDate(x.date))} <span class="pill ${x.billed ? "paid" : "due-p"}" style="margin-left:6px">${esc(t(x.billed ? "Billed" : "Next bill"))}</span></div>
+      ${x.can_cancel ? `<div class="oacts"><button data-bcancel="${esc(x.id)}">${esc(t("Cancel"))}</button></div>` : ""}</div>`).join("")}</div>` : ""}
+    ${r.repeats.length ? `<h4>${esc(t("Repeat orders"))}</h4><div>${r.repeats.map((x) => `<div class="orow">
+      <div class="top"><span>${esc(x.product)} × ${esc(x.qty)}</span><span class="pill ${pillFor(x.status)}">${esc(t(x.status))}</span></div>
+      <div class="it">${esc(String(x.plan || "").replace(/ · .*$/, ""))} · ${esc(t("{amt} each time", { amt: inr(x.amount) }))}</div>
+      ${x.can_cancel ? `<div class="oacts"><button data-rcancel="${esc(x.sub_id)}">${esc(t("Cancel"))}</button></div>` : ""}</div>`).join("")}</div>` : ""}
     <h4>${esc(t("Orders"))}</h4>
     ${r.orders.length ? `<div>${r.orders.map((o) => `<div class="orow">
       <div class="top"><span>${esc(when(o.created_at))}</span><span>${esc(inr(o.amount))}</span></div>
       <div class="it">${esc(o.items)}</div>
-      <div class="it">${esc(o.order_id)} · ${esc(t(o.pay_method))} <span class="pill ${pillFor(o.status)}" style="margin-left:6px">${esc(t(o.status))}</span></div></div>`).join("")}</div>`
+      <div class="it">${esc(o.order_id)} · ${esc(t(o.pay_method))} <span class="pill ${pillFor(o.status)}" style="margin-left:6px">${esc(t(o.status))}</span></div>
+      ${o.can_cancel || o.can_edit ? `<div class="oacts">${o.can_edit ? `<button data-oedit="${esc(o.order_id)}">${esc(t("Change items"))}</button>` : ""}${o.can_cancel ? `<button data-ocancel="${esc(o.order_id)}" data-paid="${o.pay_method !== "COD" ? 1 : 0}">${esc(t("Cancel order"))}</button>` : ""}</div>` : ""}</div>`).join("")}</div>`
       : `<p class="sub">${esc(t("Orders you place show up here."))}</p>`}
     <div class="stack"><button class="btn btn-line btn-block" data-close>${esc(t("Close"))}</button></div>`;
   $("[data-close]", sheet).onclick = closeSheet;
+  const act = async (payload, okMsg, question) => {
+    if (!(await confirmBox(question, t("Yes")))) return;
+    const res = await call("app-api", payload);
+    if (!res.ok) return toast(res.message, true);
+    toast(res.refund ? t("Order cancelled. RD Dairy will refund your payment.") : okMsg);
+    SH.catalog = null; openMyOrders();
+  };
+  sheet.querySelectorAll("[data-ocancel]").forEach((b) => b.onclick = () => act({ action: "order_cancel", order_id: b.dataset.ocancel }, t("Order cancelled"), t("Cancel this order?")));
+  sheet.querySelectorAll("[data-bcancel]").forEach((b) => b.onclick = () => act({ action: "bill_item_cancel", id: b.dataset.bcancel }, t("Removed from your bill"), t("Cancel this item?")));
+  sheet.querySelectorAll("[data-rcancel]").forEach((b) => b.onclick = () => act({ action: "repeat_cancel", sub_id: b.dataset.rcancel }, t("Repeat order cancelled"), t("Cancel this repeat order?")));
+  sheet.querySelectorAll("[data-oedit]").forEach((b) => b.onclick = () => editOrder(r.orders.find((o) => o.order_id === b.dataset.oedit)));
+}
+
+// Rebuild the cart lines from the order text, let the customer adjust, then save
+async function editOrder(o) {
+  if (!SH.catalog) { const r = await call("app-api", { action: "shop_catalog" }); if (!r.ok) return toast(r.message, true); SH.catalog = r.catalog; SH.meta = r; }
+  const lines = [];
+  String(o.items).split(", ").forEach((part) => {
+    const m = part.match(/^(.*) (\S.*?) x (\d+)$/);
+    if (!m) return;
+    for (const p of SH.catalog) for (const z of p.sizes) if (part.startsWith(p.name + " " + z.label + " x ")) lines.push({ id: p.id, name: p.name, size: z.label, price: Number(z.price), qty: Number(part.split(" x ").pop()) });
+  });
+  const sheet = openSheet("");
+  sheet.classList.add("tall");
+  const draw = () => {
+    const sub = lines.reduce((a, l) => a + l.price * l.qty, 0);
+    sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Change items"))}</h3><p class="sub">${esc(o.order_id)}</p>
+      ${lines.map((l, i) => `<div class="cline"><div><div class="n">${esc(l.name)}</div><div class="z">${esc(l.size)} · ${esc(inr(l.price))}</div></div>
+        <div class="mini-step"><button data-d="${i}">−</button><span>${l.qty}</span><button data-i="${i}">+</button></div></div>`).join("")}
+      <div style="display:flex;justify-content:space-between;padding:14px 0;font-weight:700"><span>${esc(t("Items"))}</span><span>${esc(inr(sub))}</span></div>
+      <div class="stack"><button class="btn btn-main btn-block" data-save>${esc(t("Save changes"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+    sheet.querySelectorAll("[data-i]").forEach((b) => b.onclick = () => { lines[+b.dataset.i].qty = Math.min(50, lines[+b.dataset.i].qty + 1); draw(); });
+    sheet.querySelectorAll("[data-d]").forEach((b) => b.onclick = () => { lines[+b.dataset.d].qty = Math.max(0, lines[+b.dataset.d].qty - 1); draw(); });
+    $("[data-close]", sheet).onclick = openMyOrders;
+    $("[data-save]", sheet).onclick = async () => {
+      const res = await call("app-api", { action: "order_edit", order_id: o.order_id, items: lines.filter((l) => l.qty > 0) });
+      if (!res.ok) return toast(res.message, true);
+      toast(t("Order updated")); openMyOrders();
+    };
+  };
+  if (!lines.length) return toast(t("Please chat with us to change this order"), true);
+  draw();
 }
 
 /* =========================================================
