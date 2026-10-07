@@ -118,6 +118,25 @@
   .rd-viewer-x{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font-size:1.1rem;font-weight:800;cursor:pointer}
 
 
+
+  /* app products */
+  .pr-list{display:grid;gap:12px}
+  .pr-card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px rgba(27,42,90,.07)}
+  .pr-card.open{border:1.5px solid var(--amber)}
+  .pr-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .pr-ttl b{font-size:1.02rem}
+  .pr-ed{margin-top:14px;border-top:1px solid var(--amber-pale);padding-top:14px}
+  .pr-ed textarea,.pr-ed .pr-in{width:100%;padding:9px 11px;border:1.5px solid var(--amber-light);border-radius:10px;font-family:inherit}
+  .pr-lbl{display:block;font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--navy);margin:12px 0 6px}
+  .pr-size{display:flex;gap:8px;margin-bottom:6px}
+  .pr-size input{padding:8px 10px;border:1.5px solid var(--amber-light);border-radius:9px;font-family:inherit;width:140px}
+  .pr-pairs{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.88rem}
+  .pr-photos{display:flex;flex-wrap:wrap;gap:8px}
+  .pr-ph{position:relative}.pr-ph img{width:84px;height:84px;object-fit:cover;border-radius:10px;cursor:zoom-in}
+  .pr-ph button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:0;background:var(--err);color:#fff;cursor:pointer}
+  .pr-add{display:grid;place-items:center;width:84px;height:84px;border:1.5px dashed var(--amber);border-radius:10px;font-size:.78rem;font-weight:800;cursor:pointer;text-align:center}
+  .pr-add input{display:none}
+
   /* support chat */
   .ch-wrap{display:grid;grid-template-columns:320px 1fr;gap:14px;min-height:60vh}
   @media(max-width:820px){.ch-wrap{grid-template-columns:1fr}}
@@ -204,6 +223,7 @@
         <div class="lbox" onclick="goSection('apppay')"><div class="lbox-ico">📲</div><div class="lbox-label">App Payments</div><span class="lbox-count hidden" id="apCount"></span></div>
         <div class="lbox" onclick="goSection('appreq')"><div class="lbox-ico">🗓️</div><div class="lbox-label">App Requests</div><span class="lbox-count hidden" id="arCount"></span></div>
         <div class="lbox" onclick="goSection('chat')"><div class="lbox-ico">🗨️</div><div class="lbox-label">Support Chat</div><span class="lbox-count hidden" id="chCount"></span></div>
+        <div class="lbox" onclick="goSection('prods')"><div class="lbox-ico">🧈</div><div class="lbox-label">App Products</div><span class="lbox-count hidden" id="prCount"></span></div>
       </div>
       <div class="ap-alert hidden" id="apAlert" onclick="goSection('apppay')"></div>
     </div>
@@ -524,6 +544,15 @@
       <div id="apArea" class="ap-list"><div class="empty">Loading…</div></div>
     </div>
 
+    <!-- ============ APP PRODUCTS VIEW ============ -->
+    <div id="prodView" class="hidden">
+      <div class="toolbar"><button class="btn refresh" onclick="loadProducts()">↻ Refresh</button></div>
+      <p class="muted" style="margin:0 0 14px">What customers see in the app Shop. Edit details, prices, photos and stock here. Turning a product back on in stock tells everyone who tapped Notify me.</p>
+      <div id="prList" class="pr-list"><div class="empty">Loading…</div></div>
+      <h3 class="dsub" style="margin-top:28px">Customer reviews</h3>
+      <div class="table-wrap"><div id="prReviews"><div class="empty">Loading…</div></div></div>
+    </div>
+
     <!-- ============ SUPPORT CHAT VIEW ============ -->
     <div id="chatView" class="hidden">
       <div class="toolbar">
@@ -571,6 +600,11 @@
           <div><label>UPI ID for app payments</label><input id="arUpiId" /></div>
           <div><label>UPI name</label><input id="arUpiName" /></div>
           <div class="dform-actions"><button class="btn" onclick="saveAppSettingsForm()">Save</button></div>
+        </div>
+        <div class="dform" style="grid-template-columns:1fr 1fr 1fr;margin-top:12px">
+          <div><label>Minimum shop order (₹)</label><input id="arMinOrder" type="number" min="0" /></div>
+          <div><label>Delivery fee (₹)</label><input id="arFee" type="number" min="0" /></div>
+          <div><label>Free delivery above (₹)</label><input id="arFreeAbove" type="number" min="0" /></div>
         </div>
         <div class="dform" style="grid-template-columns:1fr 1.4fr;margin-top:12px">
           <div><label>Support phone / WhatsApp</label><input id="arSupPhone" inputmode="numeric" /></div>
@@ -792,7 +826,8 @@ function switchView(v){
   var isAppPay = (v==="apppay");
   var isAppReq = (v==="appreq");
   var isChat = (v==="chat");
-  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq && !isChat;
+  var isProds = (v==="prods");
+  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq && !isChat && !isProds;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
@@ -802,6 +837,8 @@ function switchView(v){
   $("appPayView").classList.toggle("hidden", !isAppPay);
   $("appReqView").classList.toggle("hidden", !isAppReq);
   $("chatView").classList.toggle("hidden", !isChat);
+  $("prodView").classList.toggle("hidden", !isProds);
+  if(isProds){ $("cards").innerHTML=""; loadProducts(); return; }
   if(!isChat) chStopPoll();
   if(isChat){ $("cards").innerHTML=""; loadChatThreads(); chStartPoll(); return; }
   if(isAppPay){ $("cards").innerHTML=""; loadAppPayments(); return; }
@@ -2334,7 +2371,7 @@ function waButton(mobile, name, id, status){
 }
 
 function renderCards(){
-  if(view==="apppay"||view==="appreq"||view==="chat"){ $("cards").innerHTML=""; return; }
+  if(view==="apppay"||view==="appreq"||view==="chat"||view==="prods"){ $("cards").innerHTML=""; return; }
   var o=data.orders, s=data.subscriptions;
   var revenue=o.filter(x=>/paid|received|confirmed/i.test((x.Status||""))).reduce((a,x)=>a+(Number(x.Amount)||0),0);
   var pending=o.filter(x=>!/paid|received|confirmed/i.test((x.Status||""))).length;
@@ -2602,6 +2639,8 @@ async function refreshAppPayCount(){
     $("arCount").textContent = rq; $("arCount").classList.toggle("hidden", rq===0);
     var chn = r.chats||0;
     $("chCount").textContent = chn; $("chCount").classList.toggle("hidden", chn===0);
+    var prn = r.products||0;
+    $("prCount").textContent = prn; $("prCount").classList.toggle("hidden", prn===0);
     var inb = r.inbox||0;
     $("inCount").textContent = inb; $("inCount").classList.toggle("hidden", inb===0);
     if($("inNav")){ $("inNav").textContent = inb; $("inNav").classList.toggle("hidden", inb===0); }
@@ -2610,6 +2649,7 @@ async function refreshAppPayCount(){
     var parts=[];
     if(n) parts.push('<b>'+n+'</b> app '+(n===1?'payment':'payments')+' to confirm');
     if(chn) parts.push('<b>'+chn+'</b> new '+(chn===1?'chat':'chats'));
+    if(prn) parts.push('<b>'+prn+'</b> '+(prn===1?'product':'products')+' low or out of stock');
     if(inb) parts.push('<b>'+inb+'</b> WhatsApp '+(inb===1?'message':'messages')+' waiting');
     alertBox.classList.toggle("hidden", parts.length===0);
     alertBox.innerHTML = '<span>'+parts.join(' · ')+'</span><span>Open →</span>';
@@ -2719,6 +2759,9 @@ async function loadAppRequests(){
       $("arUpiId").value=(st.upi_id&&st.upi_id!=="yourbusiness@bank")?st.upi_id:"";
       $("arUpiName").value=st.upi_name||"RD Dairy";
       $("arSupPhone").value=st.support_phone||"";
+      $("arMinOrder").value=st.min_order_amount||"100";
+      $("arFee").value=st.delivery_fee||"20";
+      $("arFreeAbove").value=st.free_delivery_above||"300";
       $("arSupEmail").value=st.support_email||"";
     }
     refreshAppPayCount();
@@ -2822,7 +2865,8 @@ async function arQtyUpdate(id, status, btn){
 async function saveAppSettingsForm(){
   var err=$("arErr"); err.classList.add("hidden");
   var settings={ change_cutoff_time:$("arCutoff").value.trim(), max_extra_qty:$("arMaxExtra").value.trim(), upi_name:$("arUpiName").value.trim(),
-                 support_phone:$("arSupPhone").value.trim(), support_email:$("arSupEmail").value.trim() };
+                 support_phone:$("arSupPhone").value.trim(), support_email:$("arSupEmail").value.trim(),
+                 min_order_amount:$("arMinOrder").value.trim(), delivery_fee:$("arFee").value.trim(), free_delivery_above:$("arFreeAbove").value.trim() };
   if($("arUpiId").value.trim()) settings.upi_id=$("arUpiId").value.trim();
   try{
     var r=await aApi({action:"saveAppSettings", settings:settings});
@@ -2841,6 +2885,112 @@ function updateOrderBadges(){
 }
 // Refresh orders and subscriptions every minute while the dashboard home is showing
 setInterval(function(){ if(adminKey && !$("landing").classList.contains("hidden")) loadData(); },60000);
+
+/* ============ APP PRODUCTS ============ */
+var PRODUCTS=[], prOpen=null;
+async function loadProducts(){
+  $("prList").innerHTML='<div class="empty">Loading…</div>';
+  try{
+    var r=await aApi({action:"getCatalog"}), rv=await aApi({action:"reviewsList"});
+    if(!r.ok){ $("prList").innerHTML='<div class="empty">'+esc(r.message||"Could not load")+'</div>'; return; }
+    PRODUCTS=r.products||[]; renderProducts(); renderReviews(rv.ok?rv.reviews:[]);
+    refreshAppPayCount();
+  }catch(e){ $("prList").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+function prStatus(p){
+  if(!p.in_stock) return '<span class="pill cancel">Out of stock</span>';
+  if(p.stock!==null && p.stock<=p.low_stock_at) return '<span class="pill pending">Low: '+p.stock+' left</span>';
+  return '<span class="pill paid">In stock'+(p.stock!==null?' · '+p.stock:'')+'</span>';
+}
+function renderProducts(){
+  $("prList").innerHTML=PRODUCTS.map(function(p){
+    var open=prOpen===p.id;
+    return '<div class="pr-card'+(open?' open':'')+'" id="pr_'+esc(p.id)+'">'+
+      '<div class="pr-row">'+
+        '<div class="pr-ttl"><b>'+esc(p.name)+'</b><div class="muted">'+esc(p.category||"")+' · '+p.sizes.map(function(z){return esc(z.label)+' ₹'+z.price;}).join(', ')+'</div>'+
+        '<div style="margin-top:6px">'+prStatus(p)+(p.rating?' <span class="pill submitted">★ '+p.rating+' ('+p.rating_count+')</span>':'')+(p.waiting?' <span class="pill pending">'+p.waiting+' waiting for stock</span>':'')+(p.active===false?' <span class="pill cancel">Hidden</span>':'')+'</div></div>'+
+        '<div class="row" style="gap:6px">'+
+          (p.in_stock?'<button class="btn sm ghost" onclick="prQuickStock(\''+esc(p.id)+'\',false,this)">Mark out of stock</button>':'<button class="btn sm ok" onclick="prQuickStock(\''+esc(p.id)+'\',true,this)">Back in stock</button>')+
+          '<button class="btn sm" onclick="prToggle(\''+esc(p.id)+'\')">'+(open?'Close':'Edit')+'</button></div>'+
+      '</div>'+(open?prEditor(p):'')+
+    '</div>';
+  }).join("");
+  if(prOpen) prBindEditor(PRODUCTS.find(function(x){return x.id===prOpen;}));
+}
+function prToggle(id){ prOpen = prOpen===id ? null : id; renderProducts(); }
+function prEditor(p){
+  var d=p.details||{};
+  return '<div class="pr-ed">'+
+    '<div class="dform" style="grid-template-columns:1.4fr 1fr"><div><label>Name</label><input data-f="name" value="'+esc(p.name)+'"></div><div><label>Category</label><input data-f="category" value="'+esc(p.category||"")+'"></div></div>'+
+    '<div class="dform" style="grid-template-columns:1fr;margin-top:10px"><div><label>Short description (shown on the card)</label><input data-f="description" value="'+esc(p.description||"")+'"></div></div>'+
+    '<label class="pr-lbl">Sizes and prices</label><div id="prSizes">'+p.sizes.map(function(z){return prSizeRow(z.label,z.price);}).join("")+'</div>'+
+    '<button class="btn sm ghost" type="button" onclick="document.getElementById(\'prSizes\').insertAdjacentHTML(\'beforeend\',prSizeRow(\'\',\'\'))">+ Add size</button>'+
+    '<div class="dform" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-top:12px">'+
+      '<div><label>In stock</label><select data-f="in_stock"><option value="1"'+(p.in_stock?' selected':'')+'>Yes</option><option value="0"'+(!p.in_stock?' selected':'')+'>No</option></select></div>'+
+      '<div><label>Stock count (blank = not tracked)</label><input data-f="stock" type="number" min="0" value="'+(p.stock===null?'':p.stock)+'"></div>'+
+      '<div><label>Alert me at</label><input data-f="low_stock_at" type="number" min="0" value="'+p.low_stock_at+'"></div>'+
+      '<div><label>Show in app</label><select data-f="active"><option value="1"'+(p.active!==false?' selected':'')+'>Yes</option><option value="0"'+(p.active===false?' selected':'')+'>Hidden</option></select></div>'+
+    '</div>'+
+    '<label class="pr-lbl">About</label><textarea data-d="about" rows="2">'+esc(d.about||"")+'</textarea>'+
+    '<div class="dform" style="grid-template-columns:1.4fr 1fr;margin-top:6px"><div><label>Nutrition (one per line, like Protein | 3.2 g)</label><textarea data-d="nutrition" rows="5">'+esc((d.nutrition||[]).map(function(r){return r[0]+' | '+r[1];}).join("\n"))+'</textarea></div>'+
+      '<div><label>Nutrition is</label><input data-d="nutrition_basis" value="'+esc(d.nutrition_basis||"")+'"><label style="margin-top:8px">Shelf life</label><input data-d="shelf_life" value="'+esc(d.shelf_life||"")+'"></div></div>'+
+    '<label class="pr-lbl">Storage</label><input data-d="storage" class="pr-in" value="'+esc(d.storage||"")+'">'+
+    '<label class="pr-lbl">How it is made</label><textarea data-d="how_made" rows="3">'+esc(d.how_made||"")+'</textarea>'+
+    '<label class="pr-lbl">Suggest with this product in the cart</label><div class="pr-pairs">'+PRODUCTS.filter(function(x){return x.id!==p.id;}).map(function(x){return '<label><input type="checkbox" data-pair="'+esc(x.id)+'"'+((d.pairs||[]).indexOf(x.id)>-1?' checked':'')+'> '+esc(x.name)+'</label>';}).join("")+'</div>'+
+    '<label class="pr-lbl">Extra photos</label><div class="pr-photos" id="prPhotos">'+(p.photos||[]).map(prPhoto).join("")+'<label class="pr-add">+ Add photo<input type="file" accept="image/*" id="prPhotoIn"></label></div>'+
+    '<div class="row" style="gap:8px;margin-top:16px"><button class="btn" id="prSave">Save product</button><span class="muted" id="prMsg"></span></div>'+
+  '</div>';
+}
+function prSizeRow(l,pr){ return '<div class="pr-size"><input placeholder="500ml" data-sl value="'+esc(l)+'"><input type="number" min="0" placeholder="Price" data-sp value="'+esc(pr)+'"><button type="button" class="btn sm ghost" onclick="this.parentNode.remove()">Remove</button></div>'; }
+function prPhoto(u){ return '<div class="pr-ph" data-url="'+esc(u)+'"><img src="'+esc(u)+'" onclick="showImage(this.src)"><button type="button" onclick="this.parentNode.remove()">✕</button></div>'; }
+function prCompress(file){ return new Promise(function(res,rej){ var img=new Image(),u=URL.createObjectURL(file); img.onload=function(){ var sc=Math.min(1,1400/Math.max(img.width,img.height)),c=document.createElement("canvas"); c.width=Math.round(img.width*sc); c.height=Math.round(img.height*sc); c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u); res(c.toDataURL("image/jpeg",.82)); }; img.onerror=rej; img.src=u; }); }
+function prBindEditor(p){
+  var box=$("pr_"+p.id); if(!box) return;
+  $("prPhotoIn").onchange=async function(e){
+    var f=e.target.files[0]; if(!f) return;
+    notice("Uploading photo…");
+    try{ var data=await prCompress(f); var r=await aApi({action:"uploadProductPhoto", id:p.id, image_base64:data});
+      if(!r.ok){ notice(r.message); return; }
+      $("prPhotos").insertAdjacentHTML("afterbegin", prPhoto(r.url)); notice("Photo added. Save to keep it.");
+    }catch(err){ notice("That photo could not be read"); }
+  };
+  $("prSave").onclick=async function(){
+    var q=function(sel){ return box.querySelector(sel); };
+    var prod={ id:p.id, name:q('[data-f=name]').value, category:q('[data-f=category]').value, description:q('[data-f=description]').value,
+      in_stock:q('[data-f=in_stock]').value==="1", active:q('[data-f=active]').value==="1",
+      stock:q('[data-f=stock]').value, low_stock_at:q('[data-f=low_stock_at]').value,
+      sizes:Array.prototype.map.call(box.querySelectorAll(".pr-size"),function(r){ return {label:r.querySelector("[data-sl]").value, price:r.querySelector("[data-sp]").value}; }),
+      photos:Array.prototype.map.call(box.querySelectorAll(".pr-ph"),function(x){ return x.dataset.url; }),
+      details:{ about:q('[data-d=about]').value, nutrition_basis:q('[data-d=nutrition_basis]').value, shelf_life:q('[data-d=shelf_life]').value,
+        storage:q('[data-d=storage]').value, how_made:q('[data-d=how_made]').value,
+        nutrition:q('[data-d=nutrition]').value.split("\n").map(function(l){ var a=l.split("|"); return [ (a[0]||"").trim(), (a[1]||"").trim() ]; }).filter(function(r){return r[0];}),
+        pairs:Array.prototype.filter.call(box.querySelectorAll("[data-pair]"),function(c){return c.checked;}).map(function(c){return c.dataset.pair;}) } };
+    this.disabled=true; $("prMsg").textContent="Saving…";
+    var r=await aApi({action:"saveProduct", product:prod});
+    this.disabled=false;
+    if(!r.ok){ $("prMsg").textContent=r.message||"Could not save"; return; }
+    notice(r.notified?("Saved. "+r.notified+" waiting "+(r.notified===1?"customer was":"customers were")+" told it's back in stock."):"Saved");
+    loadProducts();
+  };
+}
+async function prQuickStock(id,on,btn){
+  var p=PRODUCTS.find(function(x){return x.id===id;}); if(!p) return;
+  btn.disabled=true;
+  var r=await aApi({action:"saveProduct", product:Object.assign({},p,{in_stock:on, stock: on && p.stock===0 ? "" : p.stock})});
+  if(!r.ok){ notice(r.message||"Could not save"); btn.disabled=false; return; }
+  notice(on?(r.notified?("Back in stock. "+r.notified+" waiting "+(r.notified===1?"customer":"customers")+" told."):"Back in stock"):"Marked out of stock");
+  loadProducts();
+}
+function renderReviews(list){
+  if(!list.length){ $("prReviews").innerHTML='<div class="empty">No reviews yet.</div>'; return; }
+  var names={}; PRODUCTS.forEach(function(p){ names[p.id]=p.name; });
+  $("prReviews").innerHTML='<table><thead><tr><th>When</th><th>Product</th><th>Customer</th><th>Rating</th><th>Review</th><th></th></tr></thead><tbody>'+list.map(function(r){
+    return '<tr'+(r.hidden?' style="opacity:.5"':'')+'><td class="muted">'+esc(fmtDate(r.created_at))+'</td><td>'+esc(names[r.product_id]||r.product_id)+'</td><td>'+esc(r.name||"")+'<br><span class="muted">'+esc(r.phone)+'</span></td>'+
+      '<td><b>'+"★".repeat(r.rating)+'</b><span class="muted">'+"★".repeat(5-r.rating)+'</span></td><td>'+esc(r.comment||"")+'</td>'+
+      '<td><button class="btn sm ghost" onclick="prHideReview(\''+r.id+'\','+(!r.hidden)+')">'+(r.hidden?'Show':'Hide')+'</button></td></tr>';
+  }).join("")+'</tbody></table>';
+}
+async function prHideReview(id,hide){ await aApi({action:"reviewHide", id:id, hidden:hide}); loadProducts(); }
 
 /* ============ SUPPORT CHAT ============ */
 var chFilter="open", chPhone=null, chTimer=null, chThreads=[];
