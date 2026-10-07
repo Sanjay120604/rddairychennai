@@ -601,6 +601,80 @@
   .notice-acts { display: flex; gap: 4px; flex-shrink: 0; }
   .notice-acts button { font-weight: 800; color: inherit; min-height: 40px; padding: 0 8px; }
 
+
+  /* ---------- wallet, gold, banners, stories, inbox ---------- */
+  .tb-r { display: flex; align-items: center; gap: 10px; }
+  .bell { position: relative; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,.1); font-size: 18px; color: #fff; }
+  .bell i { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: #E0362C; color: #fff; font-style: normal; font-size: 11px; font-weight: 800; display: grid; place-items: center; border: 2px solid #1E2B4A; }
+  .bell i.hidden { display: none; }
+  .greet { display: flex; justify-content: space-between; align-items: center; margin: 4px 2px 14px; }
+  .g-hi { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  .g-sub { color: var(--soft); font-size: 14px; margin-top: 2px; }
+  .g-ico { font-size: 38px; }
+  .billcard { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--butter-soft); border-radius: 16px; padding: 12px 14px; margin-bottom: 12px; flex-wrap: wrap; }
+  .billcard b { display: block; } .billcard span { font-size: 14px; color: var(--soft); }
+  .bc-acts { display: flex; gap: 6px; }
+  .bc-acts button { min-height: 40px; padding: 0 12px; border-radius: 10px; font-weight: 800; border: 1.5px solid var(--ink); color: var(--ink); }
+  .bc-acts button.go { background: var(--ink); color: var(--milk); }
+  html[data-theme="dark"] .bc-acts button.go { background: var(--butter); color: #1E2B4A; border-color: var(--butter); }
+  .stories { display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 12px; scrollbar-width: none; }
+  .stories::-webkit-scrollbar { display: none; }
+  .story { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 70px; }
+  .st-ring { width: 66px; height: 66px; border-radius: 50%; padding: 3px; background: conic-gradient(#F5A800, #E0362C, #F5A800); }
+  .st-ring img, .st-ring video { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--mist); }
+  .st-t { font-size: 12px; font-weight: 600; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .storyview { position: fixed; inset: 0; z-index: 80; background: #000; display: flex; align-items: center; justify-content: center; }
+  .storyview img, .storyview video { max-width: 100%; max-height: 100%; }
+  .sv-bars { position: absolute; top: calc(var(--safe-top) + 10px); left: 10px; right: 10px; display: flex; gap: 4px; z-index: 2; }
+  .sv-bars i { flex: 1; height: 3px; background: rgba(255,255,255,.35); border-radius: 2px; overflow: hidden; }
+  .sv-bars i.done b, .sv-bars i.now b { display: block; height: 100%; background: #fff; }
+  .sv-bars i.now b { width: 0; animation: svfill linear forwards; }
+  @keyframes svfill { to { width: 100%; } }
+  .sv-x { position: absolute; top: calc(var(--safe-top) + 22px); right: 12px; z-index: 3; color: #fff; font-size: 22px; width: 44px; height: 44px; }
+  .sv-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 18px calc(var(--safe-bottom) + 22px); color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.7)); display: flex; flex-direction: column; gap: 4px; z-index: 2; }
+  .sv-prev, .sv-next { position: absolute; top: 0; bottom: 0; width: 35%; z-index: 1; }
+  .sv-prev { left: 0; } .sv-next { right: 0; width: 65%; }
+  .banners { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; scrollbar-width: none; }
+  .banners::-webkit-scrollbar { display: none; }
+  .banner { position: relative; flex: 0 0 88%; scroll-snap-align: start; min-height: 128px; border-radius: 20px; overflow: hidden; color: #fff; text-align: left; display: flex; align-items: flex-end; }
+  .banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .bn-t { position: relative; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(transparent, rgba(0,0,0,.45)); width: 100%; }
+  .bn-t b { font-family: var(--display); font-size: 19px; } .bn-t span { font-size: 14px; opacity: .9; }
+  .trialcard { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 2px; background: var(--extra-bg); color: var(--extra-fg); border-radius: 18px; padding: 14px 16px; margin-bottom: 12px; }
+  .trialcard b { font-family: var(--display); font-size: 18px; } .trialcard i { font-style: normal; font-weight: 800; margin-top: 4px; }
+  .wallet { background: linear-gradient(135deg, #2B3D6B, #1E2B4A); color: #fff; border-radius: 22px; padding: 16px 18px; margin-bottom: 14px; }
+  .w-top { display: flex; justify-content: space-between; align-items: center; }
+  .w-top span { opacity: .75; font-weight: 600; font-size: 14px; } .w-top b { display: block; font-family: var(--display); font-size: 30px; }
+  .w-add { background: var(--butter); color: #1E2B4A; font-weight: 800; border-radius: 12px; padding: 0 14px; min-height: 44px; }
+  .w-pend { margin-top: 10px; background: rgba(255,255,255,.1); border-radius: 10px; padding: 8px 10px; font-size: 13.5px; }
+  .w-auto { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 14px; }
+  .w-auto input { width: 20px; height: 20px; accent-color: #F5A800; }
+  .w-hist { color: var(--butter); font-weight: 700; margin-top: 8px; min-height: 36px; }
+  .chips.amt { margin-bottom: 4px; }
+  .coupon { display: flex; gap: 8px; margin-top: 10px; }
+  .coupon input { flex: 1; min-width: 0; min-height: 46px; border-radius: 12px; border: 1.5px dashed var(--line); padding: 0 12px; text-transform: uppercase; font-weight: 700; background: var(--milk); color: var(--ink); }
+  .coupon button { min-height: 46px; padding: 0 16px; border-radius: 12px; background: var(--mist); font-weight: 800; }
+  .goldup { width: 100%; margin-top: 10px; text-align: left; background: #1E2B4A; color: #F5C34A; font-weight: 700; border-radius: 12px; padding: 10px 12px; min-height: 44px; }
+  .goldstrip { background: #1E2B4A; color: #F5C34A; font-weight: 700; border-radius: 12px; padding: 10px 12px; margin: 0 2px 12px; }
+  .goldhead { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .goldhead span { width: 44px; height: 44px; border-radius: 50%; background: #1E2B4A; color: #F5C34A; display: grid; place-items: center; font-size: 22px; }
+  .goldhead h3 { margin: 0; } .goldhead em { font-style: normal; font-weight: 700; color: var(--extra-fg); margin-left: auto; }
+  .gold-list { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; font-weight: 600; }
+  .refcode { display: flex; align-items: center; gap: 10px; background: var(--mist); border-radius: 16px; padding: 12px 14px; }
+  .refcode span { color: var(--soft); font-size: 14px; } .refcode b { font-family: var(--display); font-size: 24px; letter-spacing: .06em; margin-right: auto; }
+  .refcode button { font-weight: 800; text-decoration: underline; min-height: 40px; }
+  .refstats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .refstats div { background: var(--mist); border-radius: 14px; padding: 12px; text-align: center; }
+  .refstats b { display: block; font-family: var(--display); font-size: 22px; } .refstats span { font-size: 13px; color: var(--soft); }
+  .inb { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 2px; padding: 12px; border-radius: 14px; margin-bottom: 6px; background: var(--mist); }
+  .inb.new { background: var(--butter-soft); }
+  .inb span { font-size: 14px; color: var(--soft); } .inb i { font-style: normal; font-size: 12px; color: var(--soft); }
+  .pf-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .tile { text-align: left; background: var(--milk); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 2px; min-height: 76px; }
+  .tile b { font-size: 15px; } .tile span { font-size: 13px; color: var(--soft); }
+  .tile.gold { background: #1E2B4A; color: #F5C34A; } .tile.gold span { color: rgba(255,255,255,.75); }
+  .plus { color: var(--extra-fg); }
+
   /* ---------- sheet ---------- */
   .scrim { position: fixed; inset: 0; background: rgba(30, 43, 74, 0.45); z-index: 40; }
   .sheet {
@@ -875,6 +949,106 @@ const T = {
     "Please chat with us to change this order": "இந்த ஆர்டரை மாற்ற எங்களுடன் பேசுங்கள்",
     "View": "பார்",
     "Dismiss": "மூடு",
+    "7 day milk trial": "7 நாள் பால் சோதனை",
+    "Active till {date}": "{date} வரை செயலில்",
+    "Add money": "பணம் சேர்",
+    "Add money to RD Wallet": "RD Wallet இல் பணம் சேர்",
+    "Add {amt} to wallet to join": "சேர Wallet இல் {amt} சேர்க்கவும்",
+    "Added by UPI": "UPI மூலம் சேர்த்தது",
+    "Adjustment": "சரிசெய்தல்",
+    "Amount": "தொகை",
+    "Anything we should know? (optional)": "எங்களுக்குத் தெரிய வேண்டியது ஏதாவது? (விருப்பம்)",
+    "Apply": "பயன்படுத்து",
+    "Auto pay is off": "தானியங்கு கட்டணம் நிறுத்தப்பட்டது",
+    "Auto pay is on": "தானியங்கு கட்டணம் இயக்கப்பட்டது",
+    "Balance": "இருப்பு",
+    "Balance {amt}": "இருப்பு {amt}",
+    "Bill paid": "பில் செலுத்தப்பட்டது",
+    "Book a visit": "வருகையை முன்பதிவு செய்",
+    "Checking the weather…": "வானிலையைப் பார்க்கிறோம்…",
+    "Clear sky": "தெளிவான வானம்",
+    "Cloudy": "மேகமூட்டம்",
+    "Code copied": "குறியீடு நகலெடுக்கப்பட்டது",
+    "Cold": "குளிர்",
+    "Confirmed": "உறுதிசெய்யப்பட்டது",
+    "Continue to pay": "பணம் செலுத்தத் தொடரவும்",
+    "Date": "தேதி",
+    "Earned": "சம்பாதித்தது",
+    "Extend RD Gold": "RD Gold ஐ நீட்டி",
+    "Extend leave": "விடுப்பை நீட்டி",
+    "Family": "குடும்பம்",
+    "Farm": "பண்ணை",
+    "Free delivery and savings": "இலவச டெலிவரி மற்றும் சேமிப்பு",
+    "Free delivery on every shop order": "ஒவ்வொரு கடை ஆர்டருக்கும் இலவச டெலிவரி",
+    "Get free delivery and {pct}% off with RD Gold": "RD Gold மூலம் இலவச டெலிவரி மற்றும் {pct}% தள்ளுபடி",
+    "Good afternoon": "மதிய வணக்கம்",
+    "Good evening": "மாலை வணக்கம்",
+    "Good morning": "காலை வணக்கம்",
+    "Group": "குழு",
+    "How many people?": "எத்தனை பேர்?",
+    "Invite friends": "நண்பர்களை அழைக்கவும்",
+    "Invite friends and family. When they make their first payment, you both get {amt} in your RD Wallet.": "நண்பர்களையும் குடும்பத்தையும் அழைக்கவும். அவர்கள் முதல் கட்டணம் செலுத்தியதும் இருவருக்கும் RD Wallet இல் {amt} கிடைக்கும்.",
+    "Join RD Gold": "RD Gold இல் சேர்",
+    "Joined": "சேர்ந்தவர்கள்",
+    "Mark all read": "அனைத்தும் படித்ததாகக் குறி",
+    "Meet our cows, see how your milk is made, and taste it fresh. Great for families and schools.": "எங்கள் பசுக்களைப் பாருங்கள், பால் எப்படித் தயாராகிறது என்று பாருங்கள், புதிதாகச் சுவையுங்கள். குடும்பங்களுக்கும் பள்ளிகளுக்கும் சிறந்தது.",
+    "Misty": "பனிமூட்டம்",
+    "Money you add and spend shows up here.": "நீங்கள் சேர்க்கும் மற்றும் செலவிடும் பணம் இங்கே தெரியும்.",
+    "Notifications": "அறிவிப்புகள்",
+    "Offer": "சலுகை",
+    "Offer code": "சலுகைக் குறியீடு",
+    "Offers, payment updates and replies from RD Dairy show up here.": "சலுகைகள், கட்டண விவரங்கள் மற்றும் RD Dairy பதில்கள் இங்கே தெரியும்.",
+    "Partly cloudy": "ஓரளவு மேகமூட்டம்",
+    "Pay from RD Wallet": "RD Wallet இலிருந்து செலுத்து",
+    "Pay from wallet": "Wallet இலிருந்து செலுத்து",
+    "Pay my bills from the wallet automatically": "என் பில்களை Wallet இலிருந்து தானாகச் செலுத்து",
+    "Pay now": "இப்போது செலுத்து",
+    "Pay on first delivery": "முதல் டெலிவரியின்போது செலுத்து",
+    "Pay once by UPI and use it for bills and orders. RD Dairy confirms each top up.": "UPI மூலம் ஒருமுறை செலுத்தி பில்களுக்கும் ஆர்டர்களுக்கும் பயன்படுத்துங்கள். ஒவ்வொரு சேர்ப்பையும் RD Dairy உறுதிசெய்யும்.",
+    "Pay {amt} from wallet": "Wallet இலிருந்து {amt} செலுத்து",
+    "Priority replies in chat": "அரட்டையில் முன்னுரிமை பதில்கள்",
+    "RD Gold": "RD Gold",
+    "RD Gold: free delivery and {pct}% off": "RD Gold: இலவச டெலிவரி மற்றும் {pct}% தள்ளுபடி",
+    "RD Wallet": "RD Wallet",
+    "Rain": "மழை",
+    "Rain likely tomorrow morning": "நாளை காலை மழை வாய்ப்பு",
+    "Refer and earn": "பரிந்துரைத்து சம்பாதி",
+    "Referral code (optional)": "பரிந்துரைக் குறியீடு (விருப்பம்)",
+    "Refund": "திருப்பித் தரப்பட்டது",
+    "Request visit": "வருகையைக் கோரு",
+    "Reward": "வெகுமதி",
+    "School": "பள்ளி",
+    "Sent. Your wallet updates once RD Dairy confirms.": "அனுப்பப்பட்டது. RD Dairy உறுதிசெய்ததும் Wallet புதுப்பிக்கப்படும்.",
+    "Share on WhatsApp": "WhatsApp இல் பகிர்",
+    "Shop order": "கடை ஆர்டர்",
+    "Showers": "தூறல்",
+    "Start my trial": "சோதனையைத் தொடங்கு",
+    "Start trial": "சோதனையைத் தொடங்கு",
+    "The trial pack is for new customers": "சோதனைத் தொகுப்பு புதிய வாடிக்கையாளர்களுக்கு மட்டும்",
+    "Thunderstorms": "இடியுடன் மழை",
+    "Time": "நேரம்",
+    "Trial booked. RD Dairy will confirm on WhatsApp.": "சோதனை முன்பதிவு ஆனது. RD Dairy WhatsApp இல் உறுதிசெய்யும்.",
+    "Trial pack": "சோதனைத் தொகுப்பு",
+    "Try 7 days of fresh A2 milk": "7 நாட்கள் புதிய A2 பாலைச் சுவைத்துப் பாருங்கள்",
+    "Try RD Dairy's pure A2 milk. Sign up with my code {code} and we both get {amt} in our RD Wallet. https://rddairy.com/app": "RD Dairy இன் தூய A2 பாலைச் சுவைத்துப் பாருங்கள். என் குறியீடு {code} மூலம் பதிவு செய்தால் நம் இருவருக்கும் RD Wallet இல் {amt} கிடைக்கும். https://rddairy.com/app",
+    "Visit cancelled": "வருகை ரத்து செய்யப்பட்டது",
+    "Visit our farm": "எங்கள் பண்ணைக்கு வாருங்கள்",
+    "Visit requested. RD Dairy will confirm soon.": "வருகை கோரப்பட்டது. RD Dairy விரைவில் உறுதிசெய்யும்.",
+    "Waiting for RD Dairy to confirm": "RD Dairy உறுதிசெய்யக் காத்திருக்கிறது",
+    "Wallet": "Wallet",
+    "Wallet history": "Wallet வரலாறு",
+    "Welcome back!": "மீண்டும் வருக!",
+    "Welcome to RD Gold": "RD Gold க்கு வரவேற்கிறோம்",
+    "Your code": "உங்கள் குறியீடு",
+    "Your milk restarts on {date}.": "உங்கள் பால் {date} அன்று மீண்டும் தொடங்கும்.",
+    "one time": "ஒரு முறை",
+    "{amt} paid from your RD Wallet": "உங்கள் RD Wallet இலிருந்து {amt} செலுத்தப்பட்டது",
+    "{amt} waiting for RD Dairy to confirm": "{amt} RD Dairy உறுதிசெய்யக் காத்திருக்கிறது",
+    "{month} bill is ready": "{month} பில் தயார்",
+    "{n} days": "{n} நாட்கள்",
+    "{pct}% off all shop products": "அனைத்து கடைப் பொருட்களுக்கும் {pct}% தள்ளுபடி",
+    "{size} every morning for {days} days, just {amt}": "{days} நாட்கள் தினமும் காலை {size}, வெறும் {amt}",
+    "{size} of {product} every morning for {days} days.": "{days} நாட்கள் தினமும் காலை {size} {product}.",
     "Getting your deliveries ready": "உங்கள் டெலிவரி விவரங்களைத் தயார் செய்கிறோம்",
     "Set your delivery location": "டெலிவரி இடத்தை அமைக்கவும்",
     "Move the map so the pin sits on your gate.": "பின் உங்கள் வாசலில் இருக்கும்படி வரைபடத்தை நகர்த்துங்கள்.",
@@ -1318,6 +1492,106 @@ const T = {
     "Please chat with us to change this order": "यह ऑर्डर बदलने के लिए हमसे चैट करें",
     "View": "देखें",
     "Dismiss": "हटाएँ",
+    "7 day milk trial": "7 दिन का दूध ट्रायल",
+    "Active till {date}": "{date} तक चालू",
+    "Add money": "पैसे जोड़ें",
+    "Add money to RD Wallet": "RD Wallet में पैसे जोड़ें",
+    "Add {amt} to wallet to join": "जुड़ने के लिए Wallet में {amt} जोड़ें",
+    "Added by UPI": "UPI से जोड़ा",
+    "Adjustment": "समायोजन",
+    "Amount": "राशि",
+    "Anything we should know? (optional)": "कुछ और बताना है? (वैकल्पिक)",
+    "Apply": "लगाएँ",
+    "Auto pay is off": "ऑटो पे बंद है",
+    "Auto pay is on": "ऑटो पे चालू है",
+    "Balance": "बैलेंस",
+    "Balance {amt}": "बैलेंस {amt}",
+    "Bill paid": "बिल चुकाया",
+    "Book a visit": "विज़िट बुक करें",
+    "Checking the weather…": "मौसम देख रहे हैं…",
+    "Clear sky": "साफ़ आसमान",
+    "Cloudy": "बादल",
+    "Code copied": "कोड कॉपी हो गया",
+    "Cold": "ठंड",
+    "Confirmed": "पक्का हो गया",
+    "Continue to pay": "भुगतान के लिए आगे बढ़ें",
+    "Date": "तारीख",
+    "Earned": "कमाई",
+    "Extend RD Gold": "RD Gold बढ़ाएँ",
+    "Extend leave": "छुट्टी बढ़ाएँ",
+    "Family": "परिवार",
+    "Farm": "फ़ार्म",
+    "Free delivery and savings": "मुफ़्त डिलीवरी और बचत",
+    "Free delivery on every shop order": "हर दुकान ऑर्डर पर मुफ़्त डिलीवरी",
+    "Get free delivery and {pct}% off with RD Gold": "RD Gold के साथ मुफ़्त डिलीवरी और {pct}% छूट",
+    "Good afternoon": "नमस्कार",
+    "Good evening": "शुभ संध्या",
+    "Good morning": "सुप्रभात",
+    "Group": "समूह",
+    "How many people?": "कितने लोग?",
+    "Invite friends": "दोस्तों को बुलाएँ",
+    "Invite friends and family. When they make their first payment, you both get {amt} in your RD Wallet.": "दोस्तों और परिवार को बुलाएँ। उनके पहले भुगतान पर आप दोनों को RD Wallet में {amt} मिलेंगे।",
+    "Join RD Gold": "RD Gold से जुड़ें",
+    "Joined": "जुड़े",
+    "Mark all read": "सब पढ़ा हुआ करें",
+    "Meet our cows, see how your milk is made, and taste it fresh. Great for families and schools.": "हमारी गायों से मिलें, देखें आपका दूध कैसे बनता है, और ताज़ा चखें। परिवारों और स्कूलों के लिए बढ़िया।",
+    "Misty": "धुंध",
+    "Money you add and spend shows up here.": "आप जो पैसे जोड़ते और खर्च करते हैं वो यहाँ दिखेंगे।",
+    "Notifications": "सूचनाएँ",
+    "Offer": "ऑफ़र",
+    "Offer code": "ऑफ़र कोड",
+    "Offers, payment updates and replies from RD Dairy show up here.": "ऑफ़र, भुगतान की जानकारी और RD Dairy के जवाब यहाँ दिखेंगे।",
+    "Partly cloudy": "हल्के बादल",
+    "Pay from RD Wallet": "RD Wallet से भुगतान",
+    "Pay from wallet": "Wallet से भुगतान",
+    "Pay my bills from the wallet automatically": "मेरे बिल Wallet से अपने आप चुकाएँ",
+    "Pay now": "अभी भुगतान करें",
+    "Pay on first delivery": "पहली डिलीवरी पर भुगतान",
+    "Pay once by UPI and use it for bills and orders. RD Dairy confirms each top up.": "UPI से एक बार भुगतान करें और बिल व ऑर्डर में इस्तेमाल करें। हर टॉप अप RD Dairy पक्का करेगा।",
+    "Pay {amt} from wallet": "Wallet से {amt} चुकाएँ",
+    "Priority replies in chat": "चैट में पहले जवाब",
+    "RD Gold": "RD Gold",
+    "RD Gold: free delivery and {pct}% off": "RD Gold: मुफ़्त डिलीवरी और {pct}% छूट",
+    "RD Wallet": "RD Wallet",
+    "Rain": "बारिश",
+    "Rain likely tomorrow morning": "कल सुबह बारिश हो सकती है",
+    "Refer and earn": "रेफ़र करें और कमाएँ",
+    "Referral code (optional)": "रेफ़रल कोड (वैकल्पिक)",
+    "Refund": "वापसी",
+    "Request visit": "विज़िट का अनुरोध",
+    "Reward": "इनाम",
+    "School": "स्कूल",
+    "Sent. Your wallet updates once RD Dairy confirms.": "भेज दिया। RD Dairy के पक्का करते ही Wallet अपडेट होगा।",
+    "Share on WhatsApp": "WhatsApp पर भेजें",
+    "Shop order": "दुकान ऑर्डर",
+    "Showers": "बौछारें",
+    "Start my trial": "मेरा ट्रायल शुरू करें",
+    "Start trial": "ट्रायल शुरू करें",
+    "The trial pack is for new customers": "ट्रायल पैक नए ग्राहकों के लिए है",
+    "Thunderstorms": "आँधी तूफ़ान",
+    "Time": "समय",
+    "Trial booked. RD Dairy will confirm on WhatsApp.": "ट्रायल बुक हो गया। RD Dairy WhatsApp पर पक्का करेगा।",
+    "Trial pack": "ट्रायल पैक",
+    "Try 7 days of fresh A2 milk": "7 दिन ताज़ा A2 दूध आज़माएँ",
+    "Try RD Dairy's pure A2 milk. Sign up with my code {code} and we both get {amt} in our RD Wallet. https://rddairy.com/app": "RD Dairy का शुद्ध A2 दूध आज़माएँ। मेरे कोड {code} से साइन अप करें, हम दोनों को RD Wallet में {amt} मिलेंगे। https://rddairy.com/app",
+    "Visit cancelled": "विज़िट रद्द हो गई",
+    "Visit our farm": "हमारे फ़ार्म आइए",
+    "Visit requested. RD Dairy will confirm soon.": "विज़िट का अनुरोध भेजा गया। RD Dairy जल्द पक्का करेगा।",
+    "Waiting for RD Dairy to confirm": "RD Dairy की पुष्टि का इंतज़ार",
+    "Wallet": "Wallet",
+    "Wallet history": "Wallet इतिहास",
+    "Welcome back!": "फिर से स्वागत है!",
+    "Welcome to RD Gold": "RD Gold में स्वागत है",
+    "Your code": "आपका कोड",
+    "Your milk restarts on {date}.": "आपका दूध {date} से फिर शुरू होगा।",
+    "one time": "एक बार",
+    "{amt} paid from your RD Wallet": "आपके RD Wallet से {amt} चुकाए गए",
+    "{amt} waiting for RD Dairy to confirm": "{amt} RD Dairy की पुष्टि का इंतज़ार",
+    "{month} bill is ready": "{month} का बिल तैयार है",
+    "{n} days": "{n} दिन",
+    "{pct}% off all shop products": "दुकान के सभी सामान पर {pct}% छूट",
+    "{size} every morning for {days} days, just {amt}": "{days} दिन हर सुबह {size}, सिर्फ़ {amt}",
+    "{size} of {product} every morning for {days} days.": "{days} दिन हर सुबह {size} {product}।",
     "Getting your deliveries ready": "आपकी डिलीवरी की जानकारी तैयार कर रहे हैं",
     "Set your delivery location": "डिलीवरी की जगह तय करें",
     "Move the map so the pin sits on your gate.": "मैप को खिसकाएँ ताकि पिन आपके गेट पर हो।",
@@ -2103,12 +2377,14 @@ async function renderSignup(err = "") {
           </div>
           <div class="su-help">${esc(t("RD Dairy will call you to confirm your milk start date."))}</div>` : ""}` : ""}
 
+      <label for="su-ref">${esc(t("Referral code (optional)"))}</label>
+      <input id="su-ref" class="su-input" autocomplete="off" style="text-transform:uppercase" value="${esc(f.ref || "")}" />
       <button class="btn btn-main btn-block" id="su-go">${esc(t("Create my account"))}</button>
       <div class="err" role="alert">${esc(err)}</div>
     </section>`;
 
   const keep = () => {
-    f.name = $("#su-name").value; f.address = $("#su-addr").value;
+    f.name = $("#su-name").value; f.address = $("#su-addr").value; f.ref = ($("#su-ref")?.value || "").trim();
     if ($("#su-milk")) f.milk_id = $("#su-milk").value;
     if ($("#su-size")) f.milk_size = $("#su-size").value;
     if ($("#su-qty")) f.milk_qty = Number($("#su-qty").value);
@@ -2125,7 +2401,7 @@ async function renderSignup(err = "") {
     const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your account…");
     const r = await call("app-auth", {
       action: "signup", phone: S.phone, signup_token: f.token, device: deviceType(),
-      name: f.name, address: f.address, map_link: f.map_link || "", area_id: "",
+      name: f.name, address: f.address, map_link: f.map_link || "", ref_code: f.ref || "", area_id: "",
       wants_milk: f.wants_milk && !!f.milk_id, milk_id: f.milk_id, milk_size: f.milk_size, milk_qty: f.milk_qty, start_date: f.start,
     });
     if (!r.ok) {
@@ -2162,7 +2438,7 @@ const icons = {
 
 function shell() {
   $("#app").innerHTML = `
-    <header class="topbar">${brandHTML()}<small id="tb-area"></small></header>
+    <header class="topbar">${brandHTML()}<div class="tb-r"><small id="tb-area"></small><button class="bell" id="bell" aria-label="${esc(t("Notifications"))}">🔔<i class="hidden" id="bellCount"></i></button></div></header>
     <main id="view">${loaderHTML()}</main>
     <nav class="tabs" aria-label="Main">
       <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
@@ -2171,6 +2447,8 @@ function shell() {
       <button data-tab="help"><span class="ico">${icons.help}<i class="dot hidden" id="helpdot"></i></span>${esc(t("Help"))}</button>
       <button data-tab="account">${icons.account}${esc(t("Profile"))}</button>
     </nav>`;
+  $("#bell").onclick = openInbox;
+  updateBell();
   $(".tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-tab]");
     if (b) go(b.dataset.tab);
@@ -2228,7 +2506,7 @@ async function renderHome() {
   if (!h.is_subscriber) {
     const mr = h.milk_request;
     v.innerHTML = `
-      <p class="hello">${esc(t("Hello"))} <b>${esc(h.name || "")}</b></p>
+      <div id="homeTop"></div>
       <div id="notices"></div>
       <div class="card pad">
         ${mr && /pending/i.test(mr.status || "")
@@ -2238,9 +2516,11 @@ async function renderHome() {
       </div>
       <div class="row-actions" style="grid-template-columns:1fr">
         <button class="btn btn-main" id="toshop">${esc(t("Browse the shop"))}</button>
-      </div>`;
+      </div>
+      <div id="homeBottom"></div>`;
     $("#toshop").onclick = () => go("shop");
     loadNotices();
+    drawHomeExtras();
     return;
   }
 
@@ -2262,7 +2542,7 @@ async function renderHome() {
   const stateText = { normal: "Your usual delivery", paused: "Paused for this day", extra: "Extra milk added", less: "Less than usual" }[tm.status];
 
   v.innerHTML = `
-    <p class="hello">${esc(t("Hello"))} <b>${esc(h.name)}</b></p>
+    <div id="homeTop"></div>
     <div id="notices"></div>
     <section class="tomorrow" aria-label="${esc(t("Tomorrow, {date}", { date: shortDate(tm.date) }))}">
       <div>${bottleSVG(tm.qty, h.default_qty)}</div>
@@ -2296,7 +2576,8 @@ async function renderHome() {
     <div class="row-actions">
       <button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button>
       <button class="btn btn-line" id="fullcal">📅 ${esc(t("Full calendar"))}</button>
-    </div>`;
+    </div>
+    <div id="homeBottom"></div>`;
 
   v.querySelectorAll("[data-day]").forEach((el) => el.onclick = () => {
     const date = el.dataset.day;
@@ -2310,6 +2591,7 @@ async function renderHome() {
   $("#away").onclick = openAwaySheet;
   updateSelBar();
   loadNotices();
+  drawHomeExtras();
 }
 
 // Small cards on Home for in-app messages, like a product back in stock
@@ -2584,6 +2866,8 @@ async function renderShop() {
   const list = SH.catalog.filter((p) => SH.cat === "All" || p.category === SH.cat);
   v.innerHTML = `
     <div class="shop-head"><h2>${esc(t("Shop"))}</h2><button id="myord">${esc(t("My orders"))}</button></div>
+    ${SH.meta.gold?.active ? `<div class="goldstrip">✦ ${esc(t("RD Gold: free delivery and {pct}% off", { pct: SH.meta.gold.discount }))}</div>` : ""}
+    ${SH.meta.trial ? `<button class="trialcard" data-trial><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: SH.meta.trial.size, days: SH.meta.trial.days, amt: inr(SH.meta.trial.price) }))}</span><i>${esc(t("Start trial"))} →</i></button>` : ""}
     <div class="cats">${cats.map((c) => `<button class="${c === SH.cat ? "on" : ""}" data-cat="${esc(c)}">${esc(t(c))}</button>`).join("")}</div>
     <div class="prods">${list.map((p) => {
       const size = p.sizes.find((z) => z.label === SH.sel[p.id]) || p.sizes[0];
@@ -2614,6 +2898,7 @@ async function renderShop() {
   v.querySelectorAll("[data-inc]").forEach((b) => b.onclick = () => { const [p, z] = pick(b.dataset.inc); setQty(p, z, 1); renderShop(); });
   v.querySelectorAll("[data-dec]").forEach((b) => b.onclick = () => { const [p, z] = pick(b.dataset.dec); setQty(p, z, -1); renderShop(); });
   v.querySelectorAll("[data-open]").forEach((b) => b.onclick = () => openProduct(b.dataset.open));
+  $("[data-trial]", v)?.addEventListener("click", openTrialSheet);
   v.querySelectorAll("[data-notify]").forEach((b) => b.onclick = () => notifyMe(b.dataset.notify));
   updateCartBar();
   if (SH.openAfter) { const id = SH.openAfter; SH.openAfter = null; openProduct(id); }
@@ -2750,20 +3035,10 @@ function openCartSheet() {
           .map((id) => SH.catalog.find((p) => p.id === id)).filter((p) => p && p.in_stock && !inCart.has(p.id)).slice(0, 4);
         return want.length ? `<h4>${esc(t("You might also like"))}</h4><div class="sugg">${want.map((p) => `<div class="sg"><img src="${esc(prodImg(p))}" alt="" /><div class="sg-n">${esc(p.name)}</div><div class="sg-p">${esc(p.sizes[0].label)} · ${esc(inr(p.sizes[0].price))}</div><button data-sugg="${esc(p.id)}">+ ${esc(t("Add"))}</button></div>`).join("")}</div>` : "";
       })()}
-      ${(() => {
-        const R = meta.rules || { min_order: 0, delivery_fee: 0, free_above: 0 };
-        const forBill = !st.repeat && st.pay === "bill";
-        if (st.repeat || forBill) return `<div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>`;
-        const fee = R.free_above && total >= R.free_above ? 0 : R.delivery_fee;
-        const short = Math.max(0, R.min_order - total);
-        return `
-          <div class="cline2"><span>${esc(t("Items"))}</span><span>${esc(inr(total))}</span></div>
-          <div class="cline2"><span>${esc(t("Delivery fee"))}</span><span>${fee ? esc(inr(fee)) : `<b class="free">${esc(t("Free"))}</b>`}</span></div>
-          <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total + fee))}</span></div>
-          ${short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(short) }))}</div>`
-            : fee && R.free_above ? `<div class="freebar"><div>${esc(t("Add {amt} more for free delivery", { amt: inr(R.free_above - total) }))}</div><i style="width:${Math.min(100, Math.round(total / R.free_above * 100))}%"></i></div>`
-            : R.free_above ? `<div class="freebar done"><div>🎉 ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
-      })()}
+      ${st.repeat || st.pay === "bill" ? `<div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>` : `<div id="qbox">${st.q ? quoteHTML(st.q) : ""}</div>
+        <div class="coupon"><input id="ccode" placeholder="${esc(t("Offer code"))}" value="${esc(st.code || "")}" autocomplete="off" /><button data-apply>${esc(st.code && st.q?.coupon?.ok ? t("Remove") : t("Apply"))}</button></div>
+        ${st.q?.coupon && st.code && !st.q.coupon.ok && st.q.coupon.msg ? `<div class="minwarn">${esc(st.q.coupon.msg)}</div>` : ""}
+        ${!meta.gold?.active && meta.gold ? `<button class="goldup" data-gold>✦ ${esc(t("Get free delivery and {pct}% off with RD Gold", { pct: meta.gold.discount }))} →</button>` : ""}`}
 
       <h4>${esc(t("How often?"))}</h4>
       <div class="seg"><button data-rep="0" class="${st.repeat ? "" : "on"}">${esc(t("Just once"))}</button><button data-rep="1" class="${st.repeat ? "on" : ""}">${esc(t("Repeat"))}</button></div>
@@ -2786,11 +3061,12 @@ function openCartSheet() {
         <h4>${esc(t("Payment"))}</h4>
         <label class="opt ${st.pay === "cod" ? "on" : ""}"><input type="radio" name="pay" value="cod" ${st.pay === "cod" ? "checked" : ""}/><div><b>${esc(t("Cash on delivery"))}</b><span>${esc(t("Pay when your order arrives"))}</span></div></label>
         ${meta.upi_ready ? `<label class="opt ${st.pay === "upi" ? "on" : ""}"><input type="radio" name="pay" value="upi" ${st.pay === "upi" ? "checked" : ""}/><div><b>${esc(t("Pay now with UPI"))}</b><span>${esc(t("GPay, PhonePe or Paytm"))}</span></div></label>` : ""}
+        <label class="opt ${st.pay === "wallet" ? "on" : ""}"><input type="radio" name="pay" value="wallet" ${st.pay === "wallet" ? "checked" : ""}/><div><b>${esc(t("Pay from RD Wallet"))}</b><span>${esc(t("Balance {amt}", { amt: inr(st.q?.wallet ?? meta.wallet ?? 0) }))}</span></div></label>
         ${meta.is_subscriber ? `<label class="opt ${st.pay === "bill" ? "on" : ""}"><input type="radio" name="pay" value="bill" ${st.pay === "bill" ? "checked" : ""}/><div><b>${esc(t("Add to my monthly bill"))}</b><span>${esc(t("Delivered with your milk"))}</span></div></label>` : ""}
         <div id="upiArea"></div>
       `}
       <div class="stack">
-        <button class="btn btn-main btn-block" id="place">${esc(st.repeat ? t("Start repeat order") : t("Place order · {amt}", { amt: inr(total) }))}</button>
+        <button class="btn btn-main btn-block" id="place">${esc(st.repeat ? t("Start repeat order") : t("Place order · {amt}", { amt: inr(st.pay === "bill" ? total : (st.q ? st.q.total : total)) }))}</button>
         <button class="btn btn-quiet btn-block" data-close>${esc(t("Keep shopping"))}</button>
       </div>`;
 
@@ -2805,12 +3081,23 @@ function openCartSheet() {
     $("[data-close]", sheet).onclick = () => { closeSheet(); renderShop(); };
     if (!st.repeat && st.pay === "upi") drawUpi();
     $("#place", sheet).onclick = place;
+    $("[data-gold]", sheet)?.addEventListener("click", openGoldSheet);
+    $("[data-apply]", sheet)?.addEventListener("click", () => { keep(); if (st.code && st.q?.coupon?.ok) { st.code = ""; } else { st.code = ($("#ccode", sheet).value || "").trim().toUpperCase(); } refreshQuote(); });
+    if (!st.repeat && st.pay !== "bill" && !st.qFresh) refreshQuote();
+    st.qFresh = false;
   };
 
+  const refreshQuote = async () => {
+    const r = await call("app-api", { action: "shop_quote", items: SH.cart, code: st.code || "" });
+    if (!r.ok) return;
+    st.q = r; st.qFresh = true;
+    const btn = $("#place", sheet);
+    draw();
+  };
   const drawUpi = async () => {
     const area = $("#upiArea", sheet);
     area.innerHTML = `<div class="loading" style="padding:16px 0">${esc(t("Getting payment details…"))}</div>`;
-    const r = await call("app-api", { action: "shop_upi", items: SH.cart });
+    const r = await call("app-api", { action: "shop_upi", items: SH.cart, code: st.q?.coupon?.ok ? st.code : "" });
     if (!r.ok) { area.innerHTML = ""; return toast(r.message, true); }
     area.innerHTML = `
       <a class="btn btn-main btn-block" style="margin-top:12px" href="${esc(r.upi_link)}">${esc(t("Pay {amt} with UPI app", { amt: inr(r.amount) }))}</a>
@@ -2827,7 +3114,7 @@ function openCartSheet() {
   const place = async () => {
     keep();
     const btn = $("#place", sheet);
-    const payload = { action: "shop_order", items: SH.cart, address: (st.addr ?? meta.address ?? "").trim(), note: (st.note || "").trim(), frequency: st.repeat ? st.plan : "once" };
+    const payload = { action: "shop_order", items: SH.cart, address: (st.addr ?? meta.address ?? "").trim(), note: (st.note || "").trim(), code: st.pay === "bill" ? "" : (st.q?.coupon?.ok ? st.code : ""), frequency: st.repeat ? st.plan : "once" };
     if (payload.address.length < 6) return toast(t("Add your delivery address"), true);
     if (st.repeat) { payload.weekday = st.weekday; payload.start_date = st.start; }
     else {
@@ -2926,13 +3213,29 @@ async function editOrder(o) {
   draw();
 }
 
+function quoteHTML(q) {
+  return `
+    <div class="cline2"><span>${esc(t("Items"))}</span><span>${esc(inr(q.subtotal))}</span></div>
+    ${q.gold_discount ? `<div class="cline2"><span>✦ RD Gold ${esc(q.gold_pct)}%</span><span class="free">−${esc(inr(q.gold_discount))}</span></div>` : ""}
+    ${q.coupon?.ok && q.coupon.discount ? `<div class="cline2"><span>${esc(t("Offer"))} ${esc(q.coupon.code)}</span><span class="free">−${esc(inr(q.coupon.discount))}</span></div>` : ""}
+    <div class="cline2"><span>${esc(t("Delivery fee"))}</span><span>${q.fee ? esc(inr(q.fee)) : `<b class="free">${esc(t("Free"))}</b>`}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(q.total))}</span></div>
+    ${q.short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(q.short) }))}</div>`
+      : q.fee && q.free_above ? `<div class="freebar"><div>${esc(t("Add {amt} more for free delivery", { amt: inr(q.free_above - q.subtotal) }))}</div><i style="width:${Math.min(100, Math.round(q.subtotal / q.free_above * 100))}%"></i></div>`
+      : !q.fee ? `<div class="freebar done"><div>🎉 ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
+}
+
 /* =========================================================
    BILLS
    ========================================================= */
 async function renderBills() {
   const v = $("#view");
   if (!S.home) { loadingView(); if (!(await loadHome())) return; }
-  if (!S.home.is_subscriber) { v.innerHTML = `<div class="empty">${esc(t("Your monthly bills appear here once your milk subscription starts."))}</div>`; return; }
+  if (!S.home.is_subscriber) {
+    const w = await walletCardHTML();
+    v.innerHTML = `${w}<div class="empty" style="margin-top:14px">${esc(t("Your monthly bills appear here once your milk subscription starts."))}</div>`;
+    bindWalletCard(v); return;
+  }
   loadingView();
 
   const [b, p] = await Promise.all([call("app-api", { action: "bills" }), call("app-api", { action: "payments" })]);
@@ -2945,13 +3248,17 @@ async function renderBills() {
   const payable = b.bills.filter((x) => x.due > 0 && !x.pending);
   const payableAmt = payable.reduce((a, x) => a + x.due, 0);
 
+  const walletHTML = await walletCardHTML();
+  if (S.tab !== "bills") return;
   v.innerHTML = `
+    ${walletHTML}
     <section class="due" aria-label="${esc(t("Amount due"))}">
       <div class="lbl">${esc(due > 0 ? t("Amount due") : t("All bills paid"))}</div>
       <div class="amt ${due > 0 ? "" : "zero"}">${esc(inr(due))}</div>
       <p>${esc(due > 0 ? (unpaid === 1 ? t("Across 1 bill. Tap a bill below to see the details.") : t("Across {n} bills. Tap a bill below to see the details.", { n: unpaid })) : t("Thank you. Your account is up to date."))}</p>
       ${b.pending_amount > 0 ? `<div class="wait-note">${esc(t("{amt} sent. RD Dairy is confirming it.", { amt: inr(b.pending_amount) }))}</div>` : ""}
       ${payableAmt > 0 ? `<button class="btn btn-main btn-block" style="margin-top:16px" id="payall">${esc(t("Pay {amt}", { amt: inr(payableAmt) }))}</button>` : ""}
+      ${payableAmt > 0 && (S.wallet?.balance || 0) >= 1 ? `<button class="btn btn-line btn-block" style="margin-top:10px;background:transparent;color:#fff;border-color:rgba(255,255,255,.4)" id="paywallet">${esc(t("Pay {amt} from wallet", { amt: inr(Math.min(payableAmt, S.wallet.balance)) }))}</button>` : ""}
     </section>
 
     ${(b.upcoming || []).length ? `<h2>${esc(t("Coming on your next bill"))}</h2>
@@ -2980,6 +3287,13 @@ async function renderBills() {
 
   v.querySelectorAll("[data-bill]").forEach((el) => el.onclick = () => openBillSheet(el.dataset.bill));
   $("#payall")?.addEventListener("click", () => openUpiSheet(payable.map((x) => x.id)));
+  bindWalletCard(v);
+  $("#paywallet")?.addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    const r = await call("app-api", { action: "wallet_pay_bills", invoice_ids: payable.map((x) => x.id) });
+    if (!r.ok) { e.target.disabled = false; return toast(r.message, true); }
+    toast(t("{amt} paid from your RD Wallet", { amt: inr(r.paid) })); S.extras = null; S.home = null; loadHome(); renderBills();
+  });
 }
 
 async function openBillSheet(id) {
@@ -3224,6 +3538,318 @@ async function openUpiSheet(invoiceIds) {
 }
 
 /* =========================================================
+   WALLET, GOLD, OFFERS, REFERRALS, TRIAL, BANNERS, STORIES, VISITS, INBOX
+   ========================================================= */
+S.extras = null;
+
+// One place that understands links from banners and notifications
+function openLink(link) {
+  link = String(link || "");
+  if (!link) return;
+  if (/^https?:\/\//.test(link)) { window.open(link, "_blank", "noopener"); return; }
+  if (link.startsWith("product:")) { SH.openAfter = link.slice(8); return go("shop"); }
+  const map = { shop: () => go("shop"), bills: () => go("bills"), help: () => go("help"), profile: () => go("account"),
+    chat: () => { S.chatOpen = true; go("help"); }, wallet: openWalletSheet, gold: openGoldSheet, refer: openReferSheet,
+    trial: openTrialSheet, visit: openVisitSheet, home: () => go("home") };
+  (map[link] || (() => {}))();
+}
+
+async function loadExtras() {
+  const r = await call("app-api", { action: "home_extras" });
+  if (r.ok) { S.extras = r; updateBell(); }
+  return r.ok ? r : null;
+}
+function updateBell() {
+  const c = $("#bellCount"); if (!c) return;
+  const n = S.extras?.inbox_unread || 0;
+  c.textContent = n > 9 ? "9+" : n; c.classList.toggle("hidden", !n);
+}
+
+/* ---------- Home additions ---------- */
+async function drawHomeExtras() {
+  const box = $("#homeTop"); if (!box) return;
+  const x = S.extras || (await loadExtras()); if (!x || !$("#homeTop")) return;
+  const h = S.home || {};
+  const hr = new Date(Date.now() + 5.5 * 3600 * 1000).getUTCHours();
+  const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
+  box.innerHTML = `
+    <section class="greet"><div><div class="g-hi">${esc(t(greet))}, ${esc((h.name || "").split(" ")[0])}</div><div class="g-sub" id="gWeather">${esc(t("Checking the weather…"))}</div></div><div class="g-ico" id="gIcon">☀️</div></section>
+    ${x.resume ? `<div class="notice"><div><b>${esc(t("Welcome back!"))}</b><span>${esc(t("Your milk restarts on {date}.", { date: shortDate(x.resume.date) }))}</span></div><div class="notice-acts"><button data-ext>${esc(t("Extend leave"))}</button></div></div>` : ""}
+    ${x.bill_due ? `<div class="billcard"><div><b>${esc(t("{month} bill is ready", { month: x.bill_due.period_start ? fmtDay(x.bill_due.period_start, { month: "long" }) : "" }))}</b><span>${esc(t("{amt} due", { amt: inr(x.bill_due.due) }))}</span></div>
+      <div class="bc-acts">${x.wallet >= 1 ? `<button data-bwallet>${esc(t("Pay from wallet"))}</button>` : ""}<button class="go" data-bpay>${esc(t("Pay now"))}</button></div></div>` : ""}
+    ${x.stories.length ? `<div class="stories">${x.stories.map((s, i) => `<button class="story" data-story="${i}"><span class="st-ring">${s.media_type === "video" ? `<video src="${esc(s.media_url)}" muted playsinline preload="metadata"></video>` : `<img src="${esc(s.media_url)}" alt="" loading="lazy" />`}</span><span class="st-t">${esc(s.title || t("Farm"))}</span></button>`).join("")}</div>` : ""}
+    ${x.banners.length ? `<div class="banners">${x.banners.map((b) => `<button class="banner" data-link="${esc(b.link || "")}" style="background:${esc(b.bg || "#1E2B4A")}">${b.image_url ? `<img src="${esc(b.image_url)}" alt="" />` : ""}<span class="bn-t"><b>${esc(b.title)}</b>${b.subtitle ? `<span>${esc(b.subtitle)}</span>` : ""}</span></button>`).join("")}</div>` : ""}
+    ${x.trial ? `<button class="trialcard" data-link="trial"><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: x.trial.size, days: x.trial.days, amt: inr(x.trial.price) }))}</span><i>${esc(t("Start trial"))} →</i></button>` : ""}`;
+  box.querySelectorAll("[data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link));
+  box.querySelectorAll("[data-story]").forEach((b) => b.onclick = () => openStories(+b.dataset.story));
+  $("[data-ext]", box)?.addEventListener("click", openAwaySheet);
+  $("[data-bpay]", box)?.addEventListener("click", () => openUpiSheet([x.bill_due.id]));
+  $("[data-bwallet]", box)?.addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    const r = await call("app-api", { action: "wallet_pay_bills", invoice_ids: [x.bill_due.id] });
+    if (!r.ok) { e.target.disabled = false; return toast(r.message, true); }
+    toast(t("{amt} paid from your RD Wallet", { amt: inr(r.paid) })); S.extras = null; S.home = null; await loadHome(); renderHome();
+  });
+  const bottom = $("#homeBottom");
+  if (bottom) {
+    bottom.innerHTML = `<div class="row-actions"><button class="btn btn-line" data-link="visit">🚜 ${esc(t("Visit our farm"))}</button><button class="btn btn-line" data-link="refer">🎁 ${esc(t("Refer and earn"))}</button></div>`;
+    bottom.querySelectorAll("[data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link));
+  }
+  weather(x.weather);
+}
+
+const WMO = (c) => c === 0 ? ["☀️", "Clear sky"] : c <= 2 ? ["🌤️", "Partly cloudy"] : c === 3 ? ["☁️", "Cloudy"] : c <= 48 ? ["🌫️", "Misty"] : c <= 67 ? ["🌧️", "Rain"] : c <= 77 ? ["🌨️", "Cold"] : c <= 82 ? ["🌦️", "Showers"] : ["⛈️", "Thunderstorms"];
+async function weather(w) {
+  try {
+    const ll = latLngFromLink(S.home?.map_link) || [w.lat, w.lng];
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${ll[0]}&longitude=${ll[1]}&current=temperature_2m,weather_code&daily=temperature_2m_max,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=2`);
+    const d = await res.json();
+    const [ico, word] = WMO(d.current.weather_code);
+    const rainTmr = d.daily?.precipitation_probability_max?.[1];
+    const el = $("#gWeather"); if (!el) return;
+    $("#gIcon").textContent = ico;
+    el.textContent = `${Math.round(d.current.temperature_2m)}°C, ${t(word)}${rainTmr >= 50 ? " · " + t("Rain likely tomorrow morning") : ""}`;
+  } catch { const el = $("#gWeather"); if (el) el.textContent = t("Fresh milk is on its way"); }
+}
+
+/* ---------- stories ---------- */
+function openStories(start) {
+  const list = S.extras?.stories || []; if (!list.length) return;
+  let i = start, timer = 0;
+  const v = document.createElement("div");
+  v.className = "storyview";
+  document.body.appendChild(v);
+  const close = () => { clearTimeout(timer); v.remove(); };
+  const show = () => {
+    clearTimeout(timer);
+    const s = list[i];
+    v.innerHTML = `<div class="sv-bars">${list.map((_, k) => `<i class="${k < i ? "done" : k === i ? "now" : ""}"><b></b></i>`).join("")}</div>
+      <button class="sv-x" aria-label="${esc(t("Close"))}">✕</button>
+      ${s.media_type === "video" ? `<video src="${esc(s.media_url)}" autoplay playsinline></video>` : `<img src="${esc(s.media_url)}" alt="" />`}
+      <div class="sv-cap">${s.title ? `<b>${esc(s.title)}</b>` : ""}${s.caption ? `<span>${esc(s.caption)}</span>` : ""}</div>
+      <button class="sv-prev" aria-label="Previous"></button><button class="sv-next" aria-label="Next"></button>`;
+    $(".sv-x", v).onclick = close;
+    $(".sv-prev", v).onclick = () => { if (i > 0) { i--; show(); } };
+    const next = () => { if (i < list.length - 1) { i++; show(); } else close(); };
+    $(".sv-next", v).onclick = next;
+    const vid = $("video", v);
+    const dur = vid ? 0 : 5000;
+    $(".sv-bars .now b", v).style.animationDuration = (dur || 15000) + "ms";
+    if (vid) { vid.onloadedmetadata = () => { $(".sv-bars .now b", v).style.animationDuration = vid.duration * 1000 + "ms"; }; vid.onended = next; }
+    else timer = setTimeout(next, dur);
+  };
+  show();
+}
+
+/* ---------- inbox ---------- */
+async function openInbox() {
+  const sheet = openSheet(loaderHTML());
+  sheet.classList.add("tall");
+  const r = await call("app-api", { action: "inbox" });
+  if (!r.ok) { closeSheet(); return toast(r.message, true); }
+  sheet.innerHTML = `<div class="grip"></div><div class="sec-head" style="margin:0 0 8px"><h3 style="margin:0">${esc(t("Notifications"))}</h3>${r.items.some((x) => !x.read_at) ? `<button data-all>${esc(t("Mark all read"))}</button>` : ""}</div>
+    ${r.items.length ? r.items.map((n) => `<button class="inb ${n.read_at ? "" : "new"}" data-link="${esc(n.link || "")}"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}<i>${esc(new Date(n.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }))}</i></button>`).join("")
+      : `<p class="sub">${esc(t("Offers, payment updates and replies from RD Dairy show up here."))}</p>`}
+    <div class="stack"><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+  $("[data-close]", sheet).onclick = closeSheet;
+  const readAll = async () => { await call("app-api", { action: "inbox_read_all" }); if (S.extras) S.extras.inbox_unread = 0; updateBell(); };
+  $("[data-all]", sheet)?.addEventListener("click", async () => { await readAll(); openInbox(); });
+  sheet.querySelectorAll(".inb").forEach((b) => b.onclick = async () => { await readAll(); closeSheet(); openLink(b.dataset.link); });
+}
+
+/* ---------- RD Wallet ---------- */
+async function walletCardHTML() {
+  const r = await call("app-api", { action: "wallet" });
+  if (!r.ok) return "";
+  S.wallet = r;
+  return `<section class="wallet">
+    <div class="w-top"><div><span>${esc(t("RD Wallet"))}</span><b>${esc(inr(r.balance))}</b></div><button class="w-add" data-wadd>+ ${esc(t("Add money"))}</button></div>
+    ${r.pending.length ? `<div class="w-pend">${esc(t("{amt} waiting for RD Dairy to confirm", { amt: inr(r.pending.reduce((a, p) => a + Number(p.amount), 0)) }))}</div>` : ""}
+    <label class="w-auto"><input type="checkbox" data-wauto ${r.autopay ? "checked" : ""}/> <span>${esc(t("Pay my bills from the wallet automatically"))}</span></label>
+    <button class="w-hist" data-whist>${esc(t("Wallet history"))} →</button>
+  </section>`;
+}
+function bindWalletCard(root) {
+  $("[data-wadd]", root)?.addEventListener("click", () => openWalletSheet());
+  $("[data-whist]", root)?.addEventListener("click", openWalletHistory);
+  $("[data-wauto]", root)?.addEventListener("change", async (e) => {
+    const r = await call("app-api", { action: "wallet_autopay", on: e.target.checked });
+    if (!r.ok) return toast(r.message, true);
+    toast(e.target.checked ? (r.paid ? t("{amt} paid from your RD Wallet", { amt: inr(r.paid) }) : t("Auto pay is on")) : t("Auto pay is off"));
+    if (r.paid && S.tab === "bills") renderBills();
+  });
+}
+function openWalletSheet(preset) {
+  const st = { amount: preset || 500, proof: "", stage: "amount", link: null };
+  const sheet = openSheet("");
+  sheet.classList.add("tall");
+  const draw = () => {
+    if (st.stage === "amount") {
+      sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Add money to RD Wallet"))}</h3>
+        <p class="sub">${esc(t("Pay once by UPI and use it for bills and orders. RD Dairy confirms each top up."))}</p>
+        <div class="chips amt">${[200, 500, 1000, 2000, 3000].map((a) => `<button data-a="${a}" class="${st.amount === a ? "on" : ""}">${esc(inr(a))}</button>`).join("")}</div>
+        <div class="field"><label for="wamt">${esc(t("Amount"))}</label><input id="wamt" class="txt" type="number" inputmode="numeric" min="50" value="${st.amount}" /></div>
+        <div class="stack"><button class="btn btn-main btn-block" data-next>${esc(t("Continue to pay"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+      sheet.querySelectorAll("[data-a]").forEach((b) => b.onclick = () => { st.amount = +b.dataset.a; draw(); });
+      $("[data-close]", sheet).onclick = closeSheet;
+      $("[data-next]", sheet).onclick = async () => {
+        st.amount = Math.round(+$("#wamt", sheet).value || 0);
+        const r = await call("app-api", { action: "wallet_topup_start", amount: st.amount });
+        if (!r.ok) return toast(r.message, true);
+        st.link = r; st.stage = "pay"; draw();
+      };
+    } else {
+      sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Pay {amt}", { amt: inr(st.amount) }))}</h3>
+        <a class="btn btn-main btn-block" href="${esc(st.link.upi_link)}">${esc(t("Pay with GPay, PhonePe or Paytm"))}</a>
+        <div class="upi-box" style="margin-top:12px"><div><span class="muted" style="font-size:14px">${esc(t("UPI ID"))}</span><br><b>${esc(st.link.upi_id)}</b></div><button data-copy>${esc(t("Copy"))}</button></div>
+        <h4>${esc(t("After paying"))}</h4>
+        <div class="utr-row"><input id="wutr" type="text" inputmode="numeric" maxlength="16" aria-label="${esc(t("UPI reference number (12 digits)"))}" placeholder="${esc(t("UPI reference number (12 digits)"))}" /><button data-paste>${esc(t("Paste"))}</button></div>
+        <div class="or">${esc(t("or"))}</div><div data-proofwrap></div>
+        <div class="stack"><button class="btn btn-dark btn-block" data-send>${esc(t("Send payment details"))}</button><button class="btn btn-quiet btn-block" data-back>${esc(t("Back"))}</button></div>`;
+      $("[data-copy]", sheet).onclick = () => copyText(st.link.upi_id);
+      $("[data-paste]", sheet).onclick = () => pasteUtrInto($("#wutr", sheet));
+      $("[data-back]", sheet).onclick = () => { st.stage = "amount"; draw(); };
+      proofBlock(sheet, st, () => {});
+      $("[data-send]", sheet).onclick = async (e) => {
+        const utr = $("#wutr", sheet).value.replace(/\D/g, "");
+        if (utr && utr.length !== 12) return toast(t("The UPI reference number has 12 digits"), true);
+        if (!utr && !st.proof) return toast(t("Add the UPI reference number or a screenshot"), true);
+        e.target.disabled = true;
+        const r = await call("app-api", { action: "wallet_topup_claim", amount: st.amount, utr, image_base64: st.proof || undefined });
+        e.target.disabled = false;
+        if (!r.ok) return toast(r.message, true);
+        closeSheet(); toast(t("Sent. Your wallet updates once RD Dairy confirms."));
+        if (S.tab === "bills") renderBills();
+      };
+    }
+  };
+  draw();
+}
+async function openWalletHistory() {
+  const sheet = openSheet(loaderHTML());
+  sheet.classList.add("tall");
+  const r = await call("app-api", { action: "wallet" });
+  if (!r.ok) { closeSheet(); return toast(r.message, true); }
+  const label = { topup: "Added by UPI", bill: "Bill paid", order: "Shop order", refund: "Refund", referral: "Reward", gold: "RD Gold", trial: "Trial pack", adjust: "Adjustment" };
+  sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Wallet history"))}</h3><p class="sub">${esc(t("Balance"))}: <b>${esc(inr(r.balance))}</b></p>
+    ${r.history.length ? r.history.map((h) => `<div class="orow"><div class="top"><span>${esc(t(label[h.kind] || h.kind))}</span><span class="${h.amount > 0 ? "plus" : ""}">${h.amount > 0 ? "+" : "−"}${esc(inr(Math.abs(h.amount)))}</span></div><div class="it">${esc(h.note || "")} · ${esc(new Date(h.created_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }))}</div></div>`).join("")
+      : `<p class="sub">${esc(t("Money you add and spend shows up here."))}</p>`}
+    <div class="stack"><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+  $("[data-close]", sheet).onclick = closeSheet;
+}
+
+/* ---------- RD Gold ---------- */
+async function openGoldSheet() {
+  const sheet = openSheet(loaderHTML());
+  const r = await call("app-api", { action: "gold" });
+  if (!r.ok) { closeSheet(); return toast(r.message, true); }
+  sheet.innerHTML = `<div class="grip"></div>
+    <div class="goldhead"><span>✦</span><h3>RD Gold</h3>${r.active ? `<em>${esc(t("Active till {date}", { date: new Date(r.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) }))}</em>` : ""}</div>
+    <ul class="gold-list"><li>🚚 ${esc(t("Free delivery on every shop order"))}</li><li>💰 ${esc(t("{pct}% off all shop products", { pct: r.discount }))}</li><li>⚡ ${esc(t("Priority replies in chat"))}</li></ul>
+    <div class="pd-buy"><b>${esc(inr(r.price))}<small style="font-size:14px;font-weight:600"> / ${esc(t("{n} days", { n: r.days }))}</small></b><span class="muted">${esc(t("Wallet"))}: ${esc(inr(r.wallet))}</span></div>
+    <div class="stack">
+      ${r.wallet >= r.price ? `<button class="btn btn-main btn-block" data-join>${esc(r.active ? t("Extend RD Gold") : t("Join RD Gold"))}</button>` : `<button class="btn btn-main btn-block" data-topup>${esc(t("Add {amt} to wallet to join", { amt: inr(Math.ceil(r.price - r.wallet)) }))}</button>`}
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-topup]", sheet)?.addEventListener("click", () => openWalletSheet(Math.max(200, Math.ceil(r.price - r.wallet))));
+  $("[data-join]", sheet)?.addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    const j = await call("app-api", { action: "gold_join" });
+    if (!j.ok) { e.target.disabled = false; return toast(j.message, true); }
+    closeSheet(); toast(t("Welcome to RD Gold")); SH.catalog = null; S.extras = null;
+    if (S.tab === "account") renderAccount();
+  });
+}
+
+/* ---------- Refer and earn ---------- */
+async function openReferSheet() {
+  const sheet = openSheet(loaderHTML());
+  const r = await call("app-api", { action: "referral" });
+  if (!r.ok) { closeSheet(); return toast(r.message, true); }
+  const msg = t("Try RD Dairy's pure A2 milk. Sign up with my code {code} and we both get {amt} in our RD Wallet. https://rddairy.com/app", { code: r.code, amt: inr(r.reward) });
+  sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("Refer and earn"))}</h3>
+    <p class="sub">${esc(t("Invite friends and family. When they make their first payment, you both get {amt} in your RD Wallet.", { amt: inr(r.reward) }))}</p>
+    <div class="refcode"><span>${esc(t("Your code"))}</span><b>${esc(r.code)}</b><button data-copy>${esc(t("Copy"))}</button></div>
+    <div class="refstats"><div><b>${esc(r.joined)}</b><span>${esc(t("Joined"))}</span></div><div><b>${esc(inr(r.earned))}</b><span>${esc(t("Earned"))}</span></div></div>
+    <div class="stack"><a class="btn btn-block" style="background:#25D366;color:#fff" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">${esc(t("Share on WhatsApp"))}</a>
+      <button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+  $("[data-close]", sheet).onclick = closeSheet;
+  $("[data-copy]", sheet).onclick = async () => { try { await navigator.clipboard.writeText(r.code); toast(t("Code copied")); } catch { toast(r.code); } };
+}
+
+/* ---------- Trial pack ---------- */
+async function openTrialSheet() {
+  if (!SH.catalog) { const c = await call("app-api", { action: "shop_catalog" }); if (c.ok) { SH.catalog = c.catalog; SH.meta = c; } }
+  const tr = SH.meta?.trial || S.extras?.trial;
+  if (!tr) return toast(t("The trial pack is for new customers"), true);
+  const st = { start: addDays(todayIST(), 1), pay: "cod", addr: SH.meta?.address || "" };
+  const sheet = openSheet("");
+  sheet.classList.add("tall");
+  const draw = async () => {
+    sheet.innerHTML = `<div class="grip"></div><h3>${esc(t("7 day milk trial"))}</h3>
+      <p class="sub">${esc(t("{size} of {product} every morning for {days} days.", { size: tr.size, product: tr.product, days: tr.days }))}</p>
+      <div class="pd-buy"><b>${esc(inr(tr.price))}</b><span class="muted">${esc(t("one time"))}</span></div>
+      <div class="field"><label for="tsd">${esc(t("Start from"))}</label><input id="tsd" type="date" min="${addDays(todayIST(), 1)}" value="${st.start}" /></div>
+      <h4>${esc(t("Deliver to"))}</h4><textarea id="taddr">${esc(st.addr)}</textarea>
+      <h4>${esc(t("Payment"))}</h4>
+      ${[["cod", "Pay on first delivery"], ["upi", "Pay now with UPI"], ...(SH.meta?.wallet >= tr.price ? [["wallet", "Pay from RD Wallet"]] : [])].map(([v, l]) => `<label class="opt ${st.pay === v ? "on" : ""}"><input type="radio" name="tpay" value="${v}" ${st.pay === v ? "checked" : ""}/><div><b>${esc(t(l))}</b></div></label>`).join("")}
+      <div id="tupi"></div>
+      <div class="stack"><button class="btn btn-main btn-block" data-go>${esc(t("Start my trial"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+    $("#tsd", sheet).onchange = (e) => st.start = e.target.value;
+    $("#taddr", sheet).oninput = (e) => st.addr = e.target.value;
+    sheet.querySelectorAll("input[name=tpay]").forEach((r) => r.onchange = () => { st.pay = r.value; draw(); });
+    $("[data-close]", sheet).onclick = closeSheet;
+    if (st.pay === "upi") {
+      const u = await call("app-api", { action: "trial_upi" });
+      if (u.ok) $("#tupi", sheet).innerHTML = `<a class="btn btn-main btn-block" style="margin-top:10px" href="${esc(u.upi_link)}">${esc(t("Pay {amt} with UPI app", { amt: inr(u.amount) }))}</a>
+        <div class="utr-row" style="margin-top:10px"><input id="tutr" type="text" inputmode="numeric" maxlength="16" placeholder="${esc(t("UPI reference number (12 digits)"))}" /><button data-tpaste>${esc(t("Paste"))}</button></div>`;
+      $("[data-tpaste]", sheet)?.addEventListener("click", () => pasteUtrInto($("#tutr", sheet)));
+    }
+    $("[data-go]", sheet).onclick = async (e) => {
+      e.target.disabled = true;
+      const r = await call("app-api", { action: "trial_order", start_date: st.start, address: st.addr, pay: st.pay, utr: ($("#tutr", sheet)?.value || "").replace(/\D/g, "") });
+      e.target.disabled = false;
+      if (!r.ok) return toast(r.message, true);
+      closeSheet(); toast(t("Trial booked. RD Dairy will confirm on WhatsApp.")); S.extras = null; SH.catalog = null;
+      if (S.tab === "home") renderHome();
+    };
+  };
+  draw();
+}
+
+/* ---------- Farm visit ---------- */
+async function openVisitSheet() {
+  const slots = S.extras?.visit_slots?.length ? S.extras.visit_slots : ["Saturday 7 AM", "Sunday 7 AM"];
+  const st = { date: addDays(todayIST(), 3), slot: slots[0], group: "family", people: 4, note: "" };
+  const sheet = openSheet("");
+  sheet.classList.add("tall");
+  const mv = await call("app-api", { action: "my_visits" });
+  const draw = () => {
+    sheet.innerHTML = `<div class="grip"></div><h3>🚜 ${esc(t("Visit our farm"))}</h3>
+      <p class="sub">${esc(t("Meet our cows, see how your milk is made, and taste it fresh. Great for families and schools."))}</p>
+      ${(mv.visits || []).filter((x) => ["requested", "confirmed"].includes(x.status)).map((x) => `<div class="notice"><div><b>${esc(fmtDay(x.visit_date, { weekday: "short", day: "numeric", month: "short" }))} · ${esc(x.slot || "")}</b><span>${esc(t(x.status === "confirmed" ? "Confirmed" : "Waiting for RD Dairy to confirm"))}${x.admin_note ? " · " + esc(x.admin_note) : ""}</span></div><div class="notice-acts"><button data-vc="${esc(x.id)}">${esc(t("Cancel"))}</button></div></div>`).join("")}
+      <div class="seg" style="grid-template-columns:repeat(3,1fr)">${[["family", "Family"], ["school", "School"], ["other", "Group"]].map(([v, l]) => `<button data-g="${v}" class="${st.group === v ? "on" : ""}">${esc(t(l))}</button>`).join("")}</div>
+      <div class="field"><label for="vd">${esc(t("Date"))}</label><input id="vd" type="date" min="${addDays(todayIST(), 1)}" value="${st.date}" /></div>
+      <div class="field"><label for="vs">${esc(t("Time"))}</label><select id="vs">${slots.map((x) => `<option ${x === st.slot ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></div>
+      <div class="field"><label for="vp">${esc(t("How many people?"))}</label><input id="vp" class="txt" type="number" min="1" max="200" value="${st.people}" /></div>
+      <div class="field"><label for="vn">${esc(t("Anything we should know? (optional)"))}</label><input id="vn" class="txt" maxlength="300" value="${esc(st.note)}" /></div>
+      <div class="stack"><button class="btn btn-main btn-block" data-book>${esc(t("Request visit"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
+    sheet.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => { keep(); st.group = b.dataset.g; draw(); });
+    $("[data-close]", sheet).onclick = closeSheet;
+    sheet.querySelectorAll("[data-vc]").forEach((b) => b.onclick = async () => { await call("app-api", { action: "visit_cancel", id: b.dataset.vc }); toast(t("Visit cancelled")); openVisitSheet(); });
+    $("[data-book]", sheet).onclick = async (e) => {
+      keep(); e.target.disabled = true;
+      const r = await call("app-api", { action: "visit_book", date: st.date, slot: st.slot, group_type: st.group, people: st.people, note: st.note });
+      e.target.disabled = false;
+      if (!r.ok) return toast(r.message, true);
+      closeSheet(); toast(t("Visit requested. RD Dairy will confirm soon."));
+    };
+  };
+  const keep = () => { st.date = $("#vd", sheet).value; st.slot = $("#vs", sheet).value; st.people = +$("#vp", sheet).value || 1; st.note = $("#vn", sheet).value; };
+  draw();
+}
+
+/* =========================================================
    ACCOUNT
    ========================================================= */
 async function renderAccount() {
@@ -3246,6 +3872,13 @@ async function renderAccount() {
       </div>
       <button class="pf-edit" id="editp">${esc(t("Edit"))}</button>
     </section>
+
+    <div class="pf-tiles">
+      <button data-link="gold" class="tile gold"><b>✦ RD Gold</b><span id="pfGold">${esc(t("Free delivery and savings"))}</span></button>
+      <button data-link="wallet" class="tile"><b>${esc(t("RD Wallet"))}</b><span>${esc(S.extras ? inr(S.extras.wallet) : t("Add money"))}</span></button>
+      <button data-link="refer" class="tile"><b>🎁 ${esc(t("Refer and earn"))}</b><span>${esc(t("Invite friends"))}</span></button>
+      <button data-link="visit" class="tile"><b>🚜 ${esc(t("Visit our farm"))}</b><span>${esc(t("Book a visit"))}</span></button>
+    </div>
 
     <h2>${esc(t("Delivery location"))}</h2>
     <div class="card pad">
@@ -3289,6 +3922,8 @@ async function renderAccount() {
   $("#acc-lang").appendChild(langPicker(() => { shell(); go("account"); }));
   $("#acc-theme").appendChild(themePicker(() => renderAccount()));
   $("#editp").onclick = openProfileSheet;
+  v.querySelectorAll(".pf-tiles [data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link === "wallet" ? "bills" : b.dataset.link));
+  if (S.extras?.gold?.active) $("#pfGold").textContent = t("Active till {date}", { date: new Date(S.extras.gold.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) });
   $("#delacc").onclick = openDeleteSheet;
   mapPinBlock($("#pf-loc"), { map_link: h.map_link || "" }, async (link) => {
     const r = await call("app-api", { action: "update_profile", name: h.name, address: h.address || "", map_link: link });
@@ -3632,7 +4267,7 @@ async function startApp() {
   S.token = await store.get("rd_token");
   if (S.token) {
     // load the home screen data behind the opening animation, then reveal the app
-    await Promise.race([loadHome(), new Promise((r) => setTimeout(r, 20000))]);
+    await Promise.race([Promise.all([loadHome(), loadExtras()]), new Promise((r) => setTimeout(r, 20000))]);
     await startApp();
   } else {
     renderLogin("phone");
