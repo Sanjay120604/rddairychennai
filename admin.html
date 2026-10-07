@@ -119,6 +119,28 @@
 
 
 
+
+  /* marketing, visits, insights */
+  .mk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:14px}
+  .mk-bn{position:relative;border-radius:16px;min-height:130px;color:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+  .mk-bn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}
+  .mk-bn>div:not(.mk-act){position:relative;padding:12px 14px;display:flex;flex-direction:column}
+  .mk-bn span{font-size:.85rem;opacity:.9}.mk-bn em{font-size:.72rem;opacity:.75;font-style:normal}
+  .mk-act{position:relative;display:flex;gap:6px;padding:0 14px 12px}
+  .mk-st{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(27,42,90,.07)}
+  .mk-st img,.mk-st video{width:100%;height:180px;object-fit:cover;display:block;cursor:zoom-in}
+  .mk-st>div:not(.mk-act){padding:10px 14px;display:flex;flex-direction:column}.mk-st span{font-size:.85rem}.mk-st em{font-size:.72rem;color:var(--navy-light);font-style:normal}
+  .in-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+  .in-stat{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px rgba(27,42,90,.06);display:flex;flex-direction:column}
+  .in-stat span{font-size:.78rem;color:var(--navy-light);font-weight:700}.in-stat b{font-size:1.5rem}.in-stat em{font-size:.78rem;color:var(--navy-light);font-style:normal}
+  .in-chart{display:flex;align-items:flex-end;gap:3px;height:140px}.in-chart i{flex:1;background:var(--amber);border-radius:3px 3px 0 0;min-height:2px}
+  .in-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}@media(max-width:800px){.in-two{grid-template-columns:1fr}}
+  .in-two h4{margin:0 0 10px}
+  .in-bar{display:grid;grid-template-columns:130px 1fr 80px;gap:8px;align-items:center;margin-bottom:6px;font-size:.85rem}
+  .in-bar i{height:10px;background:var(--amber);border-radius:5px;display:block}.in-bar b{text-align:right}
+  .in-segs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .in-seg .in-mem{font-size:.84rem;margin:10px 0;display:grid;gap:3px}
+
   /* app products */
   .pr-list{display:grid;gap:12px}
   .pr-card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 6px 18px rgba(27,42,90,.07)}
@@ -224,6 +246,9 @@
         <div class="lbox" onclick="goSection('appreq')"><div class="lbox-ico">🗓️</div><div class="lbox-label">App Requests</div><span class="lbox-count hidden" id="arCount"></span></div>
         <div class="lbox" onclick="goSection('chat')"><div class="lbox-ico">🗨️</div><div class="lbox-label">Support Chat</div><span class="lbox-count hidden" id="chCount"></span></div>
         <div class="lbox" onclick="goSection('prods')"><div class="lbox-ico">🧈</div><div class="lbox-label">App Products</div><span class="lbox-count hidden" id="prCount"></span></div>
+        <div class="lbox" onclick="goSection('mkt')"><div class="lbox-ico">📣</div><div class="lbox-label">Marketing</div></div>
+        <div class="lbox" onclick="goSection('visits')"><div class="lbox-ico">🚜</div><div class="lbox-label">Farm Visits</div><span class="lbox-count hidden" id="viCount"></span></div>
+        <div class="lbox" onclick="goSection('insights')"><div class="lbox-ico">📈</div><div class="lbox-label">Insights</div></div>
       </div>
       <div class="ap-alert hidden" id="apAlert" onclick="goSection('apppay')"></div>
     </div>
@@ -537,11 +562,48 @@
         <div class="tabs" style="margin:0">
           <button class="tab active" id="apTabPending" onclick="apSetFilter('pending')">To confirm</button>
           <button class="tab" id="apTabAll" onclick="apSetFilter('all')">All</button>
+          <button class="tab" id="apTabWallet" onclick="apSetFilter('wallet')">Wallet top ups</button>
         </div>
         <button class="btn refresh" onclick="loadAppPayments()">↻ Refresh</button>
       </div>
       <p class="muted" style="margin:0 0 14px">Check each UTR or screenshot against your bank or UPI app, then confirm. Confirming records the payment in Billing as UPI.</p>
       <div id="apArea" class="ap-list"><div class="empty">Loading…</div></div>
+      <h3 class="dsub" style="margin-top:28px">RD Wallet tools</h3>
+      <div class="dcard">
+        <div class="dform" style="grid-template-columns:1fr 1fr 1.6fr auto auto">
+          <div><label>Customer mobile</label><input id="wlPhone" inputmode="numeric" maxlength="10"></div>
+          <div><label>Add (+) or take (−) ₹</label><input id="wlAmt" type="number"></div>
+          <div><label>Reason (customer sees it)</label><input id="wlNote" placeholder="Refund for leaked packet"></div>
+          <div class="dform-actions"><button class="btn ghost" onclick="wlLookup()">Check balance</button></div>
+          <div class="dform-actions"><button class="btn" onclick="wlAdjust()">Apply</button></div>
+        </div>
+        <div id="wlOut" class="muted" style="margin-top:10px"></div>
+        <div class="row" style="gap:10px;margin-top:14px;align-items:center"><button class="btn ok" onclick="wlApplyAll(this)">Pay unpaid bills from wallets now</button><span class="muted">For customers with auto pay on. The app also does this each time they open it.</span></div>
+      </div>
+    </div>
+
+    <!-- ============ MARKETING VIEW ============ -->
+    <div id="mktView" class="hidden">
+      <div class="tabs" style="margin:0 0 14px">
+        <button class="tab active" data-mt="banners" onclick="mkTab('banners')">Home banners</button>
+        <button class="tab" data-mt="offers" onclick="mkTab('offers')">Offer codes</button>
+        <button class="tab" data-mt="stories" onclick="mkTab('stories')">Farm stories</button>
+        <button class="tab" data-mt="announce" onclick="mkTab('announce')">Send announcement</button>
+        <button class="tab" data-mt="programs" onclick="mkTab('programs')">Trial, Gold, Refer</button>
+      </div>
+      <div id="mkArea"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- ============ FARM VISITS VIEW ============ -->
+    <div id="visitsView" class="hidden">
+      <div class="toolbar"><button class="btn refresh" onclick="loadVisits()">↻ Refresh</button></div>
+      <div class="table-wrap"><div id="viArea"><div class="empty">Loading…</div></div></div>
+    </div>
+
+    <!-- ============ INSIGHTS VIEW ============ -->
+    <div id="insView" class="hidden">
+      <div class="toolbar"><button class="btn refresh" onclick="loadInsights()">↻ Refresh</button></div>
+      <div id="insArea"><div class="empty">Loading…</div></div>
     </div>
 
     <!-- ============ APP PRODUCTS VIEW ============ -->
@@ -827,7 +889,8 @@ function switchView(v){
   var isAppReq = (v==="appreq");
   var isChat = (v==="chat");
   var isProds = (v==="prods");
-  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq && !isChat && !isProds;
+  var isMkt = (v==="mkt"), isVisits = (v==="visits"), isIns = (v==="insights");
+  var isOrders = !isDelivery && !isLedger && !isStock && !isExpenses && !isReports && !isAppPay && !isAppReq && !isChat && !isProds && !isMkt && !isVisits && !isIns;
   $("ordersView").classList.toggle("hidden", !isOrders);
   $("deliveryView").classList.toggle("hidden", !isDelivery);
   $("ledgerView").classList.toggle("hidden", !isLedger);
@@ -838,6 +901,12 @@ function switchView(v){
   $("appReqView").classList.toggle("hidden", !isAppReq);
   $("chatView").classList.toggle("hidden", !isChat);
   $("prodView").classList.toggle("hidden", !isProds);
+  $("mktView").classList.toggle("hidden", !isMkt);
+  $("visitsView").classList.toggle("hidden", !isVisits);
+  $("insView").classList.toggle("hidden", !isIns);
+  if(isMkt){ $("cards").innerHTML=""; mkTab(MK_TAB); return; }
+  if(isVisits){ $("cards").innerHTML=""; loadVisits(); return; }
+  if(isIns){ $("cards").innerHTML=""; loadInsights(); return; }
   if(isProds){ $("cards").innerHTML=""; loadProducts(); return; }
   if(!isChat) chStopPoll();
   if(isChat){ $("cards").innerHTML=""; loadChatThreads(); chStartPoll(); return; }
@@ -2371,7 +2440,7 @@ function waButton(mobile, name, id, status){
 }
 
 function renderCards(){
-  if(view==="apppay"||view==="appreq"||view==="chat"||view==="prods"){ $("cards").innerHTML=""; return; }
+  if(["apppay","appreq","chat","prods","mkt","visits","insights"].indexOf(view)>-1){ $("cards").innerHTML=""; return; }
   var o=data.orders, s=data.subscriptions;
   var revenue=o.filter(x=>/paid|received|confirmed/i.test((x.Status||""))).reduce((a,x)=>a+(Number(x.Amount)||0),0);
   var pending=o.filter(x=>!/paid|received|confirmed/i.test((x.Status||""))).length;
@@ -2639,6 +2708,10 @@ async function refreshAppPayCount(){
     $("arCount").textContent = rq; $("arCount").classList.toggle("hidden", rq===0);
     var chn = r.chats||0;
     $("chCount").textContent = chn; $("chCount").classList.toggle("hidden", chn===0);
+    var vin = r.visits||0, tpn = r.topups||0;
+    $("viCount").textContent = vin; $("viCount").classList.toggle("hidden", vin===0);
+    n += tpn;
+    $("apCount").textContent = n; $("apCount").classList.toggle("hidden", n===0);
     var prn = r.products||0;
     $("prCount").textContent = prn; $("prCount").classList.toggle("hidden", prn===0);
     var inb = r.inbox||0;
@@ -2649,6 +2722,7 @@ async function refreshAppPayCount(){
     var parts=[];
     if(n) parts.push('<b>'+n+'</b> app '+(n===1?'payment':'payments')+' to confirm');
     if(chn) parts.push('<b>'+chn+'</b> new '+(chn===1?'chat':'chats'));
+    if(vin) parts.push('<b>'+vin+'</b> farm '+(vin===1?'visit':'visits')+' to confirm');
     if(prn) parts.push('<b>'+prn+'</b> '+(prn===1?'product':'products')+' low or out of stock');
     if(inb) parts.push('<b>'+inb+'</b> WhatsApp '+(inb===1?'message':'messages')+' waiting');
     alertBox.classList.toggle("hidden", parts.length===0);
@@ -2665,7 +2739,51 @@ function apSetFilter(f){
   apFilter=f;
   $("apTabPending").classList.toggle("active", f==="pending");
   $("apTabAll").classList.toggle("active", f==="all");
+  $("apTabWallet").classList.toggle("active", f==="wallet");
+  if(f==="wallet") return loadTopups();
   loadAppPayments();
+}
+async function loadTopups(){
+  $("apArea").innerHTML='<div class="empty">Loading…</div>';
+  var r=await aApi({action:"topupsList", status:"all"});
+  if(!r.ok){ $("apArea").innerHTML='<div class="empty">'+esc(r.message)+'</div>'; return; }
+  if(!r.topups.length){ $("apArea").innerHTML='<div class="empty">No wallet top ups yet.</div>'; return; }
+  $("apArea").innerHTML=r.topups.map(function(t){
+    var cls=t.status==="confirmed"?" done":t.status==="rejected"?" rej":"";
+    var pill=t.status==="pending"?'<span class="pill pending">To confirm</span>':t.status==="confirmed"?'<span class="pill paid">Confirmed</span>':'<span class="pill cancel">'+esc(t.status)+'</span>';
+    return '<div class="ap-card'+cls+'"><div><div class="ap-name">'+esc(t.name||t.phone)+' '+pill+' <span class="pill submitted">RD Wallet</span></div>'+
+      '<div class="ap-meta">'+esc(t.phone)+'<br>Sent '+esc(apWhen(t.created_at))+'<br>'+(t.utr?'UTR <span class="ap-utr">'+esc(t.utr)+'</span>':'Screenshot only')+'</div>'+
+      (t.proof_url?'<a class="ap-proof" href="#" data-src="'+esc(t.proof_url)+'" onclick="showImage(this.dataset.src);return false;"><img src="'+esc(t.proof_url)+'"></a>':'')+'</div>'+
+      '<div class="ap-amt">'+apMoney(t.amount)+'</div>'+
+      (t.status==="pending"?'<div class="ap-actions"><span class="muted">Amount received</span><input type="number" id="tpAmt_'+t.id+'" value="'+Number(t.amount)+'"><button class="btn sm ok" onclick="tpConfirm(\''+t.id+'\',this)">✓ Add to wallet</button><button class="btn sm danger" onclick="tpReject(\''+t.id+'\',this)">Reject</button></div>':(t.admin_note?'<div class="ap-actions"><span class="muted">'+esc(t.admin_note)+'</span></div>':''))+
+    '</div>';
+  }).join("");
+}
+async function tpConfirm(id,btn){
+  var amt=parseFloat($("tpAmt_"+id).value);
+  if(!(await askInline("Add "+apMoney(amt)+" to this customer's wallet?",{yes:"Add"}))) return;
+  btn.disabled=true; var r=await aApi({action:"topupConfirm", id:id, amount:amt});
+  if(!r.ok){ notice(r.message); btn.disabled=false; return; } notice("Added to wallet"); loadTopups(); refreshAppPayCount();
+}
+async function tpReject(id,btn){
+  var note=await askInline("Reason (the customer sees it):",{input:"Payment not received", yes:"Reject"}); if(note===null) return;
+  btn.disabled=true; var r=await aApi({action:"topupReject", id:id, note:note});
+  if(!r.ok){ notice(r.message); btn.disabled=false; return; } loadTopups(); refreshAppPayCount();
+}
+async function wlLookup(){
+  var r=await aApi({action:"walletLookup", phone:$("wlPhone").value});
+  if(!r.ok){ $("wlOut").textContent=r.message; return; }
+  $("wlOut").innerHTML='Balance <b>'+apMoney(r.balance)+'</b>'+(r.history.length?' · last: '+r.history.slice(0,5).map(function(h){return esc(h.note||h.kind)+' '+(h.amount>0?'+':'')+apMoney(h.amount);}).join(', '):'');
+}
+async function wlAdjust(){
+  var amt=parseFloat($("wlAmt").value); if(!amt){ notice("Enter an amount"); return; }
+  if(!(await askInline((amt>0?"Add ":"Take ")+apMoney(Math.abs(amt))+" for "+$("wlPhone").value+"?",{yes:"Apply"}))) return;
+  var r=await aApi({action:"walletAdjust", phone:$("wlPhone").value, amount:amt, note:$("wlNote").value});
+  if(!r.ok){ notice(r.message); return; } notice("Done. New balance "+apMoney(r.balance)); $("wlAmt").value=""; wlLookup();
+}
+async function wlApplyAll(btn){
+  btn.disabled=true; var r=await aApi({action:"applyAllWallets"}); btn.disabled=false;
+  if(!r.ok){ notice(r.message); return; } notice(r.paid?("Paid "+apMoney(r.paid)+" across "+r.customers+" customers"):"Nothing to pay right now");
 }
 
 async function loadAppPayments(){
@@ -2991,6 +3109,172 @@ function renderReviews(list){
   }).join("")+'</tbody></table>';
 }
 async function prHideReview(id,hide){ await aApi({action:"reviewHide", id:id, hidden:hide}); loadProducts(); }
+
+/* ============ MARKETING ============ */
+var MK_TAB="banners";
+function mkTab(t){ MK_TAB=t; document.querySelectorAll("[data-mt]").forEach(function(b){ b.classList.toggle("active", b.dataset.mt===t); });
+  ({banners:mkBanners, offers:mkOffers, stories:mkStories, announce:mkAnnounce, programs:mkPrograms})[t](); }
+async function mkUpload(file, folder){
+  var ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+  var r=await aApi({action:"createUpload", bucket:"farm-media", folder:folder, ext:ext});
+  if(!r.ok) throw new Error(r.message||"Upload failed");
+  var fd=new FormData(); fd.append("cacheControl","3600"); fd.append("",file);
+  var up=await fetch(r.upload_url,{method:"PUT", body:fd, headers:{"x-upsert":"false","apikey":APP_ADMIN_KEY}});
+  if(!up.ok) throw new Error("Upload failed ("+up.status+")");
+  return r.public_url;
+}
+var LINKS=[["","No link"],["shop","Shop"],["trial","Trial pack"],["gold","RD Gold"],["wallet","RD Wallet"],["refer","Refer and earn"],["visit","Farm visit"],["bills","Bills"],["chat","Support chat"]];
+function linkSelect(id,val){ var opts=LINKS.slice(); (window.PRODUCTS||[]).forEach(function(p){ opts.push(["product:"+p.id,"Product: "+p.name]); });
+  if(val && !opts.some(function(o){return o[0]===val;})) opts.push([val,val]);
+  return '<select id="'+id+'">'+opts.map(function(o){return '<option value="'+esc(o[0])+'"'+(o[0]===(val||"")?' selected':'')+'>'+esc(o[1])+'</option>';}).join("")+'</select>'; }
+
+async function mkBanners(){
+  if(!window.PRODUCTS||!PRODUCTS.length){ var pc=await aApi({action:"getCatalog"}); if(pc.ok) PRODUCTS=pc.products; }
+  var r=await aApi({action:"bannersList"});
+  var list=r.ok?r.items:[];
+  $("mkArea").innerHTML='<div class="dcard"><h4 style="margin:0 0 10px">Add a banner</h4>'+
+    '<div class="dform" style="grid-template-columns:1.2fr 1.4fr 1fr"><div><label>Title</label><input id="bnT"></div><div><label>Subtitle</label><input id="bnS"></div><div><label>When tapped, open</label>'+linkSelect("bnL","")+'</div></div>'+
+    '<div class="dform" style="grid-template-columns:1fr 1fr 1fr 1fr 1.4fr;margin-top:10px"><div><label>Show to</label><select id="bnA"><option value="all">Everyone</option><option value="subscribers">Milk subscribers</option><option value="shoppers">Shop only customers</option><option value="new">New customers</option><option value="gold">RD Gold members</option></select></div>'+
+    '<div><label>From</label><input type="date" id="bnFrom"></div><div><label>Until</label><input type="date" id="bnTo"></div><div><label>Colour</label><input type="color" id="bnBg" value="#1E2B4A" style="height:40px"></div>'+
+    '<div><label>Picture (optional)</label><input type="file" accept="image/*" id="bnImg"></div></div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn" onclick="mkSaveBanner(this)">Add banner</button></div></div>'+
+    '<div class="mk-grid">'+(list.length?list.map(function(b){ return '<div class="mk-bn" style="background:'+esc(b.bg||"#1E2B4A")+'">'+(b.image_url?'<img src="'+esc(b.image_url)+'">':'')+'<div><b>'+esc(b.title)+'</b><span>'+esc(b.subtitle||"")+'</span><em>'+esc(b.audience)+(b.link?' · opens '+esc(b.link):'')+(b.ends_on?' · until '+esc(b.ends_on):'')+'</em></div>'+
+      '<div class="mk-act"><button class="btn sm ghost" onclick="mkToggle(\'banner\',\''+b.id+'\','+(!b.active)+')">'+(b.active?'Pause':'Show')+'</button><button class="btn sm danger" onclick="mkDelete(\'banner\',\''+b.id+'\')">Delete</button></div></div>'; }).join(""):'<div class="empty">No banners yet. Add one above.</div>')+'</div>';
+}
+async function mkSaveBanner(btn){
+  var title=$("bnT").value.trim(); if(!title){ notice("Add a title"); return; }
+  btn.disabled=true;
+  try{
+    var img="", f=$("bnImg").files[0]; if(f) img=await mkUpload(f,"banners");
+    var r=await aApi({action:"bannerSave", item:{title:title, subtitle:$("bnS").value, link:$("bnL").value, audience:$("bnA").value, starts_on:$("bnFrom").value, ends_on:$("bnTo").value, bg:$("bnBg").value, image_url:img, active:true}});
+    if(!r.ok) notice(r.message); else { notice("Banner added"); mkBanners(); }
+  }catch(e){ notice(e.message); }
+  btn.disabled=false;
+}
+async function mkToggle(kind,id,on){ await aApi({action:kind+"Save", item:{id:id, active:on}}); mkTab(MK_TAB); }
+async function mkDelete(kind,id){ if(!(await askInline("Delete this?",{yes:"Delete"}))) return; await aApi({action:kind+"Delete", id:id}); mkTab(MK_TAB); }
+
+async function mkOffers(){
+  var r=await aApi({action:"offersList"}); var list=r.ok?r.items:[];
+  $("mkArea").innerHTML='<div class="dcard"><h4 style="margin:0 0 10px">Create an offer code</h4>'+
+    '<div class="dform" style="grid-template-columns:1fr 1.4fr 1fr 1fr"><div><label>Code</label><input id="ofC" style="text-transform:uppercase" placeholder="PONGAL10"></div><div><label>Title</label><input id="ofT" placeholder="Pongal special"></div>'+
+    '<div><label>Type</label><select id="ofK"><option value="percent">% off</option><option value="flat">₹ off</option><option value="free_delivery">Free delivery</option></select></div><div><label>Value</label><input id="ofV" type="number" value="10"></div></div>'+
+    '<div class="dform" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;margin-top:10px"><div><label>Minimum order ₹</label><input id="ofM" type="number" value="0"></div><div><label>Max discount ₹</label><input id="ofX" type="number"></div><div><label>Uses per customer</label><input id="ofU" type="number" value="1"></div><div><label>From</label><input type="date" id="ofFrom"></div><div><label>Until</label><input type="date" id="ofTo"></div></div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn" onclick="mkSaveOffer(this)">Create code</button><span class="muted">Customers type the code in their cart.</span></div></div>'+
+    '<div class="table-wrap" style="margin-top:14px">'+(list.length?'<table><thead><tr><th>Code</th><th>Offer</th><th>For</th><th>Dates</th><th>Status</th><th></th></tr></thead><tbody>'+list.map(function(o){
+      return '<tr><td><b>'+esc(o.code)+'</b><br><span class="muted">'+esc(o.title||"")+'</span></td><td>'+(o.kind==="percent"?esc(o.value)+'% off':o.kind==="flat"?'₹'+esc(o.value)+' off':'Free delivery')+(Number(o.min_order)?'<br><span class="muted">min ₹'+esc(o.min_order)+'</span>':'')+'</td>'+
+      '<td>'+(o.allowed_phones&&o.allowed_phones.length?o.allowed_phones.length+' selected customers':'Everyone')+'</td><td class="muted">'+esc(o.starts_on||"")+(o.ends_on?' to '+esc(o.ends_on):'')+'</td>'+
+      '<td>'+(o.active?'<span class="pill paid">Live</span>':'<span class="pill cancel">Paused</span>')+'</td><td style="white-space:nowrap"><button class="btn sm ghost" onclick="mkToggle(\'offer\',\''+o.id+'\','+(!o.active)+')">'+(o.active?'Pause':'Resume')+'</button> <button class="btn sm danger" onclick="mkDelete(\'offer\',\''+o.id+'\')">Delete</button></td></tr>'; }).join("")+'</tbody></table>':'<div class="empty">No offer codes yet.</div>')+'</div>';
+}
+async function mkSaveOffer(btn){
+  var code=$("ofC").value.trim().toUpperCase().replace(/[^A-Z0-9]/g,""); if(!code){ notice("Add a code"); return; }
+  btn.disabled=true;
+  var r=await aApi({action:"offerSave", item:{code:code, title:$("ofT").value, kind:$("ofK").value, value:Number($("ofV").value||0), min_order:Number($("ofM").value||0), max_discount:$("ofX").value?Number($("ofX").value):"", uses_per_customer:Number($("ofU").value||1), starts_on:$("ofFrom").value, ends_on:$("ofTo").value, active:true}});
+  btn.disabled=false; if(!r.ok){ notice(r.message); return; } notice("Code "+code+" is live"); mkOffers();
+}
+
+async function mkStories(){
+  var r=await aApi({action:"storiesList"}); var list=r.ok?r.items:[];
+  $("mkArea").innerHTML='<div class="dcard"><h4 style="margin:0 0 10px">Post a farm story</h4>'+
+    '<div class="dform" style="grid-template-columns:1fr 1.6fr 1.2fr"><div><label>Title</label><input id="stT" placeholder="Morning milking"></div><div><label>Caption</label><input id="stC" placeholder="5 AM at the farm with Lakshmi"></div><div><label>Photo or short video</label><input type="file" accept="image/*,video/mp4,video/webm,video/quicktime" id="stF"></div></div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn" onclick="mkSaveStory(this)">Post story</button><span class="muted">Keep videos under 30 seconds and 20 MB.</span></div></div>'+
+    '<div class="mk-grid">'+(list.length?list.map(function(x){ return '<div class="mk-st">'+(x.media_type==="video"?'<video src="'+esc(x.media_url)+'" muted controls></video>':'<img src="'+esc(x.media_url)+'" onclick="showImage(this.src)">')+'<div><b>'+esc(x.title||"")+'</b><span>'+esc(x.caption||"")+'</span><em>'+esc(fmtDate(x.created_at))+'</em></div>'+
+      '<div class="mk-act"><button class="btn sm ghost" onclick="mkToggle(\'story\',\''+x.id+'\','+(!x.active)+')">'+(x.active?'Hide':'Show')+'</button><button class="btn sm danger" onclick="mkDelete(\'story\',\''+x.id+'\')">Delete</button></div></div>'; }).join(""):'<div class="empty">No stories yet. Share a photo of your cows or farm.</div>')+'</div>';
+}
+async function mkSaveStory(btn){
+  var f=$("stF").files[0]; if(!f){ notice("Choose a photo or video"); return; }
+  if(f.size>20*1024*1024){ notice("Please choose a file under 20 MB"); return; }
+  btn.disabled=true; notice("Uploading…");
+  try{
+    var url=await mkUpload(f,"stories");
+    var r=await aApi({action:"storySave", item:{title:$("stT").value, caption:$("stC").value, media_url:url, media_type:/^video/.test(f.type)?"video":"image", active:true}});
+    if(!r.ok) notice(r.message); else { notice("Story posted"); mkStories(); }
+  }catch(e){ notice(e.message); }
+  btn.disabled=false;
+}
+
+var SEG_CACHE=null;
+async function mkAnnounce(prefill){
+  $("mkArea").innerHTML='<div class="dcard"><h4 style="margin:0 0 10px">Send a message to customers in the app</h4>'+
+    '<div class="dform" style="grid-template-columns:1fr 1.6fr"><div><label>Send to</label><select id="anA"><option value="all">Everyone with the app</option><option value="subscribers">Milk subscribers</option><option value="shoppers">Shop only customers</option>'+(SEG_CACHE?SEG_CACHE.map(function(sg){return '<option value="seg:'+sg.key+'">'+esc(sg.label)+' ('+sg.count+')</option>';}).join(""):'')+'</select></div><div><label>Title</label><input id="anT" placeholder="Fresh paneer is back"></div></div>'+
+    '<div class="dform" style="grid-template-columns:1.6fr 1fr;margin-top:10px"><div><label>Message</label><input id="anB" placeholder="Made this morning. Order before 9 PM for tomorrow."></div><div><label>When tapped, open</label>'+linkSelect("anL","shop")+'</div></div>'+
+    '<label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-weight:700"><input type="checkbox" id="anOff"> Attach a special offer code for these customers</label>'+
+    '<div class="dform" id="anOffBox" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-top:10px;display:none"><div><label>Type</label><select id="anK"><option value="percent">% off</option><option value="flat">₹ off</option><option value="free_delivery">Free delivery</option></select></div><div><label>Value</label><input id="anV" type="number" value="10"></div><div><label>Minimum order ₹</label><input id="anM" type="number" value="0"></div><div><label>Valid until</label><input type="date" id="anTo"></div></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" onclick="mkSendAnnounce(this)">Send</button><span class="muted">It appears in their notifications and on Home. Push alerts arrive with the store apps.</span></div></div>';
+  $("anOff").onchange=function(){ $("anOffBox").style.display=this.checked?"grid":"none"; };
+  if(prefill){ $("anA").value=prefill.audience; $("anT").value=prefill.title||""; $("anB").value=prefill.body||""; if(prefill.offer){ $("anOff").checked=true; $("anOffBox").style.display="grid"; } }
+}
+async function mkSendAnnounce(btn){
+  var aud=$("anA").value, phones=null;
+  if(aud.indexOf("seg:")===0){ var sg=(SEG_CACHE||[]).find(function(x){return "seg:"+x.key===aud;}); phones=sg?sg.members.map(function(m){return m.phone;}):[]; aud="list"; }
+  var payload={action:"announce", audience:aud, phones:phones, title:$("anT").value, body:$("anB").value, link:$("anL").value};
+  if($("anOff").checked) payload.offer={kind:$("anK").value, value:$("anV").value, min_order:$("anM").value, ends_on:$("anTo").value};
+  if(!(await askInline("Send this now?",{yes:"Send"}))) return;
+  btn.disabled=true; var r=await aApi(payload); btn.disabled=false;
+  if(!r.ok){ notice(r.message); return; }
+  notice("Sent to "+r.sent+" customers"+(r.code?" with code "+r.code:""));
+}
+
+async function mkPrograms(){
+  var r=await aApi({action:"getAppSettings"}); var st=r.ok?r.settings:{};
+  var f=function(k,l,type,ph){ return '<div><label>'+l+'</label><input data-k="'+k+'" type="'+(type||"text")+'" value="'+esc(st[k]==null?"":st[k])+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'></div>'; };
+  $("mkArea").innerHTML='<div class="dcard"><h4 style="margin:0 0 10px">Trial pack (new customers)</h4>'+
+    '<div class="dform" style="grid-template-columns:repeat(5,1fr)"><div><label>Show trial</label><select data-k="trial_enabled"><option value="1"'+(st.trial_enabled!=="0"?' selected':'')+'>Yes</option><option value="0"'+(st.trial_enabled==="0"?' selected':'')+'>No</option></select></div>'+f("trial_price","Price ₹","number")+f("trial_days","Days","number")+f("trial_product","Product id","text","a2-cow-milk")+f("trial_size","Size","text","500ml")+'</div>'+
+    '<h4 style="margin:18px 0 10px">RD Gold</h4><div class="dform" style="grid-template-columns:repeat(3,1fr)">'+f("gold_price","Price ₹","number")+f("gold_days","Days","number")+f("gold_discount","Shop discount %","number")+'</div>'+
+    '<h4 style="margin:18px 0 10px">Refer and earn</h4><div class="dform" style="grid-template-columns:1fr 2fr">'+f("referral_reward","Reward for each person ₹","number")+'<div></div></div>'+
+    '<h4 style="margin:18px 0 10px">Farm visits and weather</h4><div class="dform" style="grid-template-columns:2fr 1fr 1fr">'+f("visit_slots","Visit times (comma separated)")+f("weather_lat","Weather latitude")+f("weather_lng","Weather longitude")+'</div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn" onclick="mkSavePrograms(this)">Save</button></div></div>';
+}
+async function mkSavePrograms(btn){
+  var settings={}; document.querySelectorAll("#mkArea [data-k]").forEach(function(el){ settings[el.dataset.k]=el.value; });
+  btn.disabled=true; var r=await aApi({action:"saveAppSettings", settings:settings}); btn.disabled=false;
+  notice(r.ok?"Saved":(r.message||"Could not save"));
+}
+
+/* ============ FARM VISITS ============ */
+async function loadVisits(){
+  var r=await aApi({action:"visitsList"});
+  if(!r.ok){ $("viArea").innerHTML='<div class="empty">'+esc(r.message)+'</div>'; return; }
+  if(!r.visits.length){ $("viArea").innerHTML='<div class="empty">No visit requests yet.</div>'; return; }
+  $("viArea").innerHTML='<table><thead><tr><th>Date</th><th>Who</th><th>Group</th><th>Note</th><th>Status</th><th></th></tr></thead><tbody>'+r.visits.map(function(v){
+    var pill=v.status==="requested"?'<span class="pill pending">To confirm</span>':v.status==="confirmed"?'<span class="pill paid">Confirmed</span>':'<span class="pill cancel">'+esc(v.status)+'</span>';
+    return '<tr><td><b>'+esc(arDay(v.visit_date))+'</b><br><span class="muted">'+esc(v.slot||"")+'</span></td><td>'+esc(v.name||"")+'<br><span class="muted">'+esc(v.phone)+'</span></td><td>'+esc(v.group_type||"")+', '+esc(v.people)+' people</td><td class="muted">'+esc(v.note||"")+'</td><td>'+pill+'</td>'+
+      '<td style="white-space:nowrap">'+(v.status==="requested"?'<button class="btn sm ok" onclick="viSet(\''+v.id+'\',\'confirmed\',this)">Confirm</button> <button class="btn sm danger" onclick="viSet(\''+v.id+'\',\'declined\',this)">Decline</button>':'')+' <a class="wa-btn" target="_blank" href="https://wa.me/91'+esc(String(v.phone).slice(-10))+'">WhatsApp</a></td></tr>';
+  }).join("")+'</tbody></table>';
+}
+async function viSet(id,status,btn){
+  var note=await askInline(status==="confirmed"?"Note for the family (optional):":"Reason (optional):",{input:"", yes:status==="confirmed"?"Confirm":"Decline"}); if(note===null) return;
+  btn.disabled=true; var r=await aApi({action:"visitUpdate", id:id, status:status, note:note}); if(!r.ok){ notice(r.message); btn.disabled=false; return; }
+  loadVisits(); refreshAppPayCount();
+}
+
+/* ============ INSIGHTS ============ */
+async function loadInsights(){
+  $("insArea").innerHTML='<div class="empty">Crunching the numbers…</div>';
+  var r=await aApi({action:"insights"});
+  if(!r.ok){ $("insArea").innerHTML='<div class="empty">'+esc(r.message)+'</div>'; return; }
+  SEG_CACHE=r.segments;
+  var s=r.sales, c=r.churn, max=Math.max.apply(null,s.series.map(function(x){return x.v;}).concat([1]));
+  var stat=function(l,v,sub){ return '<div class="in-stat"><span>'+l+'</span><b>'+v+'</b>'+(sub?'<em>'+sub+'</em>':'')+'</div>'; };
+  var bars=function(rows,key,fmt){ var m=Math.max.apply(null,rows.map(function(x){return x[key];}).concat([1])); return rows.map(function(x){ return '<div class="in-bar"><span>'+esc(x.name)+'</span><i style="width:'+Math.round(x[key]/m*100)+'%"></i><b>'+fmt(x[key])+'</b></div>'; }).join("")||'<div class="muted">Nothing yet</div>'; };
+  $("insArea").innerHTML=
+    '<h3 class="dsub">Sales from the app, last 30 days</h3><div class="in-stats">'+
+      stat("Shop orders", s.app_orders, apMoney(s.app_order_value))+stat("Added to monthly bills", apMoney(s.bill_items_value))+stat("Wallet top ups", apMoney(s.wallet_topups))+stat("New sign ups", s.new_signups)+stat("App users", s.app_users, s.active_7d+" active this week")+'</div>'+
+    '<div class="dcard"><div class="in-chart">'+s.series.map(function(x){ return '<i title="'+esc(x.d)+': '+apMoney(x.v)+'" style="height:'+Math.max(2,Math.round(x.v/max*100))+'%"></i>'; }).join("")+'</div><div class="muted" style="display:flex;justify-content:space-between;font-size:.75rem"><span>'+esc(s.series[0].d)+'</span><span>'+esc(s.series[s.series.length-1].d)+'</span></div></div>'+
+    '<div class="in-two"><div class="dcard"><h4>Top products</h4>'+bars(s.top_products,"qty",function(v){return v;})+'</div><div class="dcard"><h4>Busiest areas</h4>'+bars(s.areas,"value",apMoney)+'</div></div>'+
+
+    '<h3 class="dsub" style="margin-top:26px">Lifetime value and churn</h3><div class="in-stats">'+
+      stat("Churn last month", c.rate+"%", c.lost+" of "+c.base+" customers")+stat("Average lifetime value", apMoney(c.avg_ltv))+stat("Average monthly bill", apMoney(c.avg_monthly))+'</div>'+
+    '<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Area</th><th>Lifetime billed</th><th>Months</th><th>Per month</th><th>Last bill</th></tr></thead><tbody>'+c.top.map(function(x){ return '<tr><td>'+esc(x.name)+'<br><span class="muted">'+esc(x.phone)+'</span></td><td>'+esc(x.area)+'</td><td><b>'+apMoney(x.total)+'</b></td><td>'+x.months+'</td><td>'+apMoney(x.monthly)+'</td><td class="muted">'+esc(x.last)+(x.active?'':' · stopped')+'</td></tr>'; }).join("")+'</tbody></table></div>'+
+
+    '<h3 class="dsub" style="margin-top:26px">Win back</h3><p class="muted" style="margin:0 0 10px">Customers who stopped, skipped last month or keep pausing. A call or a small offer often brings them back.</p>'+
+    '<div class="table-wrap">'+(r.winback.length?'<table><thead><tr><th>Customer</th><th>Why</th><th>Detail</th><th></th></tr></thead><tbody>'+r.winback.map(function(m){ return '<tr><td>'+esc(m.name)+'<br><span class="muted">'+esc(m.phone)+(m.area?' · '+esc(m.area):'')+'</span></td><td><span class="pill pending">'+esc(m.reason)+'</span></td><td class="muted">'+esc(m.detail||"")+'</td><td><a class="wa-btn" target="_blank" href="https://wa.me/91'+esc(m.phone)+'">WhatsApp</a></td></tr>'; }).join("")+'</tbody></table>':'<div class="empty">Nobody to win back right now.</div>')+'</div>'+
+
+    '<h3 class="dsub" style="margin-top:26px">Customer groups</h3><div class="in-segs">'+r.segments.map(function(g){ return '<div class="dcard in-seg"><div class="row" style="justify-content:space-between"><b>'+esc(g.label)+'</b><span class="pill submitted">'+g.count+'</span></div>'+
+      '<div class="in-mem">'+g.members.slice(0,6).map(function(m){ return '<div>'+esc(m.name||m.phone)+' <span class="muted">'+esc(m.detail||"")+'</span></div>'; }).join("")+(g.count>6?'<div class="muted">and '+(g.count-6)+' more</div>':'')+'</div>'+
+      (g.count?'<button class="btn sm" onclick="segOffer(\''+g.key+'\')">Send offer to this group</button>':'')+'</div>'; }).join("")+'</div>';
+}
+function segOffer(key){ var g=(SEG_CACHE||[]).find(function(x){return x.key===key;}); goSection("mkt"); mkTab("announce"); setTimeout(function(){ mkAnnounce({audience:"seg:"+key, title:"A little something for you", body:"", offer:true}); },50); }
 
 /* ============ SUPPORT CHAT ============ */
 var chFilter="open", chPhone=null, chTimer=null, chThreads=[];
