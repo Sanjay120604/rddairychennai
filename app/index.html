@@ -326,6 +326,19 @@
   .su-area { min-height: 84px; padding: 12px 14px; resize: vertical; font: inherit; font-weight: 600; }
   select.su-input { appearance: auto; }
   .su-help { font-size: 14px; opacity: 0.75; margin-top: 6px; }
+  .pw-row { position: relative; }
+  .pw-row input { padding-right: 56px !important; }
+  .pw-eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 12px; color: var(--ink); opacity: .55; display: grid; place-items: center; }
+  html[data-theme="dark"] .pw-eye { color: #E8ECF4; }
+  .login .su-help + label { margin-top: 16px; }
+  .login form > label:first-of-type { margin-top: 6px; }
+  .su-new { margin: 22px 0 0; padding: 12px 14px; border-radius: 14px; background: rgba(245,168,0,.16); border: 1px solid rgba(245,168,0,.45); font-weight: 600; line-height: 1.4; }
+  .su-new + .su-title { margin-top: 16px; }
+  .su-phone-ro, #su-phone { opacity: .8; }
+  .login form label { display: block; }
+  .pw-done { font-size: 46px; margin-top: 30px; }
+  .sheet .su-input { background: var(--mist); }
+  .sheet .lbl { display: block; font-weight: 700; margin: 12px 0 6px; }
   .su-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
   .su-grid > div { min-width: 0; }
   .su-grid .su-input { min-width: 0; max-width: 100%; }
@@ -491,16 +504,44 @@
   html[data-theme="dark"] .msg.bot { border-color: #3A2F12; }
 
 
-  /* ---------- opening animation ---------- */
-  #splash { position: fixed; inset: 0; z-index: 9999; background: #0C1226; transition: opacity .4s ease, transform .4s ease; }
-  #splash svg { width: 100%; height: 100%; display: block; }
-  #splash.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
-  .sp-hint { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 44px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; transition: opacity .6s; }
+  /* ---------- opening animation: logo drop ---------- */
+  #splash { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(120% 90% at 50% 45%, #2A3B66 0%, #17213F 55%, #0C1226 100%); display: flex; align-items: center; justify-content: center; transition: opacity .55s ease; overflow: hidden; }
+  .sp-stage { display: flex; flex-direction: column; align-items: center; transform: translateY(-4vh); }
+  .sp-drop { width: 116px; height: 116px; border-radius: 50%; background: #fff; padding: 6px; box-shadow: 0 0 0 10px rgba(255,246,226,.08), 0 18px 40px rgba(0,0,0,.35); animation: spDrop 1s cubic-bezier(.3,.7,.4,1) both; transform-origin: 50% 100%; }
+  .sp-logo { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .sp-shadow { width: 92px; height: 12px; margin-top: 14px; border-radius: 50%; background: rgba(0,0,0,.45); filter: blur(4px); animation: spShadowIn 1s cubic-bezier(.3,.7,.4,1) both; }
+  .sp-name { margin-top: 22px; font-family: "Bricolage Grotesque", "Trebuchet MS", sans-serif; font-weight: 800; font-size: 38px; letter-spacing: -.5px; color: #fff; animation: spRise .6s ease-out .85s both; }
+  .sp-name b { color: #F5A800; font-weight: 800; }
+  .sp-tag { margin-top: 6px; font-family: var(--body); font-size: 14px; color: rgba(255,255,255,.72); animation: spFade .6s ease-out 1.15s both; }
+  @keyframes spDrop {
+    0% { transform: translateY(-60vh) scale(1,1); opacity: 0; }
+    10% { opacity: 1; }
+    55% { transform: translateY(0) scale(1,1); }
+    63% { transform: translateY(0) scale(1.14,.84); }
+    76% { transform: translateY(-26px) scale(.96,1.05); }
+    88% { transform: translateY(0) scale(1.04,.96); }
+    100% { transform: translateY(0) scale(1,1); opacity: 1; }
+  }
+  @keyframes spShadowIn { 0% { transform: scale(.2); opacity: 0; } 55% { transform: scale(1); opacity: 1; } 76% { transform: scale(.75); opacity: .6; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes spRise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes spFade { from { opacity: 0; } to { opacity: 1; } }
+  #splash.loop .sp-drop { animation: spHop 1.3s ease-in-out infinite; }
+  #splash.loop .sp-shadow { animation: spShadowHop 1.3s ease-in-out infinite; }
+  @keyframes spHop { 0%, 100% { transform: translateY(0) scale(1,1); } 12% { transform: translateY(0) scale(1.06,.93); } 45% { transform: translateY(-18px) scale(.98,1.03); } 80% { transform: translateY(0) scale(1,1); } }
+  @keyframes spShadowHop { 0%, 100% { transform: scale(1); opacity: 1; } 45% { transform: scale(.72); opacity: .55; } 80% { transform: scale(1); opacity: 1; } }
+  #splash.out { opacity: 0; pointer-events: none; }
+  #splash.out .sp-stage { animation: spLift .55s ease-in both; }
+  @keyframes spLift { to { transform: translateY(-10vh) scale(.94); } }
+  .sp-hint { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; transition: opacity .4s ease; pointer-events: none; }
   .sp-hint.show { opacity: 1; }
   .sp-hint span { color: #fff; font-size: 13px; padding: 6px 14px; border-radius: 999px; background: rgba(14,21,41,.5); white-space: nowrap; font-family: var(--body); }
   .sp-bar { position: relative; width: 110px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
   .sp-bar i { position: absolute; top: 0; bottom: 0; width: 40%; background: #F5A800; border-radius: 2px; animation: spslide 1.4s ease-in-out infinite; }
   @keyframes spslide { from { left: -40%; } to { left: 100%; } }
+  @media (prefers-reduced-motion: reduce) {
+    #splash *, #splash.loop *, #splash.out * { animation: none !important; }
+    .sp-bar i { left: 30%; }
+  }
 
 
   /* ---------- loading animations ---------- */
@@ -736,36 +777,86 @@
   .confirm-box .inner { background: var(--milk); border-radius: 22px; padding: 22px; max-width: 360px; width: 100%; }
   .confirm-box p { margin: 0 0 18px; font-weight: 600; font-size: 17px; }
   .confirm-box .row-actions { margin-top: 0; }
+  /* ---------- outline icon system ---------- */
+  :root { --ic: #596985; --ic-on: #FF9F1C; --ic-nav: #DCE3F0; }
+  html[data-theme="dark"] { --ic: #A7B3CB; }
+  .ic { width: 1.25em; height: 1.25em; display: inline-block; vertical-align: -0.25em; flex-shrink: 0; }
+  .ic.sm { width: 14px; height: 14px; }
+  .tabs button svg.ic { width: 26px; height: 26px; color: var(--ic); }
+  .tabs button.active svg.ic { color: var(--ic-on); }
+  .tb-btn, .bell { display: grid; place-items: center; color: var(--ic-nav); }
+  .tb-btn .ic, .bell .ic { width: 22px; height: 22px; }
+  .tb-btn .ic.sunic { color: var(--ic-on); }
+  .row-ic { display: inline-flex; align-items: center; gap: 12px; }
+  .row-ic .ic { width: 24px; height: 24px; color: var(--ic); }
+  .set-row.link b { display: grid; place-items: center; }
+  .set-row.link b .ic { width: 20px; height: 20px; color: var(--ic); }
+  .h-ic { display: flex; align-items: center; gap: 10px; }
+  .h-ic .ic { width: 26px; height: 26px; color: var(--ic); }
+  .links a { display: inline-flex; align-items: center; gap: 6px; }
+  .links a .ic { width: 18px; height: 18px; color: var(--ic); }
+  .btn .ic { width: 22px; height: 22px; vertical-align: -6px; margin-right: 4px; }
+  .btn-line .ic { color: var(--ic); }
+  .row-actions .btn { display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; padding-left: 10px; padding-right: 10px; }
+  .row-actions .btn .ic { margin: 0; }
+  .tile b { display: flex; align-items: center; gap: 8px; }
+  .tile b .ic { width: 24px; height: 24px; color: var(--ic); }
+  .tile.gold b .ic { color: #F5C34A; }
+  .mappick .pin { font-size: 0; }
+  .mappick .pin .ic, .pin-ico .ic { width: 42px; height: 42px; color: var(--ic-on); stroke-width: 2.4; fill: rgba(255,255,255,.9); }
+  .pin-ico { display: grid; place-items: center; }
+  .pin-ico .ic { width: 32px; height: 32px; }
+  .loc-btn .ic { color: var(--ic-on); }
+  .mapmini-bar .ic { width: 18px; height: 18px; }
+  .pw-done .ic { width: 58px; height: 58px; color: var(--ic-on); }
+  .done-box .tick .ic { width: 32px; height: 32px; stroke-width: 2.4; }
+  .g-ico { display: grid; place-items: center; }
+  .g-ico .ic { width: 38px; height: 38px; color: var(--ic-on); }
+  .cc-ico .ic { width: 28px; height: 28px; color: var(--ic-on); }
+  .cc-go { display: grid; place-items: center; }
+  .cc-go .ic { width: 26px; height: 26px; color: var(--ic-on); }
+  .subhead button { display: grid; place-items: center; color: var(--ink); }
+  .subhead button .ic { width: 24px; height: 24px; }
+  .sheet-x { display: grid; place-items: center; }
+  .sheet-x .ic { width: 20px; height: 20px; }
+  .sv-x .ic { width: 26px; height: 26px; }
+  .notice-acts button .ic { width: 18px; height: 18px; }
+  [data-m] .ic { width: 22px; height: 22px; }
+  .cartbar .row-ic .ic { width: 20px; height: 20px; color: var(--ic-on); }
+  .trialcard i .ic, .w-hist .ic, .goldup .ic { width: 18px; height: 18px; vertical-align: -4px; }
+  .stars i { display: inline-flex; }
+  .stars i .ic { width: 18px; height: 18px; color: var(--line); }
+  .stars.sm i .ic { width: 14px; height: 14px; }
+  .stars i.on .ic, .rv-stars button.on .ic { color: var(--ic-on); fill: rgba(255,159,28,.22); }
+  .rv-stars button .ic { width: 32px; height: 32px; color: var(--line); }
+  .stars-s .ic { width: 14px; height: 14px; color: var(--ic-on); vertical-align: -2px; }
+  .notifybtn .ic, .notified .ic { width: 18px; height: 18px; vertical-align: -4px; }
+  .goldstrip .ic { width: 20px; height: 20px; vertical-align: -5px; }
+  .goldhead span .ic { width: 22px; height: 22px; }
+  .gold-list li { display: flex; align-items: center; gap: 10px; }
+  .gold-list li .ic { width: 22px; height: 22px; color: var(--ic-on); }
+  .feenote .ic { width: 17px; height: 17px; color: var(--ic); vertical-align: -3px; }
+  .freebar .ic { width: 18px; height: 18px; vertical-align: -4px; }
+  .empty .ic { width: 20px; height: 20px; color: var(--leaf); vertical-align: -4px; }
+  .inb-code .ic { width: 14px; height: 14px; vertical-align: -2px; }
+  .chips .ic { width: 18px; height: 18px; vertical-align: -4px; margin-right: 2px; }
+  .chat-attach { color: var(--ic); }
+  .chat-attach .ic { width: 22px; height: 22px; }
+  .chat-send { display: grid; place-items: center; }
+  .chat-send .ic { width: 20px; height: 20px; }
+  .pw-eye .ic { width: 22px; height: 22px; }
+  .q .ic.sm { width: 13px; height: 13px; stroke-width: 2.4; }
 </style>
 </head>
 <body>
 <div id="splash" role="img" aria-label="RD Dairy">
-<svg viewBox="0 0 300 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <radialGradient id="cBg" cx="50%" cy="60%" r="80%"><stop offset="0" stop-color="#2A3B66"/><stop offset=".6" stop-color="#17213F"/><stop offset="1" stop-color="#0C1226"/></radialGradient>
-    <radialGradient id="cPool" cx="50%" cy="30%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#F3EBDC"/><stop offset="1" stop-color="#CFC2A6"/></radialGradient>
-    <radialGradient id="cDrop" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#F6EFE2"/><stop offset="1" stop-color="#D9CCB2"/></radialGradient>
-    <linearGradient id="cTine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E7DCC6"/></linearGradient>
-    <filter id="cB" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
-    <clipPath id="cLogoClip"><circle cx="150" cy="250" r="38"/></clipPath>
-  </defs>
-  <rect x="-200" y="-200" width="700" height="1020" fill="url(#cBg)"/>
-  <ellipse cx="150" cy="420" rx="150" ry="40" fill="#FFF6E2" opacity=".08" filter="url(#cB)"/>
-  <ellipse id="cPoolE" cx="150" cy="420" rx="135" ry="26" fill="url(#cPool)"/>
-  <g id="cRipples" fill="none" stroke="#fff"></g>
-  <g id="cCrown"></g>
-  <g id="cDrops"></g>
-  <g id="cLogo" opacity="0">
-    <circle cx="150" cy="250" r="56" fill="#FFF6E2" opacity=".18" filter="url(#cB)"/>
-    <circle cx="150" cy="250" r="42" fill="#fff"/>
-    <image href="data:image/png;base64,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" x="112" y="212" width="76" height="76" clip-path="url(#cLogoClip)" preserveAspectRatio="xMidYMid slice"/>
-  </g>
-  <g id="cWord" opacity="0">
-    <text x="150" y="520" text-anchor="middle" font-family="Bricolage Grotesque, Trebuchet MS, sans-serif" font-weight="800" font-size="38" fill="#fff" letter-spacing="-0.5">RD <tspan fill="#F5A800">Dairy</tspan></text>
-    <text x="150" y="546" text-anchor="middle" font-family="Bricolage Grotesque, Trebuchet MS, sans-serif" font-size="14" fill="#fff" fill-opacity=".7">Pure A2 milk, nothing added</text>
-  </g>
-</svg>
-<div class="sp-hint" id="spHint"><span id="spHintText">Getting your deliveries ready</span><div class="sp-bar"><i></i></div></div>
+  <div class="sp-stage">
+    <div class="sp-drop"><img class="sp-logo" src="data:image/png;base64,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" alt=""></div>
+    <div class="sp-shadow"></div>
+    <div class="sp-name">RD <b>Dairy</b></div>
+    <div class="sp-tag">Fresh from the farm, never far</div>
+  </div>
+  <div class="sp-hint" id="spHint"><span id="spHintText">Getting your deliveries ready</span><div class="sp-bar"><i></i></div></div>
 </div>
 <div id="app"></div>
 
@@ -774,84 +865,40 @@
    RD Dairy customer app
    ========================================================= */
 /* =========================================================
-   OPENING ANIMATION: milk crown
-   Plays its intro, keeps splashing while the app loads, then hands over.
+   OPENING ANIMATION: logo drop
+   Logo drops in, keeps hopping while the app loads, then hands over.
    ========================================================= */
 const SPLASH = (() => {
   const el = document.getElementById("splash");
-  if (!el) return { ready() {} };
-  const svg = el.querySelector("svg"), hint = document.getElementById("spHint");
-  const q = (id) => svg.querySelector("#" + id);
+  if (!el) return { ready() {}, setHint() {} };
+  const hint = document.getElementById("spHint");
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  const lerp = (a, b, k) => a + (b - a) * k;
-  const INTRO = 1.6, OUTRO = 1.1, P = 1.5, MAX_WAIT = 20;
+  const INTRO = 1.6, MAX_WAIT = 20000;
   const t0 = performance.now();
-  let readyAt = null, outroAt = null, raf = 0, done = false;
-
-  function crownCycle(p, strength) {
-    let crown = "", ripples = "", drops = "";
-    if (p < .32) {
-      const y = lerp(-30, 404, Math.pow(p / .32, 2));
-      drops += `<ellipse cx="150" cy="${y.toFixed(1)}" rx="9" ry="${(12 + p * 10).toFixed(1)}" fill="url(#cDrop)"/>`;
-    } else {
-      const k = (p - .32) / .68;
-      const h = Math.sin(Math.min(1, k * 1.4) * Math.PI) * 70 * strength;
-      const rad = 22 + k * 26, n = 11;
-      if (h > 2) {
-        let wall = `M${150 - rad} 412 `;
-        for (let i = 0; i <= n; i++) { const a = Math.PI + (i / n) * Math.PI; wall += `L${(150 + rad * Math.cos(a)).toFixed(1)} ${(412 - h * (.55 + .1 * Math.sin(i * 1.7)) + 6 * Math.sin(a)).toFixed(1)} `; }
-        wall += `L${150 + rad} 412 Q150 426 ${150 - rad} 412 Z`;
-        crown += `<path d="${wall}" fill="url(#cTine)" opacity=".96"/>`;
-        for (let i = 0; i <= n; i++) {
-          const a = Math.PI + (i / n) * Math.PI, x = 150 + rad * Math.cos(a) * 1.04;
-          const base = 412 - h * (.55 + .1 * Math.sin(i * 1.7)) + 6 * Math.sin(a);
-          const tip = base - h * (.35 + .15 * ((i * 7) % 3) / 2);
-          crown += `<path d="M${(x - 3).toFixed(1)} ${base.toFixed(1)} Q${x.toFixed(1)} ${tip.toFixed(1)} ${(x + 3).toFixed(1)} ${base.toFixed(1)} Z" fill="url(#cTine)"/>`;
-          if (k > .25 && k < .8) drops += `<circle cx="${(x + (x - 150) * k * .6).toFixed(1)}" cy="${(tip - 10 - (k - .25) * 60 + Math.pow(k * 3, 2) * 6).toFixed(1)}" r="${(2.4 - k * 2).toFixed(1)}" fill="#FFFDF7"/>`;
-        }
-      }
-      for (let r = 0; r < 3; r++) { const rq = k - r * .18; if (rq > 0 && rq < 1) ripples += `<ellipse cx="150" cy="420" rx="${(20 + rq * 120).toFixed(1)}" ry="${(4 + rq * 22).toFixed(1)}" stroke-opacity="${(.5 * (1 - rq)).toFixed(2)}" stroke-width="${(2 - rq).toFixed(1)}"/>`; }
-    }
-    q("cCrown").innerHTML = crown; q("cRipples").innerHTML = ripples; q("cDrops").innerHTML = drops;
-  }
-
-  function finish() {
-    if (done) return; done = true;
-    cancelAnimationFrame(raf);
+  let done = false;
+  const loopTimer = setTimeout(() => { if (!reduce) el.classList.add("loop"); }, INTRO * 1000);
+  const hintTimer = setTimeout(() => hint && hint.classList.add("show"), (INTRO + 1.4) * 1000);
+  const finish = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(loopTimer); clearTimeout(hintTimer);
+    hint && hint.classList.remove("show");
+    el.classList.remove("loop");
     el.classList.add("out");
-    setTimeout(() => el.remove(), 450);
-  }
-
-  function frame(now) {
-    const t = (now - t0) / 1000;
-    if (readyAt === null && t > MAX_WAIT) readyAt = t;
-    if (readyAt !== null && outroAt === null && t >= INTRO) outroAt = Math.max(t, readyAt);
-    const phase = outroAt === null ? (t < INTRO ? "intro" : "loop") : "outro";
-    const to = outroAt === null ? 0 : t - outroAt;
-    if (phase === "outro") crownCycle(clamp(.32 + to / 1.1 * .68, 0, 1), 1.15); else crownCycle((t % P) / P, 1);
-    q("cPoolE").setAttribute("ry", (26 + 1.5 * Math.sin(t * 3)).toFixed(1));
-    q("cLogo").setAttribute("opacity", (phase === "outro" ? 1 : clamp((t - 1) / .6, 0, 1)).toFixed(2));
-    q("cLogo").setAttribute("transform", `translate(0 ${(6 * Math.sin(t * 1.6)).toFixed(1)})`);
-    q("cWord").setAttribute("opacity", clamp((t - 1.2) / .6, 0, 1).toFixed(2));
-    hint.classList.toggle("show", phase === "loop" && t > INTRO + 1.4);
-    if (phase === "outro" && to > OUTRO) return finish();
-    raf = requestAnimationFrame(frame);
-  }
-
-  if (reduce) {
-    q("cLogo").setAttribute("opacity", 1); q("cWord").setAttribute("opacity", 1);
-    return { ready() { setTimeout(finish, 600); } };
-  }
-  raf = requestAnimationFrame(frame);
+    setTimeout(() => el.remove(), reduce ? 200 : 700);
+  };
+  const safety = setTimeout(finish, MAX_WAIT);
   return {
-    ready() { if (readyAt === null) readyAt = (performance.now() - t0) / 1000; },
+    ready() {
+      clearTimeout(safety);
+      const wait = Math.max(0, INTRO * 1000 - (performance.now() - t0));
+      setTimeout(finish, reduce ? 300 : wait);
+    },
     setHint(text) { const s = document.getElementById("spHintText"); if (s) s.textContent = text; },
   };
 })();
 
-const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://zfdfsewzcwufhsyhqvnn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_MRgQiOb1LZf0rYynRXpDAg_gK4dMJF2";
 
 const API = SUPABASE_URL.trim().replace(/\/(rest|functions)\/v1.*$/, "").replace(/\/+$/, "") + "/functions/v1";
@@ -890,6 +937,53 @@ const locale = () => (LANGS.find((l) => l.code === LANG) || LANGS[0]).locale;
 
 const T = {
   ta: {
+    "Your WhatsApp number": "உங்கள் WhatsApp எண்",
+    "Continue": "தொடரவும்",
+    "Checking…": "சரிபார்க்கிறோம்…",
+    "Enter your 10 digit WhatsApp number.": "உங்கள் 10 இலக்க WhatsApp எண்ணை உள்ளிடவும்.",
+    "Welcome back": "மீண்டும் வருக",
+    "Password": "கடவுச்சொல்",
+    "Show password": "கடவுச்சொல்லைக் காட்டு",
+    "Enter your password.": "உங்கள் கடவுச்சொல்லை உள்ளிடவும்.",
+    "Forgot password?": "கடவுச்சொல் மறந்துவிட்டதா?",
+    "Forgot your password?": "கடவுச்சொல் மறந்துவிட்டதா?",
+    "RD Dairy will send a new password to your WhatsApp on +91 {phone}.": "+91 {phone} WhatsApp க்கு RD Dairy புதிய கடவுச்சொல்லை அனுப்பும்.",
+    "Send me a new password": "புதிய கடவுச்சொல்லை அனுப்புங்கள்",
+    "Back to log in": "உள்நுழைவுக்குத் திரும்பு",
+    "Request sent": "கோரிக்கை அனுப்பப்பட்டது",
+    "RD Dairy will send your new password on WhatsApp shortly. Log in with it, then set your own.": "RD Dairy விரைவில் WhatsApp இல் புதிய கடவுச்சொல்லை அனுப்பும். அதைக் கொண்டு உள்நுழைந்து, உங்கள் சொந்த கடவுச்சொல்லை அமைக்கவும்.",
+    "Welcome, {name}": "வருக, {name}",
+    "Welcome to RD Dairy": "RD Dairy க்கு வருக",
+    "Set your own password": "உங்கள் சொந்த கடவுச்சொல்லை அமைக்கவும்",
+    "Set a password for your RD Dairy account on +91 {phone}.": "+91 {phone} இல் உள்ள உங்கள் RD Dairy கணக்கிற்கு கடவுச்சொல் அமைக்கவும்.",
+    "Choose a password only you know. You will use it next time you log in.": "உங்களுக்கு மட்டும் தெரிந்த கடவுச்சொல்லைத் தேர்ந்தெடுக்கவும். அடுத்த முறை உள்நுழைய இதைப் பயன்படுத்துவீர்கள்.",
+    "New password": "புதிய கடவுச்சொல்",
+    "At least 6 letters or numbers": "குறைந்தது 6 எழுத்துகள் அல்லது எண்கள்",
+    "Type it again": "மீண்டும் தட்டச்சு செய்யவும்",
+    "Create password": "கடவுச்சொல்லை உருவாக்கு",
+    "Save password": "கடவுச்சொல்லைச் சேமி",
+    "Saving…": "சேமிக்கிறோம்…",
+    "Use at least 6 characters for your password": "கடவுச்சொல்லுக்கு குறைந்தது 6 எழுத்துகளைப் பயன்படுத்தவும்",
+    "The two passwords are different. Please type them again.": "இரண்டு கடவுச்சொற்களும் வேறுபடுகின்றன. மீண்டும் தட்டச்சு செய்யவும்.",
+    "Password saved": "கடவுச்சொல் சேமிக்கப்பட்டது",
+    "You're new to RD Dairy. Create your profile and start ordering today.": "நீங்கள் RD Dairy க்குப் புதியவர். உங்கள் சுயவிவரத்தை உருவாக்கி இன்றே ஆர்டர் செய்யத் தொடங்குங்கள்.",
+    "Create your profile": "உங்கள் சுயவிவரத்தை உருவாக்கவும்",
+    "WhatsApp number": "WhatsApp எண்",
+    "Create a password": "கடவுச்சொல்லை உருவாக்கவும்",
+    "Create my profile": "என் சுயவிவரத்தை உருவாக்கு",
+    "Creating your profile…": "உங்கள் சுயவிவரத்தை உருவாக்குகிறோம்…",
+    "Order received": "ஆர்டர் பெறப்பட்டது",
+    "RD Dairy will confirm this order for your monthly bill shortly. You'll get a notification.": "இந்த ஆர்டரை உங்கள் மாதாந்திர பில்லில் சேர்க்க RD Dairy விரைவில் உறுதிப்படுத்தும். உங்களுக்கு அறிவிப்பு வரும்.",
+    "Waiting for RD Dairy": "RD Dairy உறுதிக்காக",
+    "Not added to bill": "பில்லில் சேர்க்கப்படவில்லை",
+    "Monthly bill, confirming": "மாதாந்திர பில், உறுதிப்படுத்துகிறோம்",
+    "Start a subscription and your deliveries and bills appear here": "சந்தா தொடங்குங்கள், உங்கள் டெலிவரிகளும் பில்களும் இங்கே தோன்றும்",
+    "Fresh A2 milk every morning, one monthly bill, and a calendar to pause or add milk any day.": "தினமும் காலையில் புதிய A2 பால், ஒரே மாதாந்திர பில், எந்த நாளும் நிறுத்த அல்லது கூடுதல் பால் சேர்க்க காலண்டர்.",
+    "Start a subscription": "சந்தா தொடங்கு",
+    "Start a subscription and your monthly bills appear here": "சந்தா தொடங்குங்கள், உங்கள் மாதாந்திர பில்கள் இங்கே தோன்றும்",
+    "Your bills, payments and receipts all stay in one place.": "உங்கள் பில்கள், கட்டணங்கள், ரசீதுகள் அனைத்தும் ஒரே இடத்தில்.",
+    "Change password": "கடவுச்சொல்லை மாற்று",
+    "Current password": "தற்போதைய கடவுச்சொல்",
     "RD Dairy confirms how you pay for repeat items.": "தொடர் பொருட்களுக்கான கட்டண முறையை RD Dairy உறுதிசெய்யும்.",
     "Fresh milk is on its way": "புதிய பால் வந்துகொண்டிருக்கிறது",
     "Shaking things up": "கொஞ்சம் குலுக்குகிறோம்",
@@ -1120,7 +1214,7 @@ const T = {
     "Chat with RD Dairy": "RD Dairy உடன் அரட்டை",
     "Get help in a few taps, or chat with our team.": "சில தொடுதல்களில் உதவி பெறுங்கள், அல்லது எங்கள் குழுவுடன் பேசுங்கள்.",
     "RD Dairy support": "RD Dairy உதவி",
-    "Hi {name} 👋 How can we help you today?": "வணக்கம் {name} 👋 இன்று உங்களுக்கு எப்படி உதவலாம்?",
+    "Hi {name} How can we help you today?": "வணக்கம் {name} இன்று உங்களுக்கு எப்படி உதவலாம்?",
     "Delivery issue": "டெலிவரி பிரச்சனை",
     "Bill or payment": "பில் அல்லது கட்டணம்",
     "Change address": "முகவரி மாற்றம்",
@@ -1449,6 +1543,53 @@ const T = {
   },
 
   hi: {
+    "Your WhatsApp number": "आपका WhatsApp नंबर",
+    "Continue": "आगे बढ़ें",
+    "Checking…": "जाँच रहे हैं…",
+    "Enter your 10 digit WhatsApp number.": "अपना 10 अंकों का WhatsApp नंबर डालें।",
+    "Welcome back": "फिर से स्वागत है",
+    "Password": "पासवर्ड",
+    "Show password": "पासवर्ड दिखाएँ",
+    "Enter your password.": "अपना पासवर्ड डालें।",
+    "Forgot password?": "पासवर्ड भूल गए?",
+    "Forgot your password?": "पासवर्ड भूल गए?",
+    "RD Dairy will send a new password to your WhatsApp on +91 {phone}.": "RD Dairy +91 {phone} के WhatsApp पर नया पासवर्ड भेजेगा।",
+    "Send me a new password": "मुझे नया पासवर्ड भेजें",
+    "Back to log in": "लॉग इन पर वापस",
+    "Request sent": "अनुरोध भेजा गया",
+    "RD Dairy will send your new password on WhatsApp shortly. Log in with it, then set your own.": "RD Dairy जल्द ही WhatsApp पर नया पासवर्ड भेजेगा। उससे लॉग इन करें, फिर अपना पासवर्ड बनाएँ।",
+    "Welcome, {name}": "स्वागत है, {name}",
+    "Welcome to RD Dairy": "RD Dairy में स्वागत है",
+    "Set your own password": "अपना पासवर्ड बनाएँ",
+    "Set a password for your RD Dairy account on +91 {phone}.": "+91 {phone} वाले अपने RD Dairy खाते के लिए पासवर्ड बनाएँ।",
+    "Choose a password only you know. You will use it next time you log in.": "ऐसा पासवर्ड चुनें जो सिर्फ़ आप जानते हों। अगली बार लॉग इन में यही काम आएगा।",
+    "New password": "नया पासवर्ड",
+    "At least 6 letters or numbers": "कम से कम 6 अक्षर या अंक",
+    "Type it again": "फिर से लिखें",
+    "Create password": "पासवर्ड बनाएँ",
+    "Save password": "पासवर्ड सहेजें",
+    "Saving…": "सहेज रहे हैं…",
+    "Use at least 6 characters for your password": "पासवर्ड में कम से कम 6 अक्षर रखें",
+    "The two passwords are different. Please type them again.": "दोनों पासवर्ड अलग हैं। कृपया फिर से लिखें।",
+    "Password saved": "पासवर्ड सहेजा गया",
+    "You're new to RD Dairy. Create your profile and start ordering today.": "आप RD Dairy में नए हैं। अपनी प्रोफ़ाइल बनाएँ और आज ही ऑर्डर शुरू करें।",
+    "Create your profile": "अपनी प्रोफ़ाइल बनाएँ",
+    "WhatsApp number": "WhatsApp नंबर",
+    "Create a password": "पासवर्ड बनाएँ",
+    "Create my profile": "मेरी प्रोफ़ाइल बनाएँ",
+    "Creating your profile…": "आपकी प्रोफ़ाइल बना रहे हैं…",
+    "Order received": "ऑर्डर मिल गया",
+    "RD Dairy will confirm this order for your monthly bill shortly. You'll get a notification.": "RD Dairy जल्द ही इस ऑर्डर को आपके मासिक बिल के लिए पक्का करेगा। आपको सूचना मिलेगी।",
+    "Waiting for RD Dairy": "RD Dairy की पुष्टि बाकी",
+    "Not added to bill": "बिल में नहीं जोड़ा गया",
+    "Monthly bill, confirming": "मासिक बिल, पुष्टि हो रही है",
+    "Start a subscription and your deliveries and bills appear here": "सदस्यता शुरू करें, आपकी डिलीवरी और बिल यहाँ दिखेंगे",
+    "Fresh A2 milk every morning, one monthly bill, and a calendar to pause or add milk any day.": "हर सुबह ताज़ा A2 दूध, एक मासिक बिल, और किसी भी दिन रोकने या दूध बढ़ाने के लिए कैलेंडर।",
+    "Start a subscription": "सदस्यता शुरू करें",
+    "Start a subscription and your monthly bills appear here": "सदस्यता शुरू करें, आपके मासिक बिल यहाँ दिखेंगे",
+    "Your bills, payments and receipts all stay in one place.": "आपके बिल, भुगतान और रसीदें सब एक जगह।",
+    "Change password": "पासवर्ड बदलें",
+    "Current password": "मौजूदा पासवर्ड",
     "RD Dairy confirms how you pay for repeat items.": "बार बार वाले सामान का भुगतान कैसे होगा, RD Dairy आपसे पक्का करेगा।",
     "Fresh milk is on its way": "ताज़ा दूध रास्ते में है",
     "Shaking things up": "थोड़ा हिला रहे हैं",
@@ -1679,7 +1820,7 @@ const T = {
     "Chat with RD Dairy": "RD Dairy से चैट करें",
     "Get help in a few taps, or chat with our team.": "कुछ ही टैप में मदद पाएँ, या हमारी टीम से चैट करें।",
     "RD Dairy support": "RD Dairy सहायता",
-    "Hi {name} 👋 How can we help you today?": "नमस्ते {name} 👋 आज हम आपकी क्या मदद करें?",
+    "Hi {name} How can we help you today?": "नमस्ते {name} आज हम आपकी क्या मदद करें?",
     "Delivery issue": "डिलीवरी की समस्या",
     "Bill or payment": "बिल या भुगतान",
     "Change address": "पता बदलें",
@@ -2085,7 +2226,7 @@ function openMapPicker(current, onPick) {
   const sheet = openSheet(`
     <h3>${esc(t("Set your delivery location"))}</h3>
     <p class="sub">${esc(t("Move the map so the pin sits on your gate."))}</p>
-    <div class="mappick"><div id="pickmap"></div><div class="pin" aria-hidden="true">📍</div>
+    <div class="mappick"><div id="pickmap"></div><div class="pin" aria-hidden="true">${ic("pin")}</div>
       <button class="mylocbtn" id="myloc">◎ ${esc(t("Use my current location"))}</button></div>
     <div class="stack">
       <button class="btn btn-main btn-block" id="pickok">${esc(t("Confirm location"))}</button>
@@ -2115,14 +2256,14 @@ function mapPinBlock(container, state, onChange) {
   const draw = () => {
     const ll = latLngFromLink(state.map_link);
     container.innerHTML = ll
-      ? `<div class="mapmini"><div class="mm"></div><div class="mapmini-bar"><span>✓ ${esc(t("Location shared"))}</span><button type="button" data-set>${esc(t("Change"))}</button></div></div>`
-      : `<button type="button" class="loc-btn" data-set>📍 ${esc(t("Set your location on the map"))}</button><div class="su-help">${esc(t("Helps our delivery partner find your home."))}</div>`;
+      ? `<div class="mapmini"><div class="mm"></div><div class="mapmini-bar"><span>${ic("check")} ${esc(t("Location shared"))}</span><button type="button" data-set>${esc(t("Change"))}</button></div></div>`
+      : `<button type="button" class="loc-btn" data-set>${ic("pin")} ${esc(t("Set your location on the map"))}</button><div class="su-help">${esc(t("Helps our delivery partner find your home."))}</div>`;
     container.querySelector("[data-set]").onclick = () => openMapPicker(state.map_link, (link) => { state.map_link = link; draw(); onChange && onChange(link); });
     if (ll) loadLeaflet().then(() => {
       const el = container.querySelector(".mm"); if (!el) return;
       const m = window.L.map(el, { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, attributionControl: false }).setView(ll, 16);
       tileLayer().addTo(m);
-      window.L.marker(ll, { icon: window.L.divIcon({ className: "pin-ico", html: "📍", iconSize: [32, 32], iconAnchor: [16, 30] }) }).addTo(m);
+      window.L.marker(ll, { icon: window.L.divIcon({ className: "pin-ico", html: ic("pin"), iconSize: [32, 32], iconAnchor: [16, 30] }) }).addTo(m);
       setTimeout(() => m.invalidateSize(), 200);
     }).catch(() => {});
   };
@@ -2133,6 +2274,56 @@ const locationBlock = (c, s) => mapPinBlock(c, s);
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
+const ICONS = {
+ "home": "<path d=\"M15 21v-7a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v7\"/><path d=\"M3 10a2 2 0 0 1 .7-1.53l7-6a2 2 0 0 1 2.6 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>",
+ "shop": "<rect x=\"4\" y=\"8\" width=\"16\" height=\"13\" rx=\"3\"/><path d=\"M8.5 8V6.5a3.5 3.5 0 0 1 7 0V8\"/>",
+ "bills": "<path d=\"M6.5 3h11A1.5 1.5 0 0 1 19 4.5V21l-2.33-1.4L14.33 21 12 19.6 9.67 21l-2.34-1.4L5 21V4.5A1.5 1.5 0 0 1 6.5 3z\"/><path d=\"M9 8h6\"/><path d=\"M9 12h4\"/>",
+ "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4.5 20.5a7.5 7.5 0 0 1 15 0\"/>",
+ "moon": "<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>",
+ "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>",
+ "settings": "<path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>",
+ "bell": "<path d=\"M10.27 21a2 2 0 0 0 3.46 0\"/><path d=\"M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33\"/>",
+ "luggage": "<rect x=\"5\" y=\"7\" width=\"14\" height=\"14\" rx=\"2.5\"/><path d=\"M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7\"/><path d=\"M9 11v6\"/>",
+ "calendar": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2.5\"/><path d=\"M3 10h18\"/><path d=\"M8 14h.01\"/><path d=\"M12 14h.01\"/><path d=\"M16 14h.01\"/><path d=\"M8 18h.01\"/><path d=\"M12 18h.01\"/><path d=\"M16 18h.01\"/>",
+ "gift": "<rect x=\"3\" y=\"8\" width=\"18\" height=\"4\" rx=\"1\"/><path d=\"M12 8v13\"/><path d=\"M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7\"/><path d=\"M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5\"/>",
+ "tractor": "<path d=\"m10 11 11 .9a1 1 0 0 1 .8 1.1l-.67 4.16a1 1 0 0 1-.98.84H20\"/><path d=\"M16 18h-5\"/><path d=\"M18 5a1 1 0 0 0-1 1v5.57\"/><path d=\"M3 4h8.13a1 1 0 0 1 .99.86L13 11.25\"/><path d=\"M4 11V4\"/><path d=\"M7 15h.01\"/><path d=\"M8 10.1V4\"/><circle cx=\"18\" cy=\"18\" r=\"2\"/><circle cx=\"7\" cy=\"15\" r=\"5\"/>",
+ "globe": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/>",
+ "sunmoon": "<path d=\"M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.9 4.9 1.4 1.4\"/><path d=\"m17.7 17.7 1.4 1.4\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.3 17.7-1.4 1.4\"/><path d=\"m19.1 4.9-1.4 1.4\"/>",
+ "headset": "<path d=\"M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z\"/><path d=\"M21 16v2a4 4 0 0 1-4 4h-5\"/>",
+ "chat": "<path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/><path d=\"M8 10h.01\"/><path d=\"M12 10h.01\"/><path d=\"M16 10h.01\"/>",
+ "truck": "<path d=\"M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2\"/><path d=\"M15 18H9\"/><path d=\"M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14\"/><circle cx=\"17\" cy=\"18\" r=\"2\"/><circle cx=\"7\" cy=\"18\" r=\"2\"/>",
+ "x": "<path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/>",
+ "right": "<path d=\"m9 18 6-6-6-6\"/>",
+ "left": "<path d=\"m15 18-6-6 6-6\"/>",
+ "down": "<path d=\"m6 9 6 6 6-6\"/>",
+ "arrow": "<path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/>",
+ "file": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>",
+ "pin": "<path d=\"M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0\"/><circle cx=\"12\" cy=\"10\" r=\"3\"/>",
+ "check": "<path d=\"M20 6 9 17l-5-5\"/>",
+ "checkcircle": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/>",
+ "sparkles": "<path d=\"M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0l1.58 6.14a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96l-6.14 1.58a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/>",
+ "star": "<path d=\"M11.53 2.3a.53.53 0 0 1 .95 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.76a.53.53 0 0 1 .3.9l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.91l5.16-.75a2.12 2.12 0 0 0 1.6-1.16z\"/>",
+ "badgecheck": "<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\"/><path d=\"m9 12 2 2 4-4\"/>",
+ "percent": "<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\"/><path d=\"m15 9-6 6\"/><path d=\"M9 9h.01\"/><path d=\"M15 15h.01\"/>",
+ "zap": "<path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"/>",
+ "tag": "<path d=\"M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\"1\"/>",
+ "milk": "<path d=\"M8 2h8\"/><path d=\"M9 2v2.79a4 4 0 0 1-.67 2.22l-.66.98A4 4 0 0 0 7 10.21V20a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9.79a4 4 0 0 0-.67-2.22l-.66-.98A4 4 0 0 1 15 4.79V2\"/><path d=\"M7 15a6.47 6.47 0 0 1 5 0 6.47 6.47 0 0 0 5 0\"/>",
+ "package": "<path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"/><path d=\"M12 22V12\"/><path d=\"m3.3 7 7.7 4.73a2 2 0 0 0 2 0L20.7 7\"/><path d=\"m7.5 4.27 9 5.15\"/>",
+ "camera": "<path d=\"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z\"/><circle cx=\"12\" cy=\"13\" r=\"3\"/>",
+ "send": "<path d=\"M3.71 3.05a.5.5 0 0 0-.68.63l2.84 7.62a2 2 0 0 1 0 1.4l-2.84 7.62a.5.5 0 0 0 .68.63l18-8.5a.5.5 0 0 0 0-.9z\"/><path d=\"M6 12h16\"/>",
+ "mail": "<rect width=\"20\" height=\"16\" x=\"2\" y=\"4\" rx=\"2\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>",
+ "phone": "<path d=\"M13.83 16.57a1 1 0 0 0 1.21-.3l.36-.47A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.47.35a1 1 0 0 0-.29 1.23 14 14 0 0 0 6.39 6.39\"/>",
+ "eye": "<path d=\"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>",
+ "cloudsun": "<path d=\"M12 2v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"M20 12h2\"/><path d=\"m19.07 4.93-1.41 1.41\"/><path d=\"M15.95 12.65a4 4 0 0 0-5.93-4.13\"/><path d=\"M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z\"/>",
+ "cloud": "<path d=\"M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z\"/>",
+ "fog": "<path d=\"M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24\"/><path d=\"M16 17H7\"/><path d=\"M17 21H9\"/>",
+ "rain": "<path d=\"M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24\"/><path d=\"M16 14v6\"/><path d=\"M8 14v6\"/><path d=\"M12 16v6\"/>",
+ "snow": "<path d=\"M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24\"/><path d=\"M8 15h.01\"/><path d=\"M8 19h.01\"/><path d=\"M12 17h.01\"/><path d=\"M12 21h.01\"/><path d=\"M16 15h.01\"/><path d=\"M16 19h.01\"/>",
+ "drizzle": "<path d=\"M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24\"/><path d=\"M8 19v1\"/><path d=\"M8 14v1\"/><path d=\"M16 19v1\"/><path d=\"M16 14v1\"/><path d=\"M12 21v1\"/><path d=\"M12 16v1\"/>",
+ "storm": "<path d=\"M6 16.33A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.97\"/><path d=\"m13 12-3 5h4l-3 5\"/>"
+};
+// One outline icon: ic("truck"), ic("bell", "lg"). Colour comes from the text colour around it.
+const ic = (name, cls = "") => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
 const esc = (x) => String(x ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtQty = (q) => {
   q = Number(q || 0);
@@ -2281,7 +2472,7 @@ function themePicker(onChange) {
   const wrap = document.createElement("div");
   wrap.className = "langs";
   const cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-  wrap.innerHTML = [["light", "☀️ ", "Light"], ["dark", "🌙 ", "Dark"]]
+  wrap.innerHTML = [["light", ic("sun") + " ", "Light"], ["dark", ic("moon") + " ", "Dark"]]
     .map(([v, ic, l]) => `<button data-theme-set="${v}" class="${cur === v ? "on" : ""}">${ic}${esc(t(l))}</button>`).join("");
   wrap.addEventListener("click", async (e) => {
     const b = e.target.closest("[data-theme-set]"); if (!b) return;
@@ -2330,15 +2521,15 @@ function upiAppButtons(link, amountLabel) {
 /* ---------- Settings: language, theme, help ---------- */
 function openSettings() {
   const sheet = openSheet(`
-    <h3>⚙️ ${esc(t("Settings"))}</h3>
-    <div class="set-row"><span>🌐 ${esc(t("Language"))}</span>
+    <h3 class="h-ic">${ic("settings")} ${esc(t("Settings"))}</h3>
+    <div class="set-row"><span class="row-ic">${ic("globe")} ${esc(t("Language"))}</span>
       <select id="setLang">${LANGS.map((l) => `<option value="${l.code}" ${l.code === LANG ? "selected" : ""}>${l.label}</option>`).join("")}</select></div>
-    <div class="set-row"><span>${document.documentElement.dataset.theme === "dark" ? "🌙" : "☀️"} ${esc(t("Dark mode"))}</span>
+    <div class="set-row"><span class="row-ic">${ic("sunmoon")} ${esc(t("Dark mode"))}</span>
       <label class="switch"><input type="checkbox" id="setDark" ${document.documentElement.dataset.theme === "dark" ? "checked" : ""}/><i></i></label></div>
-    <button class="set-row link" data-help><span>🎧 ${esc(t("Help and support"))}</span><b>›</b></button>
-    <button class="set-row link" data-chat><span>💬 ${esc(t("Chat with RD Dairy"))}${S.home?.chat_unread ? ` <i class="cc-badge" style="position:static">${S.home.chat_unread}</i>` : ""}</span><b>›</b></button>
-    <button class="set-row link" data-issue><span>🚚 ${esc(t("Report a delivery problem"))}</span><b>›</b></button>
-    <div class="links" style="margin-top:16px"><a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${esc(t("Privacy policy"))}</a><a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${esc(t("Terms of service"))}</a></div>`);
+    <button class="set-row link" data-help><span class="row-ic">${ic("headset")} ${esc(t("Help and support"))}</span><b>${ic("right")}</b></button>
+    <button class="set-row link" data-chat><span class="row-ic">${ic("chat")} ${esc(t("Chat with RD Dairy"))}${S.home?.chat_unread ? ` <i class="cc-badge" style="position:static">${S.home.chat_unread}</i>` : ""}</span><b>${ic("right")}</b></button>
+    <button class="set-row link" data-issue><span class="row-ic">${ic("truck")} ${esc(t("Report a delivery problem"))}</span><b>${ic("right")}</b></button>
+    <div class="links" style="margin-top:16px"><a href="https://rddairy.com/privacy.html" target="_blank" rel="noopener">${ic("file")} ${esc(t("Privacy policy"))}</a><a href="https://rddairy.com/terms.html" target="_blank" rel="noopener">${ic("file")} ${esc(t("Terms of service"))}</a></div>`);
   $("#setLang", sheet).onchange = async (e) => { await setLang(e.target.value); closeSheet(); shell(); go(S.tab || "home"); };
   $("#setDark", sheet).onchange = async (e) => { await setTheme(e.target.checked ? "dark" : "light"); closeSheet(); shell(); go(S.tab || "home"); };
   $("[data-help]", sheet).onclick = () => { closeSheet(); S.chatOpen = false; go("help"); };
@@ -2371,17 +2562,32 @@ function bottleSVG(qty, usual) {
    ========================================================= */
 function renderLogin(step = "phone", err = "") {
   const app = $("#app");
+  const back = `<button type="button" class="back" id="change">${esc(t("Use a different number"))}</button>`;
+  const eye = (id) => `<button type="button" class="pw-eye" data-eye="${id}" aria-label="${esc(t("Show password"))}">${ic("eye")}</button>`;
+  const bindEyes = () => app.querySelectorAll("[data-eye]").forEach((b) => b.onclick = () => {
+    const i = $("#" + b.dataset.eye); i.type = i.type === "password" ? "text" : "password";
+  });
+  const finish = async (r) => {
+    S.token = r.token;
+    await store.set("rd_token", r.token);
+    if (r.must_change) return renderLogin("change");
+    await startApp();
+    if (r.name) toast(t("Welcome, {name}", { name: r.name }));
+  };
+
   if (step === "phone") {
     app.innerHTML = `
       <section class="login">
         <div class="login-top">${brandHTML()}<div id="lp"></div></div>
         <p class="lead">${esc(t("Fresh A2 milk at your door every morning."))}</p>
-        <label for="ph">${esc(t("Your mobile number"))}</label>
-        <div class="phone-row">
-          <div class="cc">+91</div>
-          <input id="ph" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" value="${esc(S.phone)}" />
-        </div>
-        <button class="btn btn-main btn-block" id="send">${esc(t("Send code on WhatsApp"))}</button>
+        <form id="lf" autocomplete="on">
+          <label for="ph">${esc(t("Your WhatsApp number"))}</label>
+          <div class="phone-row">
+            <div class="cc">+91</div>
+            <input id="ph" name="username" type="tel" inputmode="numeric" autocomplete="username" maxlength="10" value="${esc(S.phone)}" />
+          </div>
+          <button class="btn btn-main btn-block" id="send">${esc(t("Continue"))}</button>
+        </form>
         <div class="err" role="alert">${esc(err)}</div>
         <div class="milkline">${esc(t("Serving Chennai for over 20 years"))}</div>
       </section>`;
@@ -2389,50 +2595,124 @@ function renderLogin(step = "phone", err = "") {
     const ph = $("#ph");
     ph.focus();
     ph.addEventListener("input", () => { ph.value = ph.value.replace(/\D/g, "").slice(0, 10); S.phone = ph.value; });
-    ph.addEventListener("keydown", (e) => { if (e.key === "Enter") $("#send").click(); });
-    $("#send").onclick = async () => {
+    $("#lf").onsubmit = async (e) => {
+      e.preventDefault();
       const phone = ph.value.replace(/\D/g, "");
-      if (phone.length !== 10) return renderLogin("phone", t("Enter your 10 digit mobile number."));
+      if (phone.length !== 10) return renderLogin("phone", t("Enter your 10 digit WhatsApp number."));
       S.phone = phone;
-      $("#send").disabled = true; $("#send").textContent = t("Sending…");
-      const r = await call("app-auth", { action: "send_otp", phone });
+      $("#send").disabled = true; $("#send").textContent = t("Checking…");
+      const r = await call("app-auth", { action: "check_number", phone });
       if (!r.ok) return renderLogin("phone", r.message);
-      renderLogin("otp");
+      if (r.state === "login") return renderLogin("password");
+      if (r.state === "set") { S.setName = r.name || ""; return renderLogin("set"); }
+      S.signup = {}; return renderSignup();
     };
-  } else {
+    return;
+  }
+
+  if (step === "password") {
     app.innerHTML = `
       <section class="login">
         ${brandHTML()}
-        <p class="lead">${esc(t("We sent a 6 digit code to your WhatsApp on +91 {phone}.", { phone: S.phone }))}</p>
-        <label for="otp">${esc(t("Code"))}</label>
-        <input id="otp" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" />
-        <button class="btn btn-main btn-block" id="verify">${esc(t("Log in"))}</button>
+        <h1 class="su-title">${esc(t("Welcome back"))}</h1>
+        <p class="lead">+91 ${esc(S.phone)}</p>
+        <form id="lf" autocomplete="on">
+          <input type="text" name="username" autocomplete="username" value="${esc(S.phone)}" hidden />
+          <label for="pw">${esc(t("Password"))}</label>
+          <div class="pw-row"><input id="pw" name="password" type="password" class="su-input" autocomplete="current-password" />${eye("pw")}</div>
+          <button class="btn btn-main btn-block" id="go">${esc(t("Log in"))}</button>
+        </form>
         <div class="err" role="alert">${esc(err)}</div>
-        <button class="back" id="resend">${esc(t("Send a new code"))}</button>
-        <button class="back" id="change">${esc(t("Use a different number"))}</button>
+        <button type="button" class="back" id="forgot">${esc(t("Forgot password?"))}</button>
+        ${back}
       </section>`;
-    const otp = $("#otp");
-    otp.focus();
-    otp.addEventListener("input", () => {
-      otp.value = otp.value.replace(/\D/g, "").slice(0, 6);
-      if (otp.value.length === 6) $("#verify").click();
-    });
-    $("#verify").onclick = async () => {
-      if (otp.value.length !== 6) return renderLogin("otp", t("Enter the 6 digit code."));
-      $("#verify").disabled = true; $("#verify").textContent = t("Checking…");
-      const r = await call("app-auth", { action: "verify_otp", phone: S.phone, code: otp.value, device: deviceType() });
-      if (!r.ok) return renderLogin("otp", r.message);
-      if (r.new_user) { S.signup = { token: r.signup_token }; return renderSignup(); }
-      S.token = r.token;
-      await store.set("rd_token", r.token);
-      startApp();
+    bindEyes();
+    $("#pw").focus();
+    $("#lf").onsubmit = async (e) => {
+      e.preventDefault();
+      const password = $("#pw").value;
+      if (!password) return renderLogin("password", t("Enter your password."));
+      $("#go").disabled = true; $("#go").textContent = t("Checking…");
+      const r = await call("app-auth", { action: "login", phone: S.phone, password, device: deviceType() });
+      if (!r.ok) {
+        if (r.code === "no_password") return renderLogin("phone");
+        return renderLogin("password", r.message);
+      }
+      finish(r);
     };
-    $("#resend").onclick = async () => {
-      const r = await call("app-auth", { action: "send_otp", phone: S.phone });
-      if (r.ok) toast(t("New code sent on WhatsApp")); else toast(r.message, true);
-    };
+    $("#forgot").onclick = () => renderLogin("forgot");
     $("#change").onclick = () => renderLogin("phone");
+    return;
   }
+
+  if (step === "forgot") {
+    app.innerHTML = `
+      <section class="login">
+        ${brandHTML()}
+        <h1 class="su-title">${esc(t("Forgot your password?"))}</h1>
+        <p class="lead">${esc(t("RD Dairy will send a new password to your WhatsApp on +91 {phone}.", { phone: S.phone }))}</p>
+        <button class="btn btn-main btn-block" id="go">${esc(t("Send me a new password"))}</button>
+        <div class="err" role="alert">${esc(err)}</div>
+        <button type="button" class="back" id="pwback">${esc(t("Back to log in"))}</button>
+      </section>`;
+    $("#go").onclick = async () => {
+      $("#go").disabled = true; $("#go").textContent = t("Sending…");
+      const r = await call("app-auth", { action: "forgot_password", phone: S.phone });
+      if (!r.ok) return renderLogin("forgot", r.message);
+      app.querySelector(".login").innerHTML = `
+        ${brandHTML()}
+        <div class="pw-done">${ic("checkcircle")}</div>
+        <h1 class="su-title">${esc(t("Request sent"))}</h1>
+        <p class="lead">${esc(t("RD Dairy will send your new password on WhatsApp shortly. Log in with it, then set your own."))}</p>
+        <button class="btn btn-main btn-block" id="pwback">${esc(t("Back to log in"))}</button>`;
+      $("#pwback").onclick = () => renderLogin("password");
+    };
+    $("#pwback").onclick = () => renderLogin("password");
+    return;
+  }
+
+  // set: billing number without a password yet. change: after logging in with a password from RD Dairy
+  const isSet = step === "set";
+  app.innerHTML = `
+    <section class="login">
+      ${brandHTML()}
+      <h1 class="su-title">${esc(isSet ? (S.setName ? t("Welcome, {name}", { name: S.setName }) : t("Welcome to RD Dairy")) : t("Set your own password"))}</h1>
+      <p class="lead">${esc(isSet ? t("Set a password for your RD Dairy account on +91 {phone}.", { phone: S.phone }) : t("Choose a password only you know. You will use it next time you log in."))}</p>
+      <form id="lf" autocomplete="on">
+        <input type="text" name="username" autocomplete="username" value="${esc(S.phone)}" hidden />
+        <label for="pw1">${esc(t("New password"))}</label>
+        <div class="pw-row"><input id="pw1" type="password" class="su-input" autocomplete="new-password" />${eye("pw1")}</div>
+        <div class="su-help">${esc(t("At least 6 letters or numbers"))}</div>
+        <label for="pw2">${esc(t("Type it again"))}</label>
+        <div class="pw-row"><input id="pw2" type="password" class="su-input" autocomplete="new-password" />${eye("pw2")}</div>
+        <button class="btn btn-main btn-block" id="go">${esc(isSet ? t("Create password") : t("Save password"))}</button>
+      </form>
+      <div class="err" role="alert">${esc(err)}</div>
+      ${isSet ? back : ""}
+    </section>`;
+  bindEyes();
+  $("#pw1").focus();
+  $("#lf").onsubmit = async (e) => {
+    e.preventDefault();
+    const p1 = $("#pw1").value, p2 = $("#pw2").value;
+    if (p1.length < 6) return renderLogin(step, t("Use at least 6 characters for your password"));
+    if (p1 !== p2) return renderLogin(step, t("The two passwords are different. Please type them again."));
+    $("#go").disabled = true; $("#go").textContent = t("Saving…");
+    if (isSet) {
+      const r = await call("app-auth", { action: "set_password", phone: S.phone, password: p1, device: deviceType() });
+      if (!r.ok) {
+        if (r.code === "exists") return renderLogin("password", r.message);
+        if (r.code === "new") { S.signup = {}; return renderSignup(); }
+        return renderLogin("set", r.message);
+      }
+      return finish(r);
+    }
+    const r = await call("app-auth", { action: "change_password", new_password: p1 });
+    if (!r.ok) { if (r.code === "logged_out") return renderLogin("phone", r.message); return renderLogin("change", r.message); }
+    await startApp();
+    toast(t("Password saved"));
+  };
+  $("#change") && ($("#change").onclick = () => renderLogin("phone"));
 }
 
 /* ---------- sign up for new customers ---------- */
@@ -2453,8 +2733,11 @@ async function renderSignup(err = "") {
   app.innerHTML = `
     <section class="login signup">
       <div class="login-top">${brandHTML()}<div id="lp"></div></div>
-      <h1 class="su-title">${esc(t("Welcome to RD Dairy"))}</h1>
-      <p class="lead">${esc(t("Tell us where to deliver. It takes a minute."))}</p>
+      <div class="su-new">${esc(t("You're new to RD Dairy. Create your profile and start ordering today."))}</div>
+      <h1 class="su-title">${esc(t("Create your profile"))}</h1>
+
+      <label for="su-phone">${esc(t("WhatsApp number"))}</label>
+      <div class="phone-row"><div class="cc">+91</div><input id="su-phone" type="tel" value="${esc(S.phone)}" readonly /></div>
 
       <label for="su-name">${esc(t("Your name"))}</label>
       <input id="su-name" class="su-input" autocomplete="name" value="${esc(f.name || "")}" />
@@ -2482,12 +2765,22 @@ async function renderSignup(err = "") {
 
       <label for="su-ref">${esc(t("Referral code (optional)"))}</label>
       <input id="su-ref" class="su-input" autocomplete="off" style="text-transform:uppercase" value="${esc(f.ref || "")}" />
-      <button class="btn btn-main btn-block" id="su-go">${esc(t("Create my account"))}</button>
+
+      <input type="text" name="username" autocomplete="username" value="${esc(S.phone)}" hidden />
+      <label for="su-pw1">${esc(t("Create a password"))}</label>
+      <div class="pw-row"><input id="su-pw1" type="password" class="su-input" autocomplete="new-password" value="${esc(f.pw1 || "")}" /><button type="button" class="pw-eye" data-eye="su-pw1" aria-label="${esc(t("Show password"))}">${ic("eye")}</button></div>
+      <div class="su-help">${esc(t("At least 6 letters or numbers"))}</div>
+      <label for="su-pw2">${esc(t("Type it again"))}</label>
+      <div class="pw-row"><input id="su-pw2" type="password" class="su-input" autocomplete="new-password" value="${esc(f.pw2 || "")}" /><button type="button" class="pw-eye" data-eye="su-pw2" aria-label="${esc(t("Show password"))}">${ic("eye")}</button></div>
+
+      <button class="btn btn-main btn-block" id="su-go">${esc(t("Create my profile"))}</button>
       <div class="err" role="alert">${esc(err)}</div>
+      <button type="button" class="back" id="su-back">${esc(t("Use a different number"))}</button>
     </section>`;
 
   const keep = () => {
     f.name = $("#su-name").value; f.address = $("#su-addr").value; f.ref = ($("#su-ref")?.value || "").trim();
+    f.pw1 = $("#su-pw1").value; f.pw2 = $("#su-pw2").value;
     if ($("#su-milk")) f.milk_id = $("#su-milk").value;
     if ($("#su-size")) f.milk_size = $("#su-size").value;
     if ($("#su-qty")) f.milk_qty = Number($("#su-qty").value);
@@ -2495,20 +2788,24 @@ async function renderSignup(err = "") {
   };
   $("#lp").appendChild(langPicker(() => { keep(); renderSignup(); }));
   mapPinBlock($("#su-loc"), f, () => keep());
+  app.querySelectorAll("[data-eye]").forEach((b) => b.onclick = () => { const i = $("#" + b.dataset.eye); i.type = i.type === "password" ? "text" : "password"; });
+  $("#su-back").onclick = () => { S.signup = null; renderLogin("phone"); };
   app.querySelectorAll("[data-milk]").forEach((b) => b.onclick = () => { keep(); f.wants_milk = b.dataset.milk === "1"; renderSignup(); });
   $("#su-milk")?.addEventListener("change", () => { keep(); const m = f.options.milk.find((x) => x.id === f.milk_id); f.milk_size = m?.sizes?.[0]?.label || ""; renderSignup(); });
   $("#su-go").onclick = async () => {
     keep();
     if ((f.name || "").trim().length < 2) return renderSignup(t("Enter your name"));
     if ((f.address || "").trim().length < 8) return renderSignup(t("Enter your full delivery address"));
-    const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your account…");
+    if ((f.pw1 || "").length < 6) return renderSignup(t("Use at least 6 characters for your password"));
+    if (f.pw1 !== f.pw2) return renderSignup(t("The two passwords are different. Please type them again."));
+    const btn = $("#su-go"); btn.disabled = true; btn.textContent = t("Creating your profile…");
     const r = await call("app-auth", {
-      action: "signup", phone: S.phone, signup_token: f.token, device: deviceType(),
+      action: "create_profile", phone: S.phone, password: f.pw1, device: deviceType(),
       name: f.name, address: f.address, map_link: f.map_link || "", ref_code: f.ref || "", area_id: "",
       wants_milk: f.wants_milk && !!f.milk_id, milk_id: f.milk_id, milk_size: f.milk_size, milk_qty: f.milk_qty, start_date: f.start,
     });
     if (!r.ok) {
-      if (r.code === "expired" || r.code === "exists") { S.signup = null; return renderLogin("phone", r.message); }
+      if (r.code === "exists") { S.signup = null; return renderLogin("phone", r.message); }
       return renderSignup(r.message);
     }
     S.signup = null;
@@ -2530,21 +2827,14 @@ async function signOutLocal() {
 /* =========================================================
    APP SHELL
    ========================================================= */
-const icons = {
-  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6v4c0 1.5 4 2.5 4 6v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9c0-3.5 4-4.5 4-6z"/><path d="M5 14h14"/></svg>',
-  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
-  shop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
-  bills: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>',
-  help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.2M12 16.5h.01"/></svg>',
-  account: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
-};
+const icons = { home: ic("home"), shop: ic("shop"), bills: ic("bills"), account: ic("user") };
 
 function shell() {
   $("#app").innerHTML = `
     <header class="topbar">${brandHTML()}<div class="tb-r">
-      <button class="tb-btn" id="tbTheme" aria-label="${esc(t("Dark or light"))}">${document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙"}</button>
-      <button class="tb-btn" id="tbSettings" aria-label="${esc(t("Settings"))}">⚙️<i class="tb-dot hidden" id="setDot"></i></button>
-      <button class="bell" id="bell" aria-label="${esc(t("Notifications"))}">🔔<i class="hidden" id="bellCount"></i></button></div></header>
+      <button class="tb-btn" id="tbTheme" aria-label="${esc(t("Dark or light"))}">${document.documentElement.dataset.theme === "dark" ? ic("sun", "sunic") : ic("moon")}</button>
+      <button class="tb-btn" id="tbSettings" aria-label="${esc(t("Settings"))}">${ic("settings")}<i class="tb-dot hidden" id="setDot"></i></button>
+      <button class="bell" id="bell" aria-label="${esc(t("Notifications"))}">${ic("bell")}<i class="hidden" id="bellCount"></i></button></div></header>
     <main id="view">${loaderHTML()}</main>
     <nav class="tabs" aria-label="Main">
       <button data-tab="home">${icons.home}${esc(t("Home"))}</button>
@@ -2554,7 +2844,7 @@ function shell() {
     </nav>`;
   $("#bell").onclick = openInbox;
   $("#tbSettings").onclick = openSettings;
-  $("#tbTheme").onclick = async () => { await setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); $("#tbTheme").textContent = document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙"; };
+  $("#tbTheme").onclick = async () => { await setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); $("#tbTheme").innerHTML = document.documentElement.dataset.theme === "dark" ? ic("sun", "sunic") : ic("moon"); };
   updateBell();
   $(".tabs").addEventListener("click", (e) => {
     const b = e.target.closest("[data-tab]");
@@ -2602,6 +2892,12 @@ const loadingView = () => { $("#view").innerHTML = `${loaderHTML()}`; };
 /* =========================================================
    HOME
    ========================================================= */
+// New customers: open the shop on milk so they can choose a daily or repeat delivery
+function startSubscription() {
+  SH.cat = (SH.catalog || []).some((p) => p.category === "Milk") || !SH.catalog ? "Milk" : "All";
+  go("shop");
+}
+
 async function renderHome() {
   const v = $("#view");
   if (!S.home) { loadingView(); if (!(await loadHome())) return; }
@@ -2616,24 +2912,26 @@ async function renderHome() {
       <div class="card pad">
         ${mr && /pending/i.test(mr.status || "")
           ? `<p style="margin:0;font-weight:700;font-size:17px">${esc(t("Your daily milk request ({item}) is with RD Dairy. We will call you to confirm the start date.", { item: `${mr.product} × ${mr.qty}` }))}</p>`
-          : `<p style="margin:0 0 6px;font-weight:700;font-size:18px">${esc(t("Your number is registered with RD Dairy."))}</p>
-             <p class="muted" style="margin:0">${esc(t("Once your daily milk subscription starts, your deliveries, pauses and extra milk will show here."))}</p>`}
+          : `<p style="margin:0 0 6px;font-weight:700;font-size:18px">${esc(t("Start a subscription and your deliveries and bills appear here"))}</p>
+             <p class="muted" style="margin:0">${esc(t("Fresh A2 milk every morning, one monthly bill, and a calendar to pause or add milk any day."))}</p>`}
       </div>
-      <div class="row-actions" style="grid-template-columns:1fr">
-        <button class="btn btn-main" id="toshop">${esc(t("Browse the shop"))}</button>
+      <div class="row-actions" style="grid-template-columns:1fr 1fr">
+        ${mr && /pending/i.test(mr.status || "") ? "" : `<button class="btn btn-main" id="tosub">${esc(t("Start a subscription"))}</button>`}
+        <button class="btn ${mr && /pending/i.test(mr.status || "") ? "btn-main" : "btn-line"}" id="toshop">${esc(t("Browse the shop"))}</button>
       </div>
       <div id="homeBottom"></div>`;
     $("#toshop").onclick = () => go("shop");
+    $("#tosub") && ($("#tosub").onclick = startSubscription);
     drawHomeExtras();
     return;
   }
 
   if (S.homeCal) {
     v.innerHTML = `
-      <div class="subhead"><button id="calback" aria-label="${esc(t("Back"))}">‹</button><h2>${esc(t("Full calendar"))}</h2></div>
+      <div class="subhead"><button id="calback" aria-label="${esc(t("Back"))}">${ic("left")}</button><h2>${esc(t("Full calendar"))}</h2></div>
       <p class="muted" style="margin:-4px 4px 12px">${esc(t("Tap days to select them, then change them together."))}</p>
       <div id="homecal">${loaderHTML()}</div>
-      <div class="row-actions" style="grid-template-columns:1fr"><button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button></div>`;
+      <div class="row-actions" style="grid-template-columns:1fr"><button class="btn btn-line" id="away">${ic("luggage")} ${esc(t("Long leave"))}</button></div>`;
     $("#calback").onclick = () => { S.homeCal = false; renderHome(); };
     $("#away").onclick = openAwaySheet;
     drawHomeCalendar();
@@ -2678,8 +2976,8 @@ async function renderHome() {
     <p class="muted" style="margin:10px 4px 0;font-size:14px">${esc(t("Tap days to select them, then change them together."))}</p>
 
     <div class="row-actions">
-      <button class="btn btn-line" id="away">🧳 ${esc(t("Long leave"))}</button>
-      <button class="btn btn-line" id="fullcal">📅 ${esc(t("Full calendar"))}</button>
+      <button class="btn btn-line" id="away">${ic("luggage")} ${esc(t("Long leave"))}</button>
+      <button class="btn btn-line" id="fullcal">${ic("calendar")} ${esc(t("Full calendar"))}</button>
     </div>
     <div id="homeBottom"></div>`;
 
@@ -2704,7 +3002,7 @@ async function loadNotices() {
   if (!box || !r.ok || !r.notices.length) return;
   box.innerHTML = r.notices.map((n) => `<div class="notice" data-nid="${esc(n.id)}">
     <div><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}</div>
-    <div class="notice-acts">${n.link ? `<button data-nopen="${esc(n.link)}">${esc(t("View"))}</button>` : ""}<button data-nx aria-label="${esc(t("Dismiss"))}">✕</button></div></div>`).join("");
+    <div class="notice-acts">${n.link ? `<button data-nopen="${esc(n.link)}">${esc(t("View"))}</button>` : ""}<button data-nx aria-label="${esc(t("Dismiss"))}">${ic("x")}</button></div></div>`).join("");
   box.querySelectorAll(".notice").forEach((el) => {
     const id = el.dataset.nid;
     const done = () => { call("app-api", { action: "notice_read", id }); el.remove(); };
@@ -2732,7 +3030,7 @@ function openSheet(html) {
   const addX = () => {
     if (sheet.querySelector(":scope > .sheet-x")) return;
     const x = document.createElement("button");
-    x.className = "sheet-x"; x.setAttribute("aria-label", t("Close")); x.innerHTML = "✕";
+    x.className = "sheet-x"; x.setAttribute("aria-label", t("Close")); x.innerHTML = ic("x");
     x.onclick = () => { const c = sheet.querySelector("[data-close]"); if (c) c.click(); else closeSheet(); };
     sheet.prepend(x);
   };
@@ -2839,15 +3137,15 @@ async function drawHomeCalendar() {
     if (S.sel.has(date)) cls += " sel";
     const label = ch?.paused ? t("Paused") : fmtQty(q);
     cells += `<button class="cd ${cls}" data-date="${date}" aria-pressed="${S.sel.has(date)}" aria-label="${esc(longDate(date))}, ${esc(label)}">
-      ${n}<span class="q">${ch?.paused ? "✕" : esc(+Number(q).toFixed(2))}</span></button>`;
+      ${n}<span class="q">${ch?.paused ? ic("x", "sm") : esc(+Number(q).toFixed(2))}</span></button>`;
   }
 
   box.innerHTML = `
     <div class="cal">
       <div class="cal-head">
-        <button data-m="-1" aria-label="${esc(t("Previous month"))}">‹</button>
+        <button data-m="-1" aria-label="${esc(t("Previous month"))}">${ic("left")}</button>
         <b>${esc(title)}</b>
-        <button data-m="1" aria-label="${esc(t("Next month"))}">›</button>
+        <button data-m="1" aria-label="${esc(t("Next month"))}">${ic("right")}</button>
       </div>
       <div class="cal-grid">${cells}</div>
       <div class="legend">
@@ -2954,7 +3252,7 @@ function updateCartBar() {
   document.body.classList.add("has-cart");
   const bar = document.createElement("button");
   bar.className = "cartbar";
-  bar.innerHTML = `<span>${esc(itemsLabel(cartCount()))} · <b>${esc(inr(cartTotal()))}</b></span><span>${esc(t("View cart"))} →</span>`;
+  bar.innerHTML = `<span>${esc(itemsLabel(cartCount()))} · <b>${esc(inr(cartTotal()))}</b></span><span class="row-ic">${esc(t("View cart"))} ${ic("right")}</span>`;
   bar.onclick = openCartSheet;
   document.body.appendChild(bar);
 }
@@ -2976,12 +3274,12 @@ async function renderShop() {
   if (S.tab !== "shop") return;
 
   const cats = ["All", ...new Set(SH.catalog.map((p) => p.category))].filter((c) => c !== "Fresh");
-  if (SH.cat === "Fresh") SH.cat = "All";
+  if (SH.cat === "Fresh" || !cats.includes(SH.cat)) SH.cat = "All";
   const list = SH.catalog.filter((p) => SH.cat === "All" || p.category === SH.cat);
   v.innerHTML = `
     <div class="shop-head"><h2>${esc(t("Shop"))}</h2><button id="myord">${esc(t("My orders"))}</button></div>
-    ${SH.meta.gold?.active ? `<div class="goldstrip">✦ ${esc(t("RD Gold: free delivery and {pct}% off", { pct: SH.meta.gold.discount }))}</div>` : ""}
-    ${SH.meta.trial ? `<button class="trialcard" data-trial><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: SH.meta.trial.size, days: SH.meta.trial.days, amt: inr(SH.meta.trial.price) }))}</span><i>${esc(t("Start trial"))} →</i></button>` : ""}
+    ${SH.meta.gold?.active ? `<div class="goldstrip">${ic("sparkles")} ${esc(t("RD Gold: free delivery and {pct}% off", { pct: SH.meta.gold.discount }))}</div>` : ""}
+    ${SH.meta.trial ? `<button class="trialcard" data-trial><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: SH.meta.trial.size, days: SH.meta.trial.days, amt: inr(SH.meta.trial.price) }))}</span><i>${esc(t("Start trial"))} ${ic("right")}</i></button>` : ""}
     <div class="cats">${cats.map((c) => `<button class="${c === SH.cat ? "on" : ""}" data-cat="${esc(c)}">${esc(t(c))}</button>`).join("")}</div>
     <div class="prods">${list.map((p) => {
       const size = p.sizes.find((z) => z.label === SH.sel[p.id]) || p.sizes[0];
@@ -2991,12 +3289,12 @@ async function renderShop() {
         <button class="prod-img" data-open="${esc(p.id)}" aria-label="${esc(p.name)}"><img src="${esc(prodImg(p))}" alt="" loading="lazy" />${p.in_stock ? "" : `<span class="oos-tag">${esc(t("Out of stock"))}</span>`}</button>
         <div>
           <button class="prod-name" data-open="${esc(p.id)}"><h3>${esc(p.name)}</h3></button>
-          ${p.rating ? `<div class="stars-s">★ ${esc(p.rating)} <span>(${esc(p.rating_count)})</span></div>` : ""}
+          ${p.rating ? `<div class="stars-s">${ic("star", "on")} ${esc(p.rating)} <span>(${esc(p.rating_count)})</span></div>` : ""}
           <p>${esc(p.description)}</p>
           ${p.sizes.length > 1 ? `<div class="sizes">${p.sizes.map((z) => `<button class="${z.label === size.label ? "on" : ""}" data-size="${esc(p.id)}" data-label="${esc(z.label)}">${esc(z.label)}</button>`).join("")}</div>` : `<div class="sizes"><button class="on" disabled>${esc(size.label)}</button></div>`}
           <div class="addrow"><b>${esc(inr(size.price))}</b>
             ${!p.in_stock
-              ? (waiting ? `<span class="notified">✓ ${esc(t("We'll tell you"))}</span>` : `<button class="notifybtn" data-notify="${esc(p.id)}">🔔 ${esc(t("Notify me"))}</button>`)
+              ? (waiting ? `<span class="notified">${ic("check")} ${esc(t("We'll tell you"))}</span>` : `<button class="notifybtn" data-notify="${esc(p.id)}">${ic("bell")} ${esc(t("Notify me"))}</button>`)
               : inCart
               ? `<div class="mini-step"><button data-dec="${esc(p.id)}" aria-label="${esc(t("One less"))}">−</button><span>${inCart.qty}</span><button data-inc="${esc(p.id)}" aria-label="${esc(t("One more"))}">+</button></div>`
               : `<button class="addbtn" data-inc="${esc(p.id)}">${esc(t("Add"))}</button>`}
@@ -3027,7 +3325,7 @@ async function notifyMe(id) {
   if ($(".pd")) openProduct(id);
 }
 
-const starRow = (n, size = "") => `<span class="stars ${size}">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= Math.round(n) ? "on" : ""}">★</i>`).join("")}</span>`;
+const starRow = (n, size = "") => `<span class="stars ${size}">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= Math.round(n) ? "on" : ""}">${ic("star")}</i>`).join("")}</span>`;
 
 /* ---------- product detail page ---------- */
 async function openProduct(id) {
@@ -3050,7 +3348,7 @@ async function openProduct(id) {
       <div class="pd-buy">
         <b>${esc(inr(size.price))}</b>
         ${!p.in_stock
-          ? (waiting ? `<span class="notified">✓ ${esc(t("We'll tell you when it's back in stock"))}</span>` : `<button class="btn btn-main" data-pnotify>🔔 ${esc(t("Notify me"))}</button>`)
+          ? (waiting ? `<span class="notified">${ic("check")} ${esc(t("We'll tell you when it's back in stock"))}</span>` : `<button class="btn btn-main" data-pnotify>${ic("bell")} ${esc(t("Notify me"))}</button>`)
           : inCart
           ? `<div class="mini-step big"><button data-pdec aria-label="${esc(t("One less"))}">−</button><span>${inCart.qty}</span><button data-pinc aria-label="${esc(t("One more"))}">+</button></div>`
           : `<button class="btn btn-main" data-pinc>${esc(t("Add to cart"))}</button>`}
@@ -3077,7 +3375,7 @@ async function openProduct(id) {
     box.innerHTML = `
       <div class="rv-write">
         <div class="rv-q">${esc(r.mine ? t("Your review") : t("Tried it? Rate it"))}</div>
-        <div class="rv-stars">${[1, 2, 3, 4, 5].map((i) => `<button data-star="${i}" class="${i <= st.rating ? "on" : ""}" aria-label="${i}">★</button>`).join("")}</div>
+        <div class="rv-stars">${[1, 2, 3, 4, 5].map((i) => `<button data-star="${i}" class="${i <= st.rating ? "on" : ""}" aria-label="${i}">${ic("star")}</button>`).join("")}</div>
         <textarea id="rvText" rows="2" placeholder="${esc(t("What did you like?"))}">${esc(r.mine?.comment || "")}</textarea>
         <button class="btn btn-dark btn-block" data-rvsave>${esc(t("Post review"))}</button>
       </div>
@@ -3153,7 +3451,7 @@ function openCartSheet() {
       ${st.repeat || st.pay === "bill" ? `<div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(total))}</span></div>` : `<div id="qbox">${st.q ? quoteHTML(st.q) : ""}</div>
         <div class="coupon"><input id="ccode" placeholder="${esc(t("Offer code"))}" value="${esc(st.code || "")}" autocomplete="off" /><button data-apply>${esc(st.code && st.q?.coupon?.ok ? t("Remove") : t("Apply"))}</button></div>
         ${st.q?.coupon && st.code && !st.q.coupon.ok && st.q.coupon.msg ? `<div class="minwarn">${esc(st.q.coupon.msg)}</div>` : ""}
-        ${!meta.gold?.active && meta.gold ? `<button class="goldup" data-gold>✦ ${esc(t("Get free delivery and {pct}% off with RD Gold", { pct: meta.gold.discount }))} →</button>` : ""}`}
+        ${!meta.gold?.active && meta.gold ? `<button class="goldup" data-gold>${ic("sparkles")} ${esc(t("Get free delivery and {pct}% off with RD Gold", { pct: meta.gold.discount }))} ${ic("right")}</button>` : ""}`}
 
       <h4>${esc(t("How often?"))}</h4>
       <div class="seg"><button data-rep="0" class="${st.repeat ? "" : "on"}">${esc(t("Just once"))}</button><button data-rep="1" class="${st.repeat ? "on" : ""}">${esc(t("Repeat"))}</button></div>
@@ -3246,9 +3544,9 @@ function openCartSheet() {
     if (!r.ok) { draw(); return toast(r.message, true); }
     SH.cart = []; saveCart();
     sheet.innerHTML = `<div class="grip"></div><div class="done-box">
-      <div class="tick">✓</div>
-      <h3>${esc(r.kind === "repeat" ? t("Repeat order sent") : r.kind === "bill" ? t("Added to your monthly bill") : t("Order placed"))}</h3>
-      <p class="sub">${esc(r.kind === "repeat" ? t("RD Dairy will confirm your start date on WhatsApp.") : r.kind === "bill" ? t("Delivered with your milk on {date}. It will show on this month's bill.", { date: shortDate(r.deliver_date) }) : t("Order {id} · {amt}. We deliver within 2 days.", { id: r.order_id, amt: inr(r.total) }))}</p>
+      <div class="tick">${ic("check")}</div>
+      <h3>${esc(r.kind === "repeat" ? t("Repeat order sent") : r.kind === "bill" ? t("Added to your monthly bill") : r.kind === "bill_hold" ? t("Order received") : t("Order placed"))}</h3>
+      <p class="sub">${esc(r.kind === "repeat" ? t("RD Dairy will confirm your start date on WhatsApp.") : r.kind === "bill" ? t("Delivered with your milk on {date}. It will show on this month's bill.", { date: shortDate(r.deliver_date) }) : r.kind === "bill_hold" ? t("RD Dairy will confirm this order for your monthly bill shortly. You'll get a notification.") : t("Order {id} · {amt}. We deliver within 2 days.", { id: r.order_id, amt: inr(r.total) }))}</p>
     </div>
     <div class="stack"><button class="btn btn-dark btn-block" data-orders>${esc(t("See my orders"))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t("Done"))}</button></div>`;
     $("[data-orders]", sheet).onclick = openMyOrders;
@@ -3268,6 +3566,11 @@ async function openMyOrders() {
   const when = (iso) => new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
   sheet.innerHTML = `<div class="grip"></div>
     <h3>${esc(t("My orders"))}</h3>
+    ${(r.on_hold || []).length ? `<h4>${esc(t("Waiting for RD Dairy"))}</h4><div>${r.on_hold.map((x) => `<div class="orow">
+      <div class="top"><span>${esc(when(x.created_at))}</span><span>${esc(inr(x.total))}</span></div>
+      ${orderThumbs((x.items || []).join(", "))}
+      <div class="it">${esc((x.items || []).join(", "))}</div>
+      <div class="it"><span class="pill ${x.status === "declined" ? "wait" : "due-p"}">${esc(t(x.status === "declined" ? "Not added to bill" : "Monthly bill, confirming"))}</span></div></div>`).join("")}</div>` : ""}
     ${(r.on_bill || []).length ? `<h4>${esc(t("On your monthly bill"))}</h4><div>${r.on_bill.map((x) => `<div class="orow">
       <div class="top"><span class="ot-n">${orderThumbs(x.name, true)}${esc(x.name)} × ${esc(+x.quantity.toFixed(3))}</span><span>${esc(inr(x.amount))}</span></div>
       <div class="it">${esc(shortDate(x.date))} <span class="pill ${x.billed ? "paid" : "due-p"}" style="margin-left:6px">${esc(t(x.billed ? "Billed" : "Next bill"))}</span></div>
@@ -3335,15 +3638,15 @@ async function editOrder(o) {
 function quoteHTML(q) {
   return `
     <div class="cline2"><span>${esc(t("Items"))}</span><span>${esc(inr(q.subtotal))}</span></div>
-    ${q.gold_discount ? `<div class="cline2"><span>✦ RD Gold ${esc(q.gold_pct)}%</span><span class="free">−${esc(inr(q.gold_discount))}</span></div>` : ""}
+    ${q.gold_discount ? `<div class="cline2"><span>${ic("sparkles")} RD Gold ${esc(q.gold_pct)}%</span><span class="free">−${esc(inr(q.gold_discount))}</span></div>` : ""}
     ${q.coupon?.ok && q.coupon.discount ? `<div class="cline2"><span>${esc(t("Offer"))} ${esc(q.coupon.code)}</span><span class="free">−${esc(inr(q.coupon.discount))}</span></div>` : ""}
     <div class="cline2"><span>${esc(t("Delivery fee"))}</span><span>${q.fee ? esc(inr(q.fee)) : `<b class="free">${esc(t("Free"))}</b>`}</span></div>
     <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-weight:700;font-size:18px"><span>${esc(t("Total"))}</span><span>${esc(inr(q.total))}</span></div>
     ${q.short > 0 ? `<div class="minwarn">${esc(t("Add items worth {amt} more to place this order", { amt: inr(q.short) }))}</div>` : ""}
-    ${q.fee && q.free_above ? `<div class="feenote">🚚 ${esc(t("Free delivery on orders above {amt}", { amt: inr(q.free_above) }))}</div>` : ""}
+    ${q.fee && q.free_above ? `<div class="feenote">${ic("truck")} ${esc(t("Free delivery on orders above {amt}", { amt: inr(q.free_above) }))}</div>` : ""}
     ${q.short > 0 ? ""
       : q.fee && q.free_above ? `<div class="freebar"><div>${esc(t("Add {amt} more for free delivery", { amt: inr(q.free_above - q.subtotal) }))}</div><i style="width:${Math.min(100, Math.round(q.subtotal / q.free_above * 100))}%"></i></div>`
-      : !q.fee ? `<div class="freebar done"><div>🎉 ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
+      : !q.fee ? `<div class="freebar done"><div>${ic("badgecheck")} ${esc(t("You get free delivery"))}</div><i style="width:100%"></i></div>` : ""}`;
 }
 
 // Small product photos for an order line, matched by product name or keyword
@@ -3386,8 +3689,11 @@ async function renderBills() {
   if (!S.home) { loadingView(); if (!(await loadHome())) return; }
   if (!S.home.is_subscriber) {
     const w = await walletCardHTML();
-    v.innerHTML = `${w}<div class="empty" style="margin-top:14px">${esc(t("Your monthly bills appear here once your milk subscription starts."))}</div>`;
-    bindWalletCard(v); return;
+    v.innerHTML = `${w}<div class="card pad" style="margin-top:14px;text-align:center">
+        <p style="margin:0 0 6px;font-weight:700;font-size:17px">${esc(t("Start a subscription and your monthly bills appear here"))}</p>
+        <p class="muted" style="margin:0 0 12px">${esc(t("Your bills, payments and receipts all stay in one place."))}</p>
+        <button class="btn btn-main" id="tosub">${esc(t("Start a subscription"))}</button></div>`;
+    bindWalletCard(v); $("#tosub").onclick = startSubscription; return;
   }
   loadingView();
 
@@ -3427,7 +3733,7 @@ async function renderBills() {
           ${x.pending ? `<span class="pill wait">${esc(t("Being confirmed"))}</span>` : `<span class="pill due-p">${esc(t("{amt} due", { amt: inr(x.due) }))}</span>`}</div>
       </button>`;
     }).join("")}</div>`
-    : `<div class="empty">✓ ${esc(t("All your bills are paid"))}</div>`}
+    : `<div class="empty">${ic("checkcircle")} ${esc(t("All your bills are paid"))}</div>`}
 
     <h2>${esc(t("Payments"))}</h2>
     ${p.payments.length || b.bills.some((x) => x.due <= 0) ? `<div class="list">${p.payments.map((x) => `
@@ -3729,13 +4035,13 @@ async function drawHomeExtras() {
   const hr = new Date(Date.now() + 5.5 * 3600 * 1000).getUTCHours();
   const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
   box.innerHTML = `
-    <section class="greet"><div><div class="g-hi">${esc(t(greet))}, ${esc((h.name || "").split(" ")[0])}</div><div class="g-sub" id="gWeather">${esc(t("Checking the weather…"))}</div></div><div class="g-ico" id="gIcon">☀️</div></section>
+    <section class="greet"><div><div class="g-hi">${esc(t(greet))}, ${esc((h.name || "").split(" ")[0])}</div><div class="g-sub" id="gWeather">${esc(t("Checking the weather…"))}</div></div><div class="g-ico" id="gIcon">${ic("sun")}</div></section>
     ${x.resume ? `<div class="notice"><div><b>${esc(t("Welcome back!"))}</b><span>${esc(t("Your milk restarts on {date}.", { date: shortDate(x.resume.date) }))}</span></div><div class="notice-acts"><button data-ext>${esc(t("Extend leave"))}</button></div></div>` : ""}
     ${x.bill_due ? `<div class="billcard"><div><b>${esc(t("{month} bill is ready", { month: x.bill_due.period_start ? fmtDay(x.bill_due.period_start, { month: "long" }) : "" }))}</b><span>${esc(t("{amt} due", { amt: inr(x.bill_due.due) }))}</span></div>
       <div class="bc-acts">${x.wallet >= 1 ? `<button data-bwallet>${esc(t("Pay from wallet"))}</button>` : ""}<button class="go" data-bpay>${esc(t("Pay now"))}</button></div></div>` : ""}
     ${x.stories.length ? `<div class="stories">${x.stories.map((s, i) => `<button class="story" data-story="${i}"><span class="st-ring">${s.media_type === "video" ? `<video src="${esc(s.media_url)}" muted playsinline preload="metadata"></video>` : `<img src="${esc(s.media_url)}" alt="" loading="lazy" />`}</span><span class="st-t">${esc(s.title || t("Farm"))}</span></button>`).join("")}</div>` : ""}
     ${x.banners.length ? `<div class="banners">${x.banners.map((b) => `<button class="banner" data-link="${esc(b.link || "")}" style="background:${esc(b.bg || "#1E2B4A")}">${b.image_url ? `<img src="${esc(b.image_url)}" alt="" />` : ""}<span class="bn-t"><b>${esc(b.title)}</b>${b.subtitle ? `<span>${esc(b.subtitle)}</span>` : ""}</span></button>`).join("")}</div>` : ""}
-    ${x.trial ? `<button class="trialcard" data-link="trial"><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: x.trial.size, days: x.trial.days, amt: inr(x.trial.price) }))}</span><i>${esc(t("Start trial"))} →</i></button>` : ""}`;
+    ${x.trial ? `<button class="trialcard" data-link="trial"><b>${esc(t("Try 7 days of fresh A2 milk"))}</b><span>${esc(t("{size} every morning for {days} days, just {amt}", { size: x.trial.size, days: x.trial.days, amt: inr(x.trial.price) }))}</span><i>${esc(t("Start trial"))} ${ic("right")}</i></button>` : ""}`;
   box.querySelectorAll("[data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link));
   box.querySelectorAll("[data-story]").forEach((b) => b.onclick = () => openStories(+b.dataset.story));
   $("[data-ext]", box)?.addEventListener("click", openAwaySheet);
@@ -3749,7 +4055,7 @@ async function drawHomeExtras() {
   weather(x.weather);
 }
 
-const WMO = (c) => c === 0 ? ["☀️", "Clear sky"] : c <= 2 ? ["🌤️", "Partly cloudy"] : c === 3 ? ["☁️", "Cloudy"] : c <= 48 ? ["🌫️", "Misty"] : c <= 67 ? ["🌧️", "Rain"] : c <= 77 ? ["🌨️", "Cold"] : c <= 82 ? ["🌦️", "Showers"] : ["⛈️", "Thunderstorms"];
+const WMO = (c) => c === 0 ? ["sun", "Clear sky"] : c <= 2 ? ["cloudsun", "Partly cloudy"] : c === 3 ? ["cloud", "Cloudy"] : c <= 48 ? ["fog", "Misty"] : c <= 55 ? ["drizzle", "Rain"] : c <= 67 ? ["rain", "Rain"] : c <= 77 ? ["snow", "Cold"] : c <= 82 ? ["rain", "Showers"] : ["storm", "Thunderstorms"];
 async function weather(w) {
   try {
     const ll = latLngFromLink(S.home?.map_link) || [w.lat, w.lng];
@@ -3758,7 +4064,7 @@ async function weather(w) {
     const [ico, word] = WMO(d.current.weather_code);
     const rainTmr = d.daily?.precipitation_probability_max?.[1];
     const el = $("#gWeather"); if (!el) return;
-    $("#gIcon").textContent = ico;
+    $("#gIcon").innerHTML = ic(ico);
     el.textContent = `${Math.round(d.current.temperature_2m)}°C, ${t(word)}${rainTmr >= 50 ? " · " + t("Rain likely tomorrow morning") : ""}`;
   } catch { const el = $("#gWeather"); if (el) el.textContent = t("Fresh milk is on its way"); }
 }
@@ -3775,7 +4081,7 @@ function openStories(start) {
     clearTimeout(timer);
     const s = list[i];
     v.innerHTML = `<div class="sv-bars">${list.map((_, k) => `<i class="${k < i ? "done" : k === i ? "now" : ""}"><b></b></i>`).join("")}</div>
-      <button class="sv-x" aria-label="${esc(t("Close"))}">✕</button>
+      <button class="sv-x" aria-label="${esc(t("Close"))}">${ic("x")}</button>
       ${s.media_type === "video" ? `<video src="${esc(s.media_url)}" autoplay playsinline></video>` : `<img src="${esc(s.media_url)}" alt="" />`}
       <div class="sv-cap">${s.title ? `<b>${esc(s.title)}</b>` : ""}${s.caption ? `<span>${esc(s.caption)}</span>` : ""}</div>
       <button class="sv-prev" aria-label="Previous"></button><button class="sv-next" aria-label="Next"></button>`;
@@ -3799,7 +4105,7 @@ async function openInbox() {
   const r = await call("app-api", { action: "inbox" });
   if (!r.ok) { closeSheet(); return toast(r.message, true); }
   sheet.innerHTML = `<div class="grip"></div><div class="sec-head" style="margin:0 0 8px"><h3 style="margin:0">${esc(t("Notifications"))}</h3>${r.items.some((x) => !x.read_at) ? `<button data-all>${esc(t("Mark all read"))}</button>` : ""}</div>
-    ${r.items.length ? r.items.map((n) => `<button class="inb ${n.read_at ? "" : "new"}" data-link="${esc(n.link || "")}"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}${String(n.link || "").startsWith("offer:") ? `<em class="inb-code">🏷️ ${esc(n.link.slice(6))} · ${esc(t("Tap to use"))}</em>` : ""}<i>${esc(new Date(n.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }))}</i></button>`).join("")
+    ${r.items.length ? r.items.map((n) => `<button class="inb ${n.read_at ? "" : "new"}" data-link="${esc(n.link || "")}"><b>${esc(n.title)}</b>${n.body ? `<span>${esc(n.body)}</span>` : ""}${String(n.link || "").startsWith("offer:") ? `<em class="inb-code">${ic("tag")} ${esc(n.link.slice(6))} · ${esc(t("Tap to use"))}</em>` : ""}<i>${esc(new Date(n.created_at).toLocaleString(locale(), { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }))}</i></button>`).join("")
       : `<p class="sub">${esc(t("Offers, payment updates and replies from RD Dairy show up here."))}</p>`}
     <div class="stack"><button class="btn btn-quiet btn-block" data-close>${esc(t("Close"))}</button></div>`;
   $("[data-close]", sheet).onclick = closeSheet;
@@ -3817,7 +4123,7 @@ async function walletCardHTML() {
     <div class="w-top"><div><span>${esc(t("RD Wallet"))}</span><b>${esc(inr(r.balance))}</b></div><button class="w-add" data-wadd>+ ${esc(t("Add money"))}</button></div>
     ${r.pending.length ? `<div class="w-pend">${esc(t("{amt} waiting for RD Dairy to confirm", { amt: inr(r.pending.reduce((a, p) => a + Number(p.amount), 0)) }))}</div>` : ""}
     <label class="w-auto"><input type="checkbox" data-wauto ${r.autopay ? "checked" : ""}/> <span>${esc(t("Pay my bills from the wallet automatically"))}</span></label>
-    <button class="w-hist" data-whist>${esc(t("Wallet history"))} →</button>
+    <button class="w-hist" data-whist>${esc(t("Wallet history"))} ${ic("right")}</button>
   </section>`;
 }
 function bindWalletCard(root) {
@@ -3895,8 +4201,8 @@ async function openGoldSheet() {
   const r = await call("app-api", { action: "gold" });
   if (!r.ok) { closeSheet(); return toast(r.message, true); }
   sheet.innerHTML = `<div class="grip"></div>
-    <div class="goldhead"><span>✦</span><h3>RD Gold</h3>${r.active ? `<em>${esc(t("Active till {date}", { date: new Date(r.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) }))}</em>` : ""}</div>
-    <ul class="gold-list"><li>🚚 ${esc(t("Free delivery on every shop order"))}</li><li>💰 ${esc(t("{pct}% off all shop products", { pct: r.discount }))}</li><li>⚡ ${esc(t("Priority replies in chat"))}</li></ul>
+    <div class="goldhead"><span>${ic("sparkles")}</span><h3>RD Gold</h3>${r.active ? `<em>${esc(t("Active till {date}", { date: new Date(r.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) }))}</em>` : ""}</div>
+    <ul class="gold-list"><li>${ic("truck")} ${esc(t("Free delivery on every shop order"))}</li><li>${ic("percent")} ${esc(t("{pct}% off all shop products", { pct: r.discount }))}</li><li>${ic("zap")} ${esc(t("Priority replies in chat"))}</li></ul>
     <div class="pd-buy"><b>${esc(inr(r.price))}<small style="font-size:14px;font-weight:600"> / ${esc(t("{n} days", { n: r.days }))}</small></b><span class="muted">${esc(t("Wallet"))}: ${esc(inr(r.wallet))}</span></div>
     <div class="stack">
       ${r.wallet >= r.price ? `<button class="btn btn-main btn-block" data-join>${esc(r.active ? t("Extend RD Gold") : t("Join RD Gold"))}</button>` : `<button class="btn btn-main btn-block" data-topup>${esc(t("Add {amt} to wallet to join", { amt: inr(Math.ceil(r.price - r.wallet)) }))}</button>`}
@@ -3976,7 +4282,7 @@ async function openVisitSheet() {
   sheet.classList.add("tall");
   const mv = await call("app-api", { action: "my_visits" });
   const draw = () => {
-    sheet.innerHTML = `<div class="grip"></div><h3>🚜 ${esc(t("Visit our farm"))}</h3>
+    sheet.innerHTML = `<div class="grip"></div><h3 class="h-ic">${ic("tractor")} ${esc(t("Visit our farm"))}</h3>
       <p class="sub">${esc(t("Meet our cows, see how your milk is made, and taste it fresh. Great for families and schools."))}</p>
       ${(mv.visits || []).filter((x) => ["requested", "confirmed"].includes(x.status)).map((x) => `<div class="notice"><div><b>${esc(fmtDay(x.visit_date, { weekday: "short", day: "numeric", month: "short" }))} · ${esc(x.slot || "")}</b><span>${esc(t(x.status === "confirmed" ? "Confirmed" : "Waiting for RD Dairy to confirm"))}${x.admin_note ? " · " + esc(x.admin_note) : ""}</span></div><div class="notice-acts"><button data-vc="${esc(x.id)}">${esc(t("Cancel"))}</button></div></div>`).join("")}
       <div class="seg" style="grid-template-columns:repeat(3,1fr)">${[["family", "Family"], ["school", "School"], ["other", "Group"]].map(([v, l]) => `<button data-g="${v}" class="${st.group === v ? "on" : ""}">${esc(t(l))}</button>`).join("")}</div>
@@ -4025,10 +4331,10 @@ async function renderAccount() {
     </section>
 
     <div class="pf-tiles">
-      <button data-link="gold" class="tile gold"><b>✦ RD Gold</b><span id="pfGold">${esc(t("Free delivery and savings"))}</span></button>
+      <button data-link="gold" class="tile gold"><b>${ic("sparkles")} RD Gold</b><span id="pfGold">${esc(t("Free delivery and savings"))}</span></button>
       <button data-link="wallet" class="tile"><b>${esc(t("RD Wallet"))}</b><span>${esc(S.extras ? inr(S.extras.wallet) : t("Add money"))}</span></button>
-      <button data-link="refer" class="tile"><b>🎁 ${esc(t("Refer and earn"))}</b><span>${esc(t("Invite friends"))}</span></button>
-      <button data-link="visit" class="tile"><b>🚜 ${esc(t("Visit our farm"))}</b><span>${esc(t("Book a visit"))}</span></button>
+      <button data-link="refer" class="tile"><b>${ic("gift")} ${esc(t("Refer and earn"))}</b><span>${esc(t("Invite friends"))}</span></button>
+      <button data-link="visit" class="tile"><b>${ic("tractor")} ${esc(t("Visit our farm"))}</b><span>${esc(t("Book a visit"))}</span></button>
     </div>
 
     <h2>${esc(t("Delivery location"))}</h2>
@@ -4060,6 +4366,7 @@ async function renderAccount() {
       </div>` : ""}
 
     <div style="margin-top:28px">
+      <button class="btn btn-line btn-block" id="chpw">${esc(t("Change password"))}</button>
       <button class="btn btn-line btn-block" id="logout">${esc(t("Log out"))}</button>
       <button class="danger-link" id="delacc">${esc(t("Delete my account"))}</button>
     </div>`;
@@ -4068,6 +4375,7 @@ async function renderAccount() {
   v.querySelectorAll(".pf-tiles [data-link]").forEach((b) => b.onclick = () => openLink(b.dataset.link === "wallet" ? "bills" : b.dataset.link));
   if (S.extras?.gold?.active) $("#pfGold").textContent = t("Active till {date}", { date: new Date(S.extras.gold.ends_at).toLocaleDateString(locale(), { day: "numeric", month: "short" }) });
   $("#delacc").onclick = openDeleteSheet;
+  $("#chpw").onclick = openPasswordSheet;
   mapPinBlock($("#pf-loc"), { map_link: h.map_link || "" }, async (link) => {
     const r = await call("app-api", { action: "update_profile", name: h.name, address: h.address || "", map_link: link });
     if (!r.ok) return toast(r.message, true);
@@ -4195,6 +4503,33 @@ async function loadMyIssues() {
 }
 
 /* ---------- delete account ---------- */
+function openPasswordSheet() {
+  const sheet = openSheet(`<div class="grip"></div>
+    <h3>${esc(t("Change password"))}</h3>
+    <form id="cpf" autocomplete="on">
+      <input type="text" name="username" autocomplete="username" value="${esc(S.home?.phone || S.phone || "")}" hidden />
+      <label class="lbl" for="cp0">${esc(t("Current password"))}</label>
+      <input id="cp0" type="password" class="su-input" autocomplete="current-password" />
+      <label class="lbl" for="cp1">${esc(t("New password"))}</label>
+      <input id="cp1" type="password" class="su-input" autocomplete="new-password" />
+      <div class="su-help">${esc(t("At least 6 letters or numbers"))}</div>
+      <label class="lbl" for="cp2">${esc(t("Type it again"))}</label>
+      <input id="cp2" type="password" class="su-input" autocomplete="new-password" />
+      <div class="stack"><button class="btn btn-main btn-block" id="cpgo">${esc(t("Save password"))}</button></div>
+    </form>`);
+  $("#cpf", sheet).onsubmit = async (e) => {
+    e.preventDefault();
+    const a = $("#cp0", sheet).value, b = $("#cp1", sheet).value, c = $("#cp2", sheet).value;
+    if (b.length < 6) return toast(t("Use at least 6 characters for your password"), true);
+    if (b !== c) return toast(t("The two passwords are different. Please type them again."), true);
+    const btn = $("#cpgo", sheet); btn.disabled = true;
+    const r = await call("app-auth", { action: "change_password", old_password: a, new_password: b });
+    btn.disabled = false;
+    if (!r.ok) return toast(r.message, true);
+    closeSheet(); toast(t("Password saved"));
+  };
+}
+
 function openDeleteSheet() {
   const reasons = ["Moving out of the delivery area", "Stopping milk delivery", "I have another account", "Something else"];
   const sheet = openSheet(`
@@ -4228,16 +4563,16 @@ async function renderHelp() {
   if (S.chatOpen) return renderChat();
   const sp = String(h.support_phone || "").replace(/\D/g, "").slice(-10);
   v.innerHTML = `
-    <div class="subhead"><button id="helpback" aria-label="${esc(t("Back"))}">‹</button><h2>🎧 ${esc(t("Help and support"))}</h2></div>
+    <div class="subhead"><button id="helpback" aria-label="${esc(t("Back"))}">${ic("left")}</button><h2>${esc(t("Help and support"))}</h2></div>
     <button class="chat-card" id="openchat">
-      <span class="cc-ico">💬${h.chat_unread ? `<i class="cc-badge">${h.chat_unread}</i>` : ""}</span>
+      <span class="cc-ico">${ic("chat")}${h.chat_unread ? `<i class="cc-badge">${h.chat_unread}</i>` : ""}</span>
       <span><b>${esc(t("Chat with RD Dairy"))}</b><br><span class="muted">${esc(t("Get help in a few taps, or chat with our team."))}</span></span>
-      <span class="cc-go">›</span>
+      <span class="cc-go">${ic("right")}</span>
     </button>
 
     <h2>${esc(t("Delivery problems"))}</h2>
     <div class="card pad">
-      <button class="btn btn-main btn-block" id="help-issue">🚚 ${esc(t("Report a delivery problem"))}</button>
+      <button class="btn btn-main btn-block" id="help-issue">${ic("truck")} ${esc(t("Report a delivery problem"))}</button>
       <div id="acc-issues"></div>
     </div>
 
@@ -4247,8 +4582,8 @@ async function renderHelp() {
         <a class="wa" href="https://wa.me/91${esc(sp)}?text=${encodeURIComponent("Hi RD Dairy, I need help (" + h.phone + ")")}" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .2-3.3-.7c-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
           ${esc(t("WhatsApp RD Dairy"))}</a>
-        <a href="tel:+91${esc(sp)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>${esc(t("Call"))}</a>
-        ${h.support_email ? `<a href="mailto:${esc(h.support_email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>${esc(t("Email"))}</a>` : ""}
+        <a href="tel:+91${esc(sp)}">${ic("phone")}${esc(t("Call"))}</a>
+        <a href="mailto:${esc(h.support_email || "rddairy14@gmail.com")}?subject=${encodeURIComponent("Help with RD Dairy app (" + h.phone + ")")}">${ic("mail")}${esc(t("Email"))}</a>
       </div>
       <p class="muted" style="margin:12px 0 0;font-size:14px;text-align:center">${esc(t("We usually reply within a few minutes, 6 AM to 9 PM."))}</p>
     </div>
@@ -4267,8 +4602,8 @@ async function renderHelp() {
    SUPPORT CHAT
    ========================================================= */
 const CHAT_TOPICS = [
-  ["delivery", "Delivery issue", "🚚"], ["bill", "Bill or payment", "🧾"], ["address", "Change address", "📍"],
-  ["milk", "Pause or extra milk", "🥛"], ["product", "Product question", "🧈"], ["other", "Something else", "💬"],
+  ["delivery", "Delivery issue", "truck"], ["bill", "Bill or payment", "bills"], ["address", "Change address", "pin"],
+  ["milk", "Pause or extra milk", "milk"], ["product", "Product question", "package"], ["other", "Something else", "chat"],
 ];
 const CHAT = { messages: [], status: null, topic: null, local: [], timer: null, proof: "" };
 
@@ -4295,14 +4630,14 @@ async function renderChat() {
   v.innerHTML = `
     <div class="chat">
       <div class="chat-head">
-        <button id="chatback" aria-label="${esc(t("Back"))}">‹</button>
+        <button id="chatback" aria-label="${esc(t("Back"))}">${ic("left")}</button>
         <div><b>${esc(t("RD Dairy support"))}</b><span>${esc(t("We usually reply within a few minutes, 6 AM to 9 PM."))}</span></div>
       </div>
       <div class="chat-body" id="chatbody"></div>
       <div class="chat-compose">
-        <label class="chat-attach" aria-label="${esc(t("Attach a photo"))}">📷<input type="file" accept="image/*" id="chatfile" /></label>
+        <label class="chat-attach" aria-label="${esc(t("Attach a photo"))}">${ic("camera")}<input type="file" accept="image/*" id="chatfile" /></label>
         <div class="chat-in"><div id="chatprev"></div><textarea id="chattext" rows="1" placeholder="${esc(t("Type a message"))}"></textarea></div>
-        <button class="chat-send" id="chatsend" aria-label="${esc(t("Send"))}">➤</button>
+        <button class="chat-send" id="chatsend" aria-label="${esc(t("Send"))}">${ic("send")}</button>
       </div>
     </div>`;
   document.body.classList.add("in-chat");
@@ -4338,14 +4673,14 @@ function bubble(m) {
 function drawChat(name) {
   const box = $("#chatbody"); if (!box) return;
   const bot = (text, actions = "") => `<div class="msg them bot"><div>${esc(text)}</div>${actions}</div>`;
-  const chips = `<div class="chips">${CHAT_TOPICS.map(([k, l, ic]) => `<button data-topic="${k}" class="${CHAT.topic === l ? "on" : ""}">${ic} ${esc(t(l))}</button>`).join("")}</div>`;
+  const chips = `<div class="chips">${CHAT_TOPICS.map(([k, l, ico]) => `<button data-topic="${k}" class="${CHAT.topic === l ? "on" : ""}">${ic(ico)} ${esc(t(l))}</button>`).join("")}</div>`;
   let html = "";
   if (CHAT.messages.length) {
     html += CHAT.messages.map(bubble).join("");
     if (CHAT.status === "resolved") html += `<div class="chat-note">${esc(t("This chat is marked as resolved. Send a message to reopen it."))}</div>`;
     html += bot(t("Anything else we can help with?")) + chips;
   } else {
-    html += bot(t("Hi {name} 👋 How can we help you today?", { name })) + chips;
+    html += bot(t("Hi {name} How can we help you today?", { name })) + chips;
   }
   html += CHAT.local.join("");
   box.innerHTML = html;
