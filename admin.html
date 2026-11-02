@@ -634,6 +634,19 @@
     <div id="appReqView" class="hidden">
       <div class="toolbar"><button class="btn refresh" onclick="loadAppRequests()">↻ Refresh</button></div>
 
+      <h3 class="dsub">Logins and passwords</h3>
+      <p class="muted" style="margin:0 0 10px">Customers log in to the app with their WhatsApp number and a password. Passwords are stored scrambled, so you reset them here and send the new one on WhatsApp.</p>
+      <div class="dcard" style="margin-bottom:14px">
+        <div class="dform" style="grid-template-columns:1fr auto">
+          <div><label>Reset a password for any number</label><input id="acResetPhone" type="tel" maxlength="10" placeholder="10 digit WhatsApp number" /></div>
+          <div class="dform-actions"><button class="btn" onclick="acReset(document.getElementById('acResetPhone').value, this)">Reset password</button></div>
+        </div>
+        <div id="acResetOut"></div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:14px"><div id="acResets"><div class="empty">Loading…</div></div></div>
+      <div class="table-wrap" style="margin-bottom:14px"><div id="acHolds"><div class="empty">Loading…</div></div></div>
+      <div class="table-wrap" style="margin-bottom:24px"><div id="acProfiles"><div class="empty">Loading…</div></div></div>
+
       <h3 class="dsub">Delivery problems</h3>
       <p class="muted" style="margin:0 0 10px">Reported by customers in the app. Sort it out with the customer, then mark it resolved with a short note they can see.</p>
       <div class="table-wrap" style="margin-bottom:24px"><div id="arIssues"><div class="empty">Loading…</div></div></div>
@@ -2861,10 +2874,69 @@ async function apReject(id, btn){
 function arDay(d){ return new Date(d+"T00:00:00Z").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"}); }
 function arQty(q){ q=Number(q||0); return q<1 && q>0 ? Math.round(q*1000)+" ml" : (+q.toFixed(2))+" L"; }
 
+/* ============ Logins and passwords ============ */
+async function loadAccountRequests(){
+  try{
+    var r = await aApi({action:"accountRequests"});
+    if(!r.ok){ $("acResets").innerHTML='<div class="empty">'+esc(r.message||"Could not load")+'</div>'; return; }
+    var rs=r.resets||[], hs=r.holds||[], ps=r.profiles||[];
+    $("acResets").innerHTML = '<div style="padding:12px 14px 4px;font-weight:800">Forgot password</div>' + (rs.length
+      ? '<table><thead><tr><th>Asked</th><th>Customer</th><th></th></tr></thead><tbody>'+rs.map(function(x){
+          return '<tr><td class="muted">'+esc(fmtDate(x.created_at))+'</td><td><b>'+esc(x.name||"")+'</b><br><span class="muted">'+esc(x.phone)+'</span></td>'+
+            '<td style="white-space:nowrap"><button class="btn sm" onclick="acReset(\''+esc(x.phone)+'\',this)">Reset</button></td></tr>';
+        }).join("")+'</tbody></table>'
+      : '<div class="empty">No password requests right now.</div>');
+    $("acHolds").innerHTML = '<div style="padding:12px 14px 4px;font-weight:800">Monthly bill orders to confirm</div><p class="muted" style="margin:0 14px 8px">From profiles created in the last 7 days. Approve to add them to the customer\'s monthly bill.</p>' + (hs.length
+      ? '<table><thead><tr><th>Ordered</th><th>Customer</th><th>Items</th><th>Total</th><th>For</th><th></th></tr></thead><tbody>'+hs.map(function(h){
+          return '<tr><td class="muted">'+esc(fmtDate(h.created_at))+'</td><td><b>'+esc(h.name||"")+'</b><br><span class="muted">'+esc(h.phone)+'</span></td>'+
+            '<td class="muted">'+esc((h.items||[]).join(", "))+'</td><td><b>'+apMoney(h.total)+'</b></td><td>'+esc(h.deliver_date||"")+'</td>'+
+            '<td style="white-space:nowrap"><button class="btn sm" onclick="acHold(\''+h.id+'\',\'approve\',this)">Approve</button> <button class="btn sm danger" onclick="acHold(\''+h.id+'\',\'decline\',this)">Decline</button></td></tr>';
+        }).join("")+'</tbody></table>'
+      : '<div class="empty">No orders waiting.</div>');
+    $("acProfiles").innerHTML = '<div style="padding:12px 14px 4px;font-weight:800">New app profiles on billing numbers</div><p class="muted" style="margin:0 14px 8px">If a customer tells you they never set this up, tap Reset. Whoever made it is logged out at once.</p>' + (ps.length
+      ? '<table><thead><tr><th>Created</th><th>Customer</th><th></th></tr></thead><tbody>'+ps.map(function(x){
+          return '<tr><td class="muted">'+esc(fmtDate(x.created_at))+'</td><td><b>'+esc(x.name||"")+'</b><br><span class="muted">'+esc(x.phone)+'</span></td>'+
+            '<td style="white-space:nowrap"><button class="btn sm" onclick="acSeen(\''+x.id+'\',this)">Looks right</button> <button class="btn sm danger" onclick="acReset(\''+esc(x.phone)+'\',this)">Reset</button></td></tr>';
+        }).join("")+'</tbody></table>'
+      : '<div class="empty">No new profiles to check.</div>');
+  }catch(e){ $("acResets").innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+async function acReset(phone, btn){
+  phone=String(phone||"").replace(/\D/g,"").slice(-10);
+  if(phone.length!==10){ notice("Enter a 10 digit number", true); return; }
+  var ok=await askInline("Reset the password for "+phone+"? They will be logged out on every phone.", {yes:"Reset", float:true});
+  if(ok===null||ok===false) return;
+  btn.disabled=true;
+  try{
+    var r=await aApi({action:"accountReset", phone:phone});
+    btn.disabled=false;
+    if(!r.ok){ notice(r.message, true); return; }
+    $("acResetOut").innerHTML='<div style="margin-top:12px;padding:12px 14px;border-radius:10px;background:#F2FBF4;border:1px solid #BFE6C8">'+
+      '<b>'+esc(r.name||"")+'</b> ('+esc(r.phone)+') · New password: <b style="font-size:1.15rem;letter-spacing:1px">'+esc(r.temp)+'</b><br>'+
+      '<span class="muted">They will set their own password after logging in.</span><br>'+
+      '<a class="wa-btn" style="margin-top:8px" target="_blank" href="'+esc(r.wa)+'">Send on WhatsApp</a></div>';
+    $("acResetOut").scrollIntoView({behavior:"smooth", block:"center"});
+    loadAccountRequests(); refreshAppPayCount();
+  }catch(e){ btn.disabled=false; notice(e.message, true); }
+}
+async function acSeen(id, btn){
+  btn.disabled=true;
+  try{ var r=await aApi({action:"accountSeen", id:id}); if(!r.ok){ notice(r.message,true); btn.disabled=false; return; } loadAccountRequests(); refreshAppPayCount(); }
+  catch(e){ btn.disabled=false; notice(e.message,true); }
+}
+async function acHold(id, decision, btn){
+  if(decision==="decline"){ var ok=await askInline("Decline this order? The customer is told to order again with cash on delivery or UPI.", {yes:"Decline", float:true}); if(ok===null||ok===false) return; }
+  btn.disabled=true;
+  try{ var r=await aApi({action:"billHoldDecide", id:id, decision:decision}); if(!r.ok){ notice(r.message,true); btn.disabled=false; return; }
+    notice(decision==="approve"?"Added to the monthly bill":"Order declined"); loadAccountRequests(); refreshAppPayCount(); }
+  catch(e){ btn.disabled=false; notice(e.message,true); }
+}
+
 async function loadAppRequests(){
   $("arChanges").innerHTML='<div class="empty">Loading…</div>';
   $("arQty").innerHTML='<div class="empty">Loading…</div>';
   try{
+    loadAccountRequests();
     var res = await Promise.all([aApi({action:"appChanges"}), aApi({action:"qtyRequests"}), aApi({action:"getAppSettings"}), aApi({action:"deletions"}), aApi({action:"issues"}), aApi({action:"profileChanges"})]);
     renderIssues(res[4].ok?res[4].issues:[], res[4].ok?null:res[4].message);
     renderProfileChanges(res[5].ok?res[5].changes:[], res[5].ok?null:res[5].message);
