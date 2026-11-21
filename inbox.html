@@ -598,7 +598,7 @@ $("viewer").addEventListener("click", function(e){ if(e.target.id==="viewer" || 
 var swReg = null;
 function urlB64(s){ var p = "=".repeat((4 - s.length % 4) % 4); var b = atob((s + p).replace(/-/g,"+").replace(/_/g,"/")); var a = new Uint8Array(b.length); for(var i=0;i<b.length;i++) a[i] = b.charCodeAt(i); return a; }
 function alertsSupported(){ return ("serviceWorker" in navigator) && ("PushManager" in window) && ("Notification" in window); }
-async function getReg(){ if(!swReg) swReg = await navigator.serviceWorker.register("sw.js"); return swReg; }
+async function getReg(){ if(!swReg) swReg = await navigator.serviceWorker.register("inbox-sw.js", { scope: "./inbox" }); return swReg; }
 async function refreshAlertBtn(){
   var btn = $("alertBtn");
   if(!alertsSupported()){ btn.textContent = "🔔 Turn on alerts"; btn.classList.remove("on"); return; }
